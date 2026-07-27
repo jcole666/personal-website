@@ -524,6 +524,53 @@ body {
   font-style: italic;
 }
 
+/* ===== 云朵传送遮罩 ===== */
+.cloud-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cloud-layer.is-active {
+  pointer-events: all;
+}
+
+.cloud-fill {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  will-change: opacity;
+}
+
+.cloud-puff {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52vmax;
+  aspect-ratio: 220 / 150;
+  margin-left: -26vmax;
+  margin-top: -17.7vmax;
+  will-change: transform, opacity;
+}
+
+.cloud-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 10px 22px rgba(40, 40, 55, 0.16));
+}
+
+.cloud-svg ellipse,
+.cloud-svg circle {
+  stroke: #34343d;
+  stroke-width: 1.3;
+}
+
 /* ===== 页脚 ===== */
 .footer {
   background: #e2d5f0;

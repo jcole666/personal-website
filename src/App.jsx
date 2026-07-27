@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
+import { TransitionProvider } from './context/TransitionContext.jsx'
+import CloudTransition from './components/CloudTransition.jsx'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
@@ -13,21 +15,24 @@ import Milktea from './pages/Milktea.jsx'
 
 function App() {
   return (
-    <div className="app">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/coursework" element={<Coursework />} />
-        <Route path="/essays" element={<Essays />} />
-        <Route path="/experience" element={<Experience />} />
-        <Route path="/reading" element={<Reading />} />
-        <Route path="/music" element={<Music />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/milktea" element={<Milktea />} />
-      </Routes>
-      <Footer />
-    </div>
+    <TransitionProvider>
+      <div className="app">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/coursework" element={<Coursework />} />
+          <Route path="/essays" element={<Essays />} />
+          <Route path="/experience" element={<Experience />} />
+          <Route path="/reading" element={<Reading />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/movies" element={<Movies />} />
+          <Route path="/milktea" element={<Milktea />} />
+        </Routes>
+        <Footer />
+        <CloudTransition />
+      </div>
+    </TransitionProvider>
   )
 }
 

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import TransitionLink from './TransitionLink.jsx'
 import { sections } from '../data/sections.js'
 
 function Sections() {
@@ -10,7 +10,7 @@ function Sections() {
       </div>
       <div className="worlds-list">
         {sections.map((section) => (
-          <Link to={section.link} className="world-card" key={section.num}>
+          <TransitionLink to={section.link} className="world-card" key={section.num}>
             <span className="world-num" aria-hidden="true">
               {section.num}
             </span>
@@ -27,7 +27,7 @@ function Sections() {
               <p className="world-latest-text">{section.latest}</p>
               <span className="world-enter">▸ 进入传送门</span>
             </div>
-          </Link>
+          </TransitionLink>
         ))}
       </div>
     </section>
