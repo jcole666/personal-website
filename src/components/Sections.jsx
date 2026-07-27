@@ -1,24 +1,32 @@
 import { Link } from 'react-router-dom'
-
-const sections = [
-  { icon: '💻', title: '代码开发', desc: '课余编程项目，技术栈与踩坑记录', link: '/projects' },
-  { icon: '📚', title: '课程作业', desc: '大学课程的学习记录与作业归档', link: '/coursework' },
-  { icon: '✍️', title: '随笔', desc: '技术思考、生活感悟等文字创作', link: '/essays' },
-  { icon: '🗺️', title: '经历分享', desc: '个人成长故事、实习比赛社团经历', link: '/experience' },
-  { icon: '🎵', title: '音乐', desc: '喜欢的音乐、歌单、乐器相关', link: '/music' },
-  { icon: '🎬', title: '电影', desc: '影评、观影记录、推荐', link: '/movies' },
-  { icon: '🧋', title: '奶茶打卡', desc: '日常奶茶探店、口味记录、打卡日志', link: '/milktea' },
-]
+import { sections } from '../data/sections.js'
 
 function Sections() {
   return (
-    <section className="sections">
-      <div className="sections-grid">
+    <section className="worlds">
+      <div className="worlds-head">
+        <span className="worlds-eyebrow">CHOOSE A WORLD</span>
+        <h2 className="worlds-title">选择一个世界</h2>
+      </div>
+      <div className="worlds-list">
         {sections.map((section) => (
-          <Link to={section.link} className="section-card" key={section.title}>
-            <span className="card-icon">{section.icon}</span>
-            <h2 className="card-title">{section.title}</h2>
-            <p className="card-desc">{section.desc}</p>
+          <Link to={section.link} className="world-card" key={section.num}>
+            <span className="world-num" aria-hidden="true">
+              {section.num}
+            </span>
+            <div className="world-body">
+              <span className="world-icon">{section.icon}</span>
+              <div className="world-text">
+                <h3 className="world-title">{section.title}</h3>
+                <span className="world-label">{section.label}</span>
+                <p className="world-desc">{section.desc}</p>
+              </div>
+            </div>
+            <div className="world-latest">
+              <span className="world-latest-tag">最新</span>
+              <p className="world-latest-text">{section.latest}</p>
+              <span className="world-enter">▸ 进入传送门</span>
+            </div>
           </Link>
         ))}
       </div>

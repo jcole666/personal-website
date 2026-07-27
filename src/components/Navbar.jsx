@@ -1,19 +1,30 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
+
+const navItems = [
+  { to: '/projects', label: '代码开发' },
+  { to: '/coursework', label: '课程作业' },
+  { to: '/essays', label: '随笔' },
+  { to: '/experience', label: '经历分享' },
+  { to: '/reading', label: '读书' },
+  { to: '/music', label: '音乐' },
+  { to: '/movies', label: '电影' },
+  { to: '/milktea', label: '奶茶打卡' },
+]
 
 function Navbar() {
   return (
     <nav className="navbar">
       <div className="nav-inner">
-        <Link to="/" className="nav-logo">流前</Link>
+        <Link to="/" className="nav-logo">
+          流前
+          <span className="nav-logo-tag">PRIVATE GALLERY</span>
+        </Link>
         <ul className="nav-links">
-          <li><Link to="/">首页</Link></li>
-          <li><Link to="/projects">代码开发</Link></li>
-          <li><Link to="/coursework">课程作业</Link></li>
-          <li><Link to="/essays">随笔</Link></li>
-          <li><Link to="/experience">经历分享</Link></li>
-          <li><Link to="/music">音乐</Link></li>
-          <li><Link to="/movies">电影</Link></li>
-          <li><Link to="/milktea">奶茶打卡</Link></li>
+          {navItems.map((item) => (
+            <li key={item.to}>
+              <NavLink to={item.to}>{item.label}</NavLink>
+            </li>
+          ))}
         </ul>
       </div>
     </nav>
