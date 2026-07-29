@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { TransitionProvider } from './context/TransitionContext.jsx'
-import CloudTransition from './components/CloudTransition.jsx'
+import LoadingTransition from './components/LoadingTransition.jsx'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
@@ -30,7 +30,7 @@ function App() {
           <Route path="/milktea" element={<Milktea />} />
         </Routes>
         <Footer />
-        <CloudTransition />
+        <LoadingTransition />
       </div>
     </TransitionProvider>
   )

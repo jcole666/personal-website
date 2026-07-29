@@ -1,5 +1,15 @@
+import { useLocation } from 'react-router-dom'
+
 function Footer() {
-  // 点击「回到顶部」时执行：平滑滚动到页面最上方
+  const { pathname } = useLocation()
+  const isAnimalWorld = pathname === '/experience'
+  const isReadingWorld = pathname === '/reading'
+  const isMusicWorld = pathname === '/music'
+  const isMoviesWorld = pathname === '/movies'
+
+  // 有独立页脚的板块，全局 Footer 不渲染
+  if (isAnimalWorld || isReadingWorld || isMusicWorld || isMoviesWorld) return null
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
