@@ -65,16 +65,16 @@
    ============================================ */
 
 .food-stall {
-  margin-bottom: 60px;
+  margin-bottom: 48px;
 }
 
 /* 摊位头部 — 简洁的色点 + 文字 */
 .food-stall-head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 28px;
-  padding-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
@@ -112,7 +112,7 @@
 .food-stall-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 /* ============================================
@@ -122,7 +122,7 @@
 
 .food-card {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
@@ -132,8 +132,8 @@
 }
 
 .food-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
 }
 
 /* 照片区 — 大比例 */
@@ -180,10 +180,10 @@
 
 /* 信息区 */
 .food-card-info {
-  padding: 16px 18px 18px;
+  padding: 12px 16px 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
 }
 

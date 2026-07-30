@@ -93,6 +93,7 @@ body {
   display: flex;
   gap: 24px;
   list-style: none;
+  align-items: center;
 }
 
 .nav-links a {
@@ -122,6 +123,11 @@ body {
   bottom: 0;
   height: 2px;
   background: var(--gold);
+}
+
+/* 导航栏 Button 间隙微调 */
+.nav-links li {
+  list-style: none;
 }
 
 /* ===== Hero · 馆长的话 ===== */
@@ -524,51 +530,38 @@ body {
   font-style: italic;
 }
 
-/* ===== 云朵传送遮罩 ===== */
-.cloud-layer {
+
+/* ===== 动森 Loading 转场 ===== */
+
+/* 注册自定义属性，让 keyframes 可以动画化 mask 半径 */
+@property --curtain-r {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.transition-curtain {
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  z-index: 10000;
+  background: #000;
+  /* 默认：全黑（mask 中心透明圆半径=0） */
+  -webkit-mask-image: radial-gradient(circle at center, transparent var(--curtain-r), black calc(var(--curtain-r) + 1px));
+  mask-image: radial-gradient(circle at center, transparent var(--curtain-r), black calc(var(--curtain-r) + 1px));
 }
 
-.cloud-layer.is-active {
-  pointer-events: all;
+/* 关幕动画：透明圆从 120vmax 缩到 0，四周→中间 1.2s */
+.transition-curtain--closing {
+  animation: curtain-close 1.2s ease-in-out forwards;
 }
 
-.cloud-fill {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  will-change: opacity;
-}
-
-.cloud-puff {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 52vmax;
-  aspect-ratio: 220 / 150;
-  margin-left: -26vmax;
-  margin-top: -17.7vmax;
-  will-change: transform, opacity;
-}
-
-.cloud-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 10px 22px rgba(40, 40, 55, 0.16));
-}
-
-.cloud-svg ellipse,
-.cloud-svg circle {
-  stroke: #34343d;
-  stroke-width: 1.3;
+@keyframes curtain-close {
+  0% {
+    --curtain-r: 120vmax;
+  }
+  100% {
+    --curtain-r: 0px;
+  }
 }
 
 /* ===== 页脚 ===== */
@@ -663,4 +656,442 @@ body {
   .footer-top:hover {
     transform: none;
   }
+}
+
+/* ===== 经历分享页 · 动森岛世界 ===== */
+
+/* 在动森页面，用系统中文字体替换 Noto Sans SC */
+.experience-world [class*="animal-"],
+.experience-world,
+.navbar-animal [class*="animal-"],
+.navbar-animal,
+.footer-animal {
+  font-family: Nunito, 'Microsoft YaHei', 'PingFang SC', sans-serif !important;
+}
+
+.experience-world {
+  min-height: calc(100vh - var(--nav-height));
+  background: #f8f8f0;
+}
+
+/* 经历页全局动森叶子光标 —— !important 覆盖一切 */
+.experience-world,
+.experience-world * {
+  cursor: url('/cursor-icon.png') 6 4, auto !important;
+}
+
+/* 回退类型 */
+.experience-world a,
+.experience-world button,
+.experience-world [class*="animal-"],
+.exp-card,
+.exp-filter-btn,
+.exp-modal-close {
+  cursor: url('/cursor-icon.png') 6 4, pointer !important;
+}
+
+.experience-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 48px;
+}
+
+/* 让动森 Title 在容器里居中 */
+.experience-title-wrap {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* 动森分割线间距 */
+.experience-inner [class*="animal-divider"] {
+  margin-bottom: 20px;
+}
+
+/* 小屏适配 */
+@media (max-width: 768px) {
+  .experience-inner {
+    padding: 24px 16px 40px;
+  }
+
+  .exp-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .exp-modal {
+    max-width: 100%;
+    border-radius: 18px;
+  }
+
+  .experience-hero {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* ===== 动森世界导航栏· 覆盖紫色为暖棕 ===== */
+.navbar-animal {
+  background-color: rgba(248, 248, 240, 0.88) !important;
+  border-bottom: 1px solid rgba(25, 200, 185, 0.35) !important;
+}
+
+.navbar-animal .nav-logo {
+  color: #794f27 !important;
+  font-family: Nunito, 'Noto Sans SC', sans-serif !important;
+}
+
+.navbar-animal .nav-logo-tag {
+  color: #19c8b9 !important;
+  font-family: Nunito, 'Noto Sans SC', sans-serif !important;
+}
+
+.navbar-animal .nav-links a {
+  color: #725d42 !important;
+  font-family: Nunito, 'Noto Sans SC', sans-serif !important;
+}
+
+.navbar-animal .nav-links a:hover {
+  color: #19c8b9 !important;
+}
+
+.navbar-animal .nav-links a.active {
+  color: #19c8b9 !important;
+}
+
+.navbar-animal .nav-links a.active::after {
+  background: #19c8b9 !important;
+}
+
+/* ===== 经历分享· 时钟 + 打字机 hero 区 ===== */
+.experience-hero {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 16px;
+}
+
+.experience-hero-time {
+  flex-shrink: 0;
+}
+
+.experience-hero-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===== 经历分享· 画廊卡片网格（替换旧统计卡片） ===== */
+
+/* 筛选栏 —— 轻量标签按钮 */
+.exp-filter {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.exp-filter-btn {
+  font-family: Nunito, 'Microsoft YaHei', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(121, 79, 39, 0.18);
+  background: transparent;
+  color: #9f927d;
+  transition: all 0.25s ease;
+}
+
+.exp-filter-btn:hover {
+  border-color: #19c8b9;
+  color: #19c8b9;
+}
+
+.exp-filter-btn--active {
+  background: #19c8b9;
+  border-color: #19c8b9;
+  color: #fff;
+}
+
+/* 画廊网格 */
+.exp-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 4px;
+}
+
+/* 单张卡片 */
+.exp-card {
+  background: #fffef9;
+  border-radius: 18px;
+  border: 1.5px solid rgba(121, 79, 39, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* 微微旋转，像随手放的照片 */
+  transform: rotate(var(--card-rotate, 0deg));
+}
+
+.exp-card:hover {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 12px 32px rgba(121, 79, 39, 0.14);
+}
+
+/* 封面区 */
+.exp-card-cover {
+  aspect-ratio: 4 / 3;
+  background: #f5f0e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.exp-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.exp-card:hover .exp-card-cover img {
+  transform: scale(1.05);
+}
+
+.exp-card-cover--empty {
+  color: #d4cbbc;
+  opacity: 0.6;
+}
+
+/* 信息区 */
+.exp-card-body {
+  padding: 14px 18px 18px;
+}
+
+.exp-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.exp-card-date {
+  font-size: 0.75rem;
+  color: #b8a99a;
+  font-family: 'Space Mono', 'Consolas', monospace;
+}
+
+.exp-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #59442f;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.exp-card-summary {
+  font-size: 0.88rem;
+  color: #8c7b65;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 空状态 */
+.exp-empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: #b8a99a;
+  font-size: 0.95rem;
+}
+
+.exp-empty p {
+  margin-top: 12px;
+}
+
+/* ===== 详情弹窗 ===== */
+.exp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: exp-fade-in 0.25s ease;
+}
+
+.exp-modal {
+  background: #fffef9;
+  border-radius: 22px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: exp-scale-in 0.3s ease;
+}
+
+.exp-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.exp-modal-close:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.exp-modal-cover {
+  aspect-ratio: 16 / 9;
+  background: #f5f0e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+  border-radius: 22px 22px 0 0;
+}
+
+.exp-modal-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.exp-modal-cover--placeholder {
+  color: #d4cbbc;
+  font-size: 0.85rem;
+}
+
+.exp-modal-body {
+  padding: 20px 28px 32px;
+}
+
+.exp-modal-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.exp-modal-date {
+  font-size: 0.78rem;
+  color: #b8a99a;
+  font-family: 'Space Mono', 'Consolas', monospace;
+}
+
+.exp-modal-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #59442f;
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.exp-modal-details {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: #725d42;
+}
+
+.exp-modal-details p {
+  margin-bottom: 1em;
+}
+
+@keyframes exp-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes exp-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== 经历分享· 独立页脚 ===== */
+.experience-footer {
+  background: #f8f8f0;
+  border-top: 1px solid rgba(25, 200, 185, 0.25);
+  padding: 32px 24px 24px;
+  color: #794f27;
+}
+
+.experience-footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(121, 79, 39, 0.12);
+}
+
+.experience-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.experience-footer-logo {
+  font-family: Nunito, 'Microsoft YaHei', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.experience-footer-tag {
+  font-size: 0.8rem;
+  color: rgba(121, 79, 39, 0.55);
+  font-family: Nunito, 'Microsoft YaHei', sans-serif;
+}
+
+.experience-footer-links {
+  display: flex;
+  gap: 20px;
+}
+
+.experience-footer-links a {
+  font-size: 0.85rem;
+  color: #794f27;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.experience-footer-links a:hover {
+  color: #19c8b9;
+}
+
+.experience-footer-bottom {
+  max-width: 960px;
+  margin: 16px auto 0;
+  font-size: 0.78rem;
+  color: rgba(121, 79, 39, 0.45);
+}
+
+/* ===== 动森海浪（repeat-x 铺满全宽） ===== */
+.experience-sea {
+  width: 100%;
+  height: 80px;
+  background: url('/footer-sea.svg') repeat-x center / auto 100%;
 }

@@ -1,3 +1,4 @@
+import { Icon } from 'animal-island-ui'
 import TransitionLink from './TransitionLink.jsx'
 import { sections } from '../data/sections.js'
 
@@ -15,7 +16,9 @@ function Sections() {
               {section.num}
             </span>
             <div className="world-body">
-              <span className="world-icon">{section.icon}</span>
+              <span className="world-icon">
+                <Icon name={section.icon} size={36} />
+              </span>
               <div className="world-text">
                 <h3 className="world-title">{section.title}</h3>
                 <span className="world-label">{section.label}</span>
