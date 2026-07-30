@@ -115,8 +115,8 @@ function Stall({ stall }) {
   const hasMore = stall.items.length >= 6
 
   return (
-    <div className="food-stall" id={stall.id}>
-      <div className="food-stall-head">
+    <div className="food-stall">
+      <div className="food-stall-head" id={stall.id}>
         <span className="food-stall-dot" style={{ background: stall.color }} />
         <span className="food-stall-icon">{stall.icon}</span>
         <span className="food-stall-name">{stall.name}</span>
