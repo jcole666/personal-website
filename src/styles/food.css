@@ -30,32 +30,32 @@
    ============================================ */
 
 .food-hero {
-  padding: 64px 0 48px;
+  padding: 48px 0 40px;
   text-align: center;
 }
 
 .food-hero-title {
   font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  font-size: clamp(2.2rem, 3.5vw, 3rem);
   font-weight: 600;
   color: #2d2418;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   letter-spacing: 0.02em;
   line-height: 1.15;
 }
 
 .food-hero-line {
-  width: 40px;
+  width: 32px;
   height: 2px;
   background: #c47a5e;
-  margin: 0 auto 18px;
+  margin: 0 auto 14px;
 }
 
 .food-hero-sub {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   color: #8c7b68;
   font-weight: 400;
-  max-width: 460px;
+  max-width: 420px;
   margin: 0 auto;
   line-height: 1.7;
 }
@@ -65,7 +65,7 @@
    ============================================ */
 
 .food-stall {
-  margin-bottom: 72px;
+  margin-bottom: 60px;
 }
 
 /* 摊位头部 — 简洁的色点 + 文字 */
@@ -112,7 +112,7 @@
 .food-stall-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 20px;
 }
 
 /* ============================================
@@ -138,7 +138,7 @@
 
 /* 照片区 — 大比例 */
 .food-card-photo {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 5 / 7;
   background: #f5ede0;
   display: flex;
   align-items: center;
@@ -301,7 +301,7 @@
 }
 
 .food-modal-photo {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 5 / 7;
   background: #f5ede0;
   display: flex;
   align-items: center;
@@ -459,7 +459,7 @@
 
 .food-footer {
   background: #f5efe5;
-  padding: 40px 24px 28px;
+  padding: 32px 24px 24px;
 }
 
 .food-footer-inner {

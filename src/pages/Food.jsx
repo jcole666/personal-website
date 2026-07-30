@@ -81,8 +81,7 @@ function FoodModal({ item, onClose }) {
           </div>
           <h2 className="food-modal-name">{item.name}</h2>
           <p className="food-modal-shop">{item.shop} · {item.location}</p>
-          <p className="food-modal-date">{item.date}</p>
-          {item.price && <span className="food-modal-price">{item.price}</span>}
+          <p className="food-modal-meta-row">{item.date} · {item.price}</p>
           <div className="food-modal-rating"><StarsText rating={item.rating} /></div>
           <div className="food-modal-review">{renderParagraphs(item.review)}</div>
         </div>
