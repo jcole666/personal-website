@@ -6,6 +6,7 @@ import './common.css'
 import './styles/reading.css'
 import './styles/music.css'
 import './styles/movies.css'
+import './styles/food.css'
 import './components/Villager.css'
 import App from './App.jsx'
 

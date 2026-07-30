@@ -1,7 +1,7 @@
 export const sections = [
   {
     num: '01',
-    icon: '💻',
+    icon: 'icon-diy',
     title: '代码开发',
     label: 'CODE / DEV',
     desc: '记录我写过的项目与踩过的坑',
@@ -10,7 +10,7 @@ export const sections = [
   },
   {
     num: '02',
-    icon: '📚',
+    icon: 'icon-design',
     title: '课程作业',
     label: 'COURSEWORK',
     desc: '大学里那些认真对待的作业与实验',
@@ -19,16 +19,7 @@ export const sections = [
   },
   {
     num: '03',
-    icon: '✍️',
-    title: '随笔',
-    label: 'ESSAYS',
-    desc: '一些不吐不快的碎碎念',
-    latest: '关于深夜 debug 的一点想法',
-    link: '/essays',
-  },
-  {
-    num: '04',
-    icon: '🧭',
+    icon: 'icon-map',
     title: '经历分享',
     label: 'EXPERIENCE',
     desc: '比赛、实习，还有走过的弯路',
@@ -36,8 +27,8 @@ export const sections = [
     link: '/experience',
   },
   {
-    num: '05',
-    icon: '📖',
+    num: '04',
+    icon: 'icon-miles',
     title: '读书',
     label: 'READING',
     desc: '最近在读的书与随手的摘抄',
@@ -45,8 +36,8 @@ export const sections = [
     link: '/reading',
   },
   {
-    num: '06',
-    icon: '🎵',
+    num: '05',
+    icon: 'icon-variant',
     title: '音乐',
     label: 'MUSIC',
     desc: '我的耳朵简史，从 Prince 开始',
@@ -54,8 +45,8 @@ export const sections = [
     link: '/music',
   },
   {
-    num: '07',
-    icon: '🎬',
+    num: '06',
+    icon: 'icon-camera',
     title: '电影',
     label: 'MOVIES',
     desc: '看过的电影与一点私人短评',
@@ -63,12 +54,12 @@ export const sections = [
     link: '/movies',
   },
   {
-    num: '08',
-    icon: '🧋',
-    title: '奶茶打卡',
-    label: 'MILK TEA',
-    desc: '一杯一杯，喝出一张城市地图',
-    latest: '第 37 杯 · 街角那家的招牌',
-    link: '/milktea',
+    num: '07',
+    icon: 'icon-shopping',
+    title: '市集',
+    label: 'FOOD MARKET',
+    desc: '吃吃喝喝，闲逛市集',
+    latest: '四个摊位 · 24 种好味道',
+    link: '/food',
   },
 ]

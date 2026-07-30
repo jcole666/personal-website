@@ -6,9 +6,10 @@ function Footer() {
   const isReadingWorld = pathname === '/reading'
   const isMusicWorld = pathname === '/music'
   const isMoviesWorld = pathname === '/movies'
+  const isFoodWorld = pathname === '/food'
 
   // 有独立页脚的板块，全局 Footer 不渲染
-  if (isAnimalWorld || isReadingWorld || isMusicWorld || isMoviesWorld) return null
+  if (isAnimalWorld || isReadingWorld || isMusicWorld || isMoviesWorld || isFoodWorld) return null
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })

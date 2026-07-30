@@ -6,12 +6,11 @@ import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
 import Projects from './pages/Projects.jsx'
 import Coursework from './pages/Coursework.jsx'
-import Essays from './pages/Essays.jsx'
 import Experience from './pages/Experience.jsx'
 import Reading from './pages/Reading.jsx'
 import Music from './pages/Music.jsx'
 import Movies from './pages/Movies.jsx'
-import Milktea from './pages/Milktea.jsx'
+import Food from './pages/Food.jsx'
 
 function App() {
   return (
@@ -22,12 +21,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/coursework" element={<Coursework />} />
-          <Route path="/essays" element={<Essays />} />
           <Route path="/experience" element={<Experience />} />
           <Route path="/reading" element={<Reading />} />
           <Route path="/music" element={<Music />} />
           <Route path="/movies" element={<Movies />} />
-          <Route path="/milktea" element={<Milktea />} />
+          <Route path="/food" element={<Food />} />
         </Routes>
         <Footer />
         <LoadingTransition />

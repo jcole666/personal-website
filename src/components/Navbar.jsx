@@ -6,12 +6,11 @@ import TransitionLink from './TransitionLink.jsx'
 const navItems = [
   { to: '/projects', label: '代码开发' },
   { to: '/coursework', label: '课程作业' },
-  { to: '/essays', label: '随笔' },
   { to: '/experience', label: '经历分享' },
   { to: '/reading', label: '读书' },
   { to: '/music', label: '音乐' },
   { to: '/movies', label: '电影' },
-  { to: '/milktea', label: '奶茶打卡' },
+  { to: '/food', label: '市集' },
 ]
 
 function Navbar() {
@@ -23,12 +22,14 @@ function Navbar() {
   const isReadingWorld = pathname === '/reading'
   const isMusicWorld = pathname === '/music'
   const isMoviesWorld = pathname === '/movies'
+  const isFoodWorld = pathname === '/food'
 
   let navbarTheme = ''
   if (isAnimalWorld) navbarTheme = ' navbar-animal'
   else if (isReadingWorld) navbarTheme = ' navbar-reading'
   else if (isMusicWorld) navbarTheme = ' navbar-music'
   else if (isMoviesWorld) navbarTheme = ' navbar-movies'
+  else if (isFoodWorld) navbarTheme = ' navbar-food'
 
   return (
     <nav className={`navbar${navbarTheme}`}>
@@ -36,7 +37,7 @@ function Navbar() {
         <TransitionLink to="/" className="nav-logo">
           流前
           <span className="nav-logo-tag">
-            {isAnimalWorld ? 'ISLAND JOURNAL' : isReadingWorld ? 'READING NOTES' : isMusicWorld ? 'LISTENING ROOM' : isMoviesWorld ? 'SCREENING ROOM' : 'PRIVATE GALLERY'}
+            {isAnimalWorld ? 'ISLAND JOURNAL' : isReadingWorld ? 'READING NOTES' : isMusicWorld ? 'LISTENING ROOM' : isMoviesWorld ? 'SCREENING ROOM' : isFoodWorld ? 'FOOD MARKET' : 'PRIVATE GALLERY'}
           </span>
         </TransitionLink>
         <ul className="nav-links">

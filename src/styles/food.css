@@ -1,0 +1,569 @@
+/* ============================================
+   市集 · 食物日记
+   温暖克制 / 大图大字 / 留白呼吸
+   ============================================ */
+
+/* ----- 全局 ----- */
+.food-world {
+  min-height: calc(100vh - var(--nav-height));
+  background: #faf6f0;
+  color: #2d2418;
+  position: relative;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+
+.food-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 滚动条 */
+.food-world ::-webkit-scrollbar { width: 6px; }
+.food-world ::-webkit-scrollbar-track { background: transparent; }
+.food-world ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 3px; }
+
+/* ============================================
+   页面头部 — 大字标题
+   ============================================ */
+
+.food-hero {
+  padding: 64px 0 48px;
+  text-align: center;
+}
+
+.food-hero-title {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  font-weight: 400;
+  color: #2d2418;
+  margin: 0 0 12px;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.food-hero-line {
+  width: 48px;
+  height: 2px;
+  background: #c47a5e;
+  margin: 0 auto 16px;
+}
+
+.food-hero-sub {
+  font-size: 0.95rem;
+  color: #8c7b68;
+  font-weight: 400;
+  max-width: 460px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ============================================
+   摊位分类区
+   ============================================ */
+
+.food-stall {
+  margin-bottom: 72px;
+}
+
+/* 摊位头部 — 简洁的色点 + 文字 */
+.food-stall-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.food-stall-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.food-stall-name {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d2418;
+  letter-spacing: 0.03em;
+}
+
+.food-stall-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.food-stall-desc {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: #b0a090;
+  font-family: 'Space Mono', monospace;
+}
+
+/* ============================================
+   卡片网格
+   ============================================ */
+
+.food-stall-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ============================================
+   卡片 — 统一的现代卡片风格
+   大图 + 干净文字区
+   ============================================ */
+
+.food-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.food-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* 照片区 — 大比例 */
+.food-card-photo {
+  aspect-ratio: 4 / 3;
+  background: #f0e8d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.food-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.food-card:hover .food-card-photo img {
+  transform: scale(1.04);
+}
+
+.food-card-photo-placeholder {
+  font-size: 1.8rem;
+  opacity: 0.3;
+}
+
+/* 照片左上角的摊位色标签 */
+.food-card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  z-index: 1;
+  backdrop-filter: blur(4px);
+}
+
+/* 信息区 */
+.food-card-info {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.food-card-name {
+  font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+  font-size: 1.25rem;
+  color: #2d2418;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.food-card-shop {
+  font-size: 0.72rem;
+  color: #8c7b68;
+}
+
+.food-card-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.food-card-rating {
+  font-size: 0.7rem;
+  color: #c47a5e;
+  letter-spacing: 0.04em;
+}
+
+.food-card-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2d2418;
+}
+
+/* ============================================
+   查看更多按钮 — 简洁文字链接
+   ============================================ */
+
+.food-more-btn {
+  display: block;
+  margin: 32px auto 0;
+  padding: 12px 36px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  background: transparent;
+  color: #2d2418;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.3s;
+  letter-spacing: 0.02em;
+}
+
+.food-more-btn:hover {
+  border-color: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.02);
+}
+
+/* ============================================
+   详情弹窗
+   ============================================ */
+
+.food-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(20, 14, 6, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: food-fade-in 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+
+.food-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+  animation: food-float-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.food-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  color: #2d2418;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.food-modal-close:hover {
+  background: rgba(255,255,255,1);
+}
+
+.food-modal-photo {
+  aspect-ratio: 4 / 3;
+  background: #f0e8d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0a090;
+  font-size: 0.9rem;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+.food-modal-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.food-modal-body {
+  padding: 28px 32px 36px;
+}
+
+.food-modal-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.food-modal-tag {
+  font-size: 0.7rem;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #f0e8d8;
+  color: #8c7b68;
+  font-weight: 500;
+}
+
+.food-modal-name {
+  font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+  font-size: 2.2rem;
+  color: #2d2418;
+  margin: 0 0 8px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.food-modal-shop {
+  font-size: 1rem;
+  color: #8c7b68;
+  margin-bottom: 4px;
+}
+
+.food-modal-date {
+  font-size: 0.75rem;
+  color: #b0a090;
+  font-family: 'Space Mono', monospace;
+  margin-bottom: 6px;
+}
+
+.food-modal-price {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  color: #2d2418;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.food-modal-rating {
+  font-size: 0.82rem;
+  color: #c47a5e;
+  margin-bottom: 18px;
+  letter-spacing: 0.04em;
+}
+
+.food-modal-review {
+  font-size: 0.9rem;
+  line-height: 1.9;
+  color: #4a3a2a;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 18px;
+}
+
+.food-modal-review p { margin-bottom: 0.7em; }
+
+/* ============================================
+   全部显示弹窗
+   ============================================ */
+
+.food-full-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(20, 14, 6, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: food-fade-in 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+
+.food-full-panel {
+  background: #faf6f0;
+  border-radius: 16px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 36px 32px 40px;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+  animation: food-float-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.food-full-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  color: #2d2418;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.food-full-close:hover { background: #ffffff; }
+
+.food-full-title {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.6rem;
+  color: #2d2418;
+  margin-bottom: 28px;
+  text-align: center;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.food-full-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* ============================================
+   页脚
+   ============================================ */
+
+.food-footer {
+  background: #f5efe5;
+  padding: 40px 24px 28px;
+}
+
+.food-footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.food-footer-brand { display: flex; flex-direction: column; gap: 4px; }
+
+.food-footer-logo {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.3rem;
+  color: #2d2418;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.food-footer-tag { font-size: 0.8rem; color: #8c7b68; }
+
+.food-footer-links { display: flex; gap: 24px; }
+
+.food-footer-links a {
+  font-size: 0.82rem;
+  color: #8c7b68;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.food-footer-links a:hover { color: #c47a5e; }
+
+.food-footer-bottom {
+  max-width: 960px;
+  margin: 20px auto 0;
+  font-size: 0.75rem;
+  color: rgba(0,0,0,0.2);
+}
+
+/* ============================================
+   导航栏覆盖
+   ============================================ */
+
+.navbar-food {
+  background-color: rgba(250, 246, 240, 0.94) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+  backdrop-filter: blur(16px);
+}
+
+.navbar-food .nav-logo {
+  color: #2d2418 !important;
+  font-family: 'Playfair Display', 'Noto Serif SC', serif !important;
+  font-size: 1.4rem !important;
+  letter-spacing: 0.03em;
+}
+
+.navbar-food .nav-logo-tag { color: #8c7b68 !important; }
+
+.navbar-food .nav-links a { color: #8c7b68 !important; }
+.navbar-food .nav-links a:hover { color: #c47a5e !important; }
+.navbar-food .nav-links a.active { color: #2d2418 !important; }
+.navbar-food .nav-links a.active::after { background: #c47a5e !important; }
+
+/* ============================================
+   动画
+   ============================================ */
+
+@keyframes food-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes food-float-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+
+@media (max-width: 900px) {
+  .food-stall-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .food-full-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+
+@media (max-width: 768px) {
+  .food-hero { padding: 40px 0 36px; }
+  .food-hero-title { font-size: 2.2rem; }
+  .food-inner { padding: 0 16px 60px; }
+  .food-stall { margin-bottom: 52px; }
+  .food-stall-head { margin-bottom: 20px; }
+
+  .food-modal { max-width: 100%; border-radius: 12px; }
+  .food-modal-body { padding: 20px 22px 28px; }
+
+  .food-full-panel { padding: 28px 20px 32px; }
+}
+
+@media (max-width: 480px) {
+  .food-stall-grid { grid-template-columns: 1fr; gap: 16px; }
+  .food-full-grid { grid-template-columns: 1fr; }
+}
