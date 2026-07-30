@@ -116,7 +116,9 @@
   gap: 10px;
   margin-bottom: 22px;
   padding-bottom: 12px;
+  padding-top: 16px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
+  scroll-margin-top: 80px;
 }
 
 .food-stall-dot {
