@@ -2,6 +2,19 @@ import { useState } from 'react'
 import foodData from '../data/food.js'
 
 /* ====== 工具 ====== */
+function getPhotoGradient(id) {
+  const palettes = [
+    ['#e8c4a0', '#d4a878'], ['#c4a888', '#b89870'],
+    ['#d4b896', '#c4a076'], ['#e0ccb0', '#ccb088'],
+    ['#dcc8a8', '#c8b490'], ['#e8d4b8', '#d0bc98'],
+    ['#c8b090', '#b8a080'], ['#d8c4a8', '#c8b488'],
+    ['#e4d0b4', '#ccb894'], ['#ccc0a0', '#bcb088'],
+  ]
+  let hash = 0
+  for (let i = 0; i < id.length; i++) { hash = ((hash << 5) - hash) + id.charCodeAt(i); hash |= 0 }
+  const idx = Math.abs(hash) % palettes.length
+  return `linear-gradient(135deg, ${palettes[idx][0]}, ${palettes[idx][1]})`
+}
 
 function renderParagraphs(text) {
   if (!text) return null
@@ -24,11 +37,11 @@ function StarsText({ rating }) {
 function FoodCard({ item, badge, onSelect }) {
   return (
     <div className="food-card" onClick={() => onSelect(item)}>
-      <div className="food-card-photo">
+      <div className="food-card-photo" style={{ background: getPhotoGradient(item.id) }}>
         {item.photoUrl ? (
           <img src={item.photoUrl} alt={item.name} />
         ) : (
-          <span className="food-card-photo-placeholder">{item.icon || '🍽️'}</span>
+          <span className="food-card-photo-placeholder">🍽️</span>
         )}
         {badge && (
           <span className="food-card-badge" style={{ background: badge }}>
@@ -147,6 +160,7 @@ function Food() {
         {/* 头部 */}
         <div className="food-hero">
           <h1 className="food-hero-title">市集</h1>
+          <div className="food-hero-line" />
           <p className="food-hero-sub">从学校后街到城市角落，记录吃过的每一口好味道。</p>
         </div>
 
@@ -159,8 +173,8 @@ function Food() {
       <footer className="food-footer">
         <div className="food-footer-inner">
           <div className="food-footer-brand">
-            <span className="food-footer-logo">流前 · 市集</span>
-            <span className="food-footer-tag">记录吃过的每一口好味道</span>
+            <span className="food-footer-logo">流前</span>
+            <span className="food-footer-tag">市集</span>
           </div>
           <nav className="food-footer-links">
             <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">GitHub</a>
