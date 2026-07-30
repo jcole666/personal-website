@@ -112,10 +112,10 @@ function Stall({ stall }) {
   const [showAll, setShowAll] = useState(false)
 
   const visible = showAll ? stall.items : stall.items.slice(0, 6)
-  const hasMore = stall.items.length > 6
+  const hasMore = stall.items.length >= 6
 
   return (
-    <div className="food-stall">
+    <div className="food-stall" id={stall.id}>
       <div className="food-stall-head">
         <span className="food-stall-dot" style={{ background: stall.color }} />
         <span className="food-stall-icon">{stall.icon}</span>
@@ -161,6 +161,22 @@ function Food() {
           <div className="food-hero-line" />
           <p className="food-hero-sub">从学校后街到城市角落，记录吃过的每一口好味道。</p>
         </div>
+
+        {/* 快速导航栏 */}
+        <nav className="food-quick-nav">
+          {foodData.stalls.map((stall) => (
+            <a
+              key={stall.id}
+              href={`#${stall.id}`}
+              className="food-quick-nav-item"
+              style={{ '--nav-color': stall.color }}
+            >
+              <span className="food-quick-nav-dot" style={{ background: stall.color }} />
+              <span>{stall.icon}</span>
+              <span>{stall.name}</span>
+            </a>
+          ))}
+        </nav>
 
         {/* 各摊位 */}
         {foodData.stalls.map((stall) => (
