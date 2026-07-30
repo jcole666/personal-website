@@ -147,7 +147,6 @@ function Food() {
         {/* 头部 */}
         <div className="food-hero">
           <h1 className="food-hero-title">市集</h1>
-          <div className="food-hero-line" />
           <p className="food-hero-sub">从学校后街到城市角落，记录吃过的每一口好味道。</p>
         </div>
 

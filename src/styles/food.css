@@ -42,6 +42,9 @@
   margin: 0 0 12px;
   letter-spacing: 0.02em;
   line-height: 1.15;
+  /* 底部渐变横线替代 food-hero-line */
+  background: linear-gradient(90deg, #c47a5e 0%, #e8b89d 50%, transparent 50%) 0 100% / 72px 2px no-repeat;
+  padding-bottom: 20px;
 }
 
 .food-hero-line {
