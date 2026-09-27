@@ -64,10 +64,11 @@
 }
 
 .ed-hero-note {
-  max-width: 20rem;
+  /* 22rem：字号提到 0.9rem 后，20rem 会让这段中文断成三行且断点难看 */
+  max-width: 22rem;
   margin: 0 0 6px;
-  font-size: 0.8rem;
-  line-height: 2;
+  font-size: 0.9rem;
+  line-height: 1.9;
   /* 中文不用 0.2em —— 那是拉丁文的字距，中文会被撑散 */
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -80,7 +81,7 @@
 .ed-label {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -167,7 +168,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -230,7 +231,7 @@
 .ed-row-num {
   flex-shrink: 0;
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.1em;
   color: var(--ed-ink-2);
 }
@@ -258,14 +259,15 @@
 .ed-row-desc {
   margin: 10px 0 0;
   max-width: 46ch;
-  font-size: 0.9rem;
+  /* 比标签大一档，保住"描述是正文、其余是标注"的层级 */
+  font-size: 0.95rem;
   line-height: 1.8;
   color: var(--ed-ink-2);
 }
 
 .ed-row-tech {
   margin: 8px 0 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -273,7 +275,7 @@
 
 .ed-row-meta {
   flex-shrink: 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -424,7 +426,7 @@
 
 .ed-modal-tech {
   margin: 14px 0 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -459,7 +461,7 @@
 .ed-modal-link {
   display: inline-block;
   margin-top: 32px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ed-ink);
