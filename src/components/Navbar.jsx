@@ -4,17 +4,7 @@ import { useTransition } from '../context/TransitionContext.jsx'
 import { useEditMode } from '../context/EditModeContext.jsx'
 import TransitionLink from './TransitionLink.jsx'
 import { getNavTheme, navThemeVars } from '../data/navTheme.js'
-
-const navItems = [
-  { to: '/projects', label: '代码开发' },
-  { to: '/coursework', label: '课程学习' },
-  { to: '/experience', label: '经历分享' },
-  { to: '/reading', label: '书籍' },
-  { to: '/music', label: '音乐' },
-  { to: '/movies', label: '电影' },
-  { to: '/games', label: '游戏' },
-  { to: '/food', label: '市集' },
-]
+import { siteNav } from '../data/siteNav.js'
 
 /** 经历分享页的导航项用的是动森 UI 的按钮组件，而不是普通文字链接 */
 const ISLAND_WORLD = '/experience'
@@ -43,7 +33,7 @@ function Navbar() {
         </TransitionLink>
 
         <ul className="nav-links">
-          {navItems.map((item) => (
+          {siteNav.map((item) => (
             <li key={item.to}>
               {isIslandWorld ? (
                 <Button

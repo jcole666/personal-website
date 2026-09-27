@@ -1,6 +1,9 @@
 /* ============================================
    全站统一页脚
-   骨架（布局、间距、字号）写死在这里，8 个页面共用；
+   骨架（布局、间距、字号）写死在这里，9 处页脚共用：
+     品牌区 ｜ 站内导航（4×2） ｜ 联系方式（GitHub + 完整邮箱）
+     ──────────────────────────────────────────
+     底部行（版权 + 回到顶部）
    每页专属的配色与字体由 src/data/footerTheme.js 注入的 --ft-* 变量提供。
    ============================================ */
 
@@ -46,13 +49,24 @@
   color: var(--ft-tag-ink);
 }
 
-/* 链接区 */
-.site-footer-links {
-  display: flex;
-  gap: 22px;
+/* 站内导航：4 列 × 2 行 */
+.site-footer-nav {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 8px 22px;
 }
 
-.site-footer-links a {
+/* 联系方式：GitHub 与邮箱上下排列，邮箱写全地址方便直接复制 */
+.site-footer-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  text-align: right;
+}
+
+.site-footer-nav a,
+.site-footer-contact a {
   font-family: var(--ft-ui-font);
   font-size: 0.85rem;
   color: var(--ft-muted);
@@ -60,7 +74,8 @@
   transition: color 0.25s ease;
 }
 
-.site-footer-links a:hover {
+.site-footer-nav a:hover,
+.site-footer-contact a:hover {
   color: var(--ft-accent);
 }
 
@@ -114,5 +129,13 @@
   .site-footer-inner {
     gap: 20px;
     padding-bottom: 16px;
+  }
+  .site-footer-nav {
+    grid-template-columns: repeat(2, auto);
+    gap: 8px 28px;
+  }
+  .site-footer-contact {
+    align-items: flex-start;
+    text-align: left;
   }
 }
