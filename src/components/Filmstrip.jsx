@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import PhotoArt from './PhotoArt.jsx'
 
 /**
  * 闪烁星空 — 随机散布的星星，每颗独立闪烁
@@ -69,11 +70,15 @@ function PosterCard({ movie, index, onHover, onSelect }) {
       title={movie.title}
     >
       <div className="film-poster-img">
-        {movie.posterUrl ? (
-          <img src={movie.posterUrl} alt={movie.title} />
-        ) : (
-          <span className="film-poster-placeholder">{movie.title.slice(0, 3)}</span>
-        )}
+        {/* 有 posterUrl 显示真海报，没有就画一张极简艺术海报（featured 的 posterColor 会被复用） */}
+        <PhotoArt
+          src={movie.posterUrl}
+          alt={movie.title}
+          id={movie.id}
+          label={movie.title}
+          theme="poster"
+          accent={movie.posterColor}
+        />
       </div>
       <span className="film-poster-title">{movie.title}</span>
       <span className="film-poster-year">{movie.year}</span>

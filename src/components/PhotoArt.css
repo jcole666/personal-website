@@ -1,0 +1,39 @@
+/* ===== PhotoArt — 缺图时的占位插画 ===== */
+
+/* 铺满父容器（父容器负责 aspect-ratio 和 overflow:hidden） */
+.photo-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * 手写体。
+ * index.html 已经通过 Google Fonts 载入了这几款中文手写字体，
+ * 优先用毛笔楷书（马善政），退化到站酷快乐体，最后兜到衬线。
+ */
+.photo-art-hand {
+  font-family: 'Ma Shan Zheng', 'ZCOOL KuaiLe', 'Noto Serif SC', serif;
+  letter-spacing: 0.06em;
+}
+
+/* 电影海报的竖排片名用无衬线更有海报感 */
+.photo-art--poster .photo-art-hand {
+  font-family: 'Noto Serif SC', 'Playfair Display', serif;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* hover 时和真图保持一致的轻微放大（父级已有 overflow:hidden） */
+.food-card:hover .photo-art,
+.exp-card:hover .photo-art {
+  transform: scale(1.03);
+  transition: transform 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .food-card:hover .photo-art,
+  .exp-card:hover .photo-art {
+    transform: none;
+  }
+}
