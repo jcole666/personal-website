@@ -1,0 +1,524 @@
+/* ============================================================
+   管理后台样式：Admin 页 + SectionEditor 编辑器 + JsonEditor
+   主题延续主站的紫色系（爱 Prince → 主色紫）
+   ============================================================ */
+
+/* ---------- Admin 页 ---------- */
+.admin-world {
+  min-height: 100vh;
+  padding: 32px 16px 64px;
+  background: linear-gradient(160deg, #1b1026 0%, #2a1a3e 55%, #201428 100%);
+  color: #ece6f5;
+  font-family: inherit;
+}
+
+.admin-inner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.admin-loading {
+  text-align: center;
+  padding: 80px 0;
+  color: #9a8fb8;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.admin-head {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.admin-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  letter-spacing: 0.04em;
+  background: linear-gradient(90deg, #c9a8ff, #8f7bff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.admin-sub {
+  color: #a495c4;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+}
+.admin-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(201, 168, 255, 0.18);
+  color: #ece6f5;
+  text-decoration: none;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.admin-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 168, 255, 0.5);
+  background: rgba(201, 168, 255, 0.09);
+}
+.admin-card-icon {
+  font-size: 1.6rem;
+}
+.admin-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.admin-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 3px;
+}
+.admin-card-desc {
+  font-size: 0.78rem;
+  color: #a495c4;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-card-arrow {
+  color: #a495c4;
+  font-size: 1.1rem;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.admin-enter-edit,
+.admin-logout {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 168, 255, 0.35);
+  background: transparent;
+  color: #e2d6f7;
+  font-size: 0.88rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.admin-enter-edit:hover {
+  background: rgba(201, 168, 255, 0.14);
+  border-color: rgba(201, 168, 255, 0.7);
+}
+.admin-logout {
+  border-color: rgba(255, 120, 120, 0.35);
+  color: #f0b8b8;
+}
+.admin-logout:hover {
+  background: rgba(255, 120, 120, 0.12);
+  border-color: rgba(255, 120, 120, 0.6);
+}
+
+/* ---------- 登录表单 ---------- */
+.admin-login {
+  max-width: 340px;
+  margin: 48px auto 0;
+  padding: 32px 28px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(201, 168, 255, 0.2);
+  text-align: center;
+}
+.admin-login-title {
+  margin: 0 0 6px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.admin-login-sub {
+  margin: 0 0 22px;
+  color: #a495c4;
+  font-size: 0.86rem;
+}
+.admin-login-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 255, 0.3);
+  background: rgba(0, 0, 0, 0.25);
+  color: #ece6f5;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+.admin-login-input:focus {
+  border-color: #a88bff;
+}
+.admin-login-error {
+  color: #ff8d8d;
+  font-size: 0.82rem;
+  margin: 10px 0 0;
+}
+.admin-login-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #8f5bff, #b58aff);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.admin-login-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.admin-back {
+  text-align: center;
+  margin-top: 20px;
+}
+.admin-back a {
+  color: #a495c4;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.admin-back a:hover {
+  color: #d8c6ff;
+}
+
+/* ---------- SectionEditor ---------- */
+.se-world {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #171022 0%, #221531 55%, #1c1226 100%);
+  color: #ece6f5;
+  font-family: inherit;
+  padding-bottom: 90px;
+}
+.se-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.se-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.se-head-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.se-back-btn {
+  color: #a495c4;
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.se-back-btn:hover {
+  color: #d8c6ff;
+}
+.se-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+.se-head-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.se-dirty-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffcf5c;
+  box-shadow: 0 0 6px rgba(255, 207, 92, 0.8);
+  animation: se-pulse 1.2s ease-in-out infinite;
+}
+@keyframes se-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.se-warn {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 160, 80, 0.12);
+  border: 1px solid rgba(255, 170, 90, 0.35);
+  color: #ffd9ae;
+  font-size: 0.86rem;
+}
+.se-warn a {
+  color: #ffc98a;
+}
+.se-status {
+  margin-bottom: 12px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(120, 255, 160, 0.1);
+  border: 1px solid rgba(120, 255, 160, 0.3);
+  color: #b6f5c8;
+  font-size: 0.86rem;
+}
+.se-status--err {
+  background: rgba(255, 120, 120, 0.1);
+  border-color: rgba(255, 120, 120, 0.35);
+  color: #ffb3b3;
+}
+.se-hint {
+  color: #8f84a8;
+  font-size: 0.82rem;
+  margin: 0 0 16px;
+}
+
+.se-editor {
+  border-radius: 14px;
+  border: 1px solid rgba(201, 168, 255, 0.2);
+  background: rgba(0, 0, 0, 0.28);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.se-foot {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: rgba(23, 16, 34, 0.94);
+  border-top: 1px solid rgba(201, 168, 255, 0.18);
+  backdrop-filter: blur(6px);
+}
+.se-foot-note {
+  color: #8f84a8;
+  font-size: 0.82rem;
+}
+.se-btn {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.se-btn--primary {
+  background: linear-gradient(90deg, #8f5bff, #b58aff);
+  color: #fff;
+}
+.se-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+.se-btn--secondary {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 255, 0.35);
+  color: #d8c6ff;
+}
+.se-btn--secondary:hover:not(:disabled) {
+  background: rgba(201, 168, 255, 0.12);
+}
+.se-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.se-loading {
+  text-align: center;
+  padding: 80px 0;
+  color: #9a8fb8;
+}
+.se-back {
+  text-align: center;
+  margin-top: 16px;
+}
+.se-back a {
+  color: #a495c4;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+/* ---------- 编辑模式浮动按钮 ---------- */
+.edit-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 90px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #8f5bff, #b58aff);
+  color: #fff;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(143, 91, 255, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.edit-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(143, 91, 255, 0.6);
+}
+.edit-fab-pen {
+  font-size: 1rem;
+}
+.edit-fab-label {
+  white-space: nowrap;
+}
+
+/* ---------- JsonEditor ---------- */
+.je-object {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.je-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.je-label {
+  flex: 0 0 130px;
+  font-size: 0.8rem;
+  color: #b9a9d8;
+  padding-top: 9px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.je-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.je-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 168, 255, 0.25);
+  background: rgba(0, 0, 0, 0.3);
+  color: #ece6f5;
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+}
+.je-input:focus {
+  border-color: #a88bff;
+}
+.je-input--area {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+}
+
+.je-toggle {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 168, 255, 0.3);
+  background: rgba(0, 0, 0, 0.25);
+  color: #a495c4;
+  font-family: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+.je-toggle--on {
+  background: rgba(120, 255, 160, 0.15);
+  border-color: rgba(120, 255, 160, 0.4);
+  color: #b6f5c8;
+}
+
+.je-array {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.je-array-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.je-array-count {
+  font-size: 0.78rem;
+  color: #8f84a8;
+}
+.je-btn {
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1px solid rgba(201, 168, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbbde0;
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.je-btn:hover:not(:disabled) {
+  background: rgba(201, 168, 255, 0.12);
+  border-color: rgba(201, 168, 255, 0.5);
+}
+.je-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.je-btn--add {
+  border-color: rgba(120, 255, 160, 0.35);
+  color: #b6f5c8;
+}
+.je-btn--danger {
+  border-color: rgba(255, 120, 120, 0.3);
+  color: #f0a0a0;
+}
+.je-btn--danger:hover:not(:disabled) {
+  background: rgba(255, 120, 120, 0.12);
+  border-color: rgba(255, 120, 120, 0.6);
+}
+
+.je-item {
+  border: 1px solid rgba(201, 168, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+}
+.je-item-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.je-item-title {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #d8c6ff;
+}
+.je-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
