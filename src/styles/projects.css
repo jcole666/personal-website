@@ -118,7 +118,7 @@
    如果这里也用 1.1s 淡出，上下滑时屏幕上会一直有元素在动，看着晕 */
 .ed-reveal {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(6px);
   transition:
     opacity 0.3s ease,
     transform 0.3s ease,
@@ -258,14 +258,10 @@
   font-weight: 400;
   line-height: 1.15;
   letter-spacing: -0.01em;
-  transition: font-style 0.5s var(--ed-ease);
 }
 
-/* group-hover:italic —— 悬停时标题转斜体 */
-.ed-row:hover .ed-row-title,
-.ed-row:focus-visible .ed-row-title {
-  font-style: italic;
-}
+/* 悬停反馈只有：极淡墨底 + 分隔线加深 + 行号提亮（见上面的 .ed-row:hover）。
+   原先还有一条"标题转斜体"，用户明确不要，已移除。 */
 
 .ed-row-desc {
   margin: 10px 0 0;
@@ -341,12 +337,9 @@
   font-weight: 400;
   line-height: 1.3;
   white-space: pre-line;
-  transition: font-style 0.5s var(--ed-ease);
 }
 
-.ed-idea:hover .ed-idea-text {
-  font-style: italic;
-}
+/* 灵感卡不可点，不做悬停反馈 */
 
 /* ============================================
    弹窗：放大的一张纸，没有阴影没有圆角
@@ -686,9 +679,7 @@
     transform: none;
     transition: none;
   }
-  .ed-row-title,
   .ed-filter,
-  .ed-idea-text,
   .ed-modal-close {
     transition: none;
   }
