@@ -1,8 +1,12 @@
 import { Icon } from 'animal-island-ui'
 import TransitionLink from './TransitionLink.jsx'
-import { sections } from '../data/sections.js'
+import { sections as seedSections } from '../data/sections.js'
+import { useData } from '../context/DataContext.jsx'
 
 function Sections() {
+  const { data } = useData()
+  const sections = data.sections?.sections ?? seedSections
+
   return (
     <section className="worlds">
       <div className="worlds-head">
@@ -12,6 +16,10 @@ function Sections() {
       <div className="worlds-list">
         {sections.map((section) => (
           <TransitionLink to={section.link} className="world-card" key={section.num}>
+            {/* 液态玻璃虹彩边缘 */}
+            <span className="world-iris" aria-hidden="true" />
+            {/* hover 高光扫过层（玻璃反光） */}
+            <span className="world-shine" aria-hidden="true" />
             <span className="world-num" aria-hidden="true">
               {section.num}
             </span>

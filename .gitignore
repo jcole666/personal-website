@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# 服务器
+server/uploads
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +26,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# AI 助手的工作记忆与临时目录（不属于网站源码）
+.workbuddy-ai/
+.notebook/
+.ppt-work/
+
+# 与本网站无关的大文件
+*.pptx
+ChatGPT Image*.png
+
+# 设计原始素材：成品图已经放进 public/，这里不重复入库
+picture/

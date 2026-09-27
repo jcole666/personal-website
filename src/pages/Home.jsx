@@ -1,13 +1,13 @@
 import Hero from '../components/Hero.jsx'
-import Quote from '../components/Quote.jsx'
 import Sections from '../components/Sections.jsx'
+import EditButton from '../components/edit/EditButton.jsx'
 
 function Home() {
   return (
     <>
       <Hero />
-      <Quote />
       <Sections />
+      <EditButton sectionKey="sections" label="首页板块" />
     </>
   )
 }
