@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
-import movieData, { extractMovieTags, filterByMovieTag } from '../data/movies.js'
+import seedMovieData, { extractMovieTags, filterByMovieTag } from '../data/movies.js'
+import { useData } from '../context/DataContext.jsx'
 import Filmstrip, { Stars } from '../components/Filmstrip.jsx'
+import EditButton from '../components/edit/EditButton.jsx'
 
 /* 小工具 */
 function renderParagraphs(text) {
@@ -290,18 +292,21 @@ function FullPeopleModal({ title, items, onClose, onSelect }) {
 
 /* ====== 主组件 ====== */
 function Movies() {
-  const allTags = useMemo(() => extractMovieTags(movieData), [])
+  const { data } = useData()
+  const movieData = data.movies ?? seedMovieData
+
+  const allTags = useMemo(() => extractMovieTags(movieData), [movieData])
   const [activeTag, setActiveTag] = useState(null)
   const [modalItem, setModalItem] = useState(null)
   const [personItem, setPersonItem] = useState(null)
   const [showMoreMovies, setShowMoreMovies] = useState(false)
   const [showMorePeople, setShowMorePeople] = useState(false)
 
-  const watched = useMemo(() => filterByMovieTag(movieData.watched, activeTag), [activeTag])
+  const watched = useMemo(() => filterByMovieTag(movieData.watched, activeTag), [activeTag, movieData])
   const visibleMovies = watched.slice(0, 15) // 最多 5 行 × 3
   const hasMore = watched.length > 15
 
-  const people = useMemo(() => filterByMovieTag(movieData.people, activeTag), [activeTag])
+  const people = useMemo(() => filterByMovieTag(movieData.people, activeTag), [activeTag, movieData])
   const visiblePeople = people.slice(0, 6) // 最多显示 6 人
   const hasMorePeople = people.length > 6
 
@@ -397,6 +402,8 @@ function Movies() {
           onSelect={setPersonItem}
         />
       )}
+
+      <EditButton sectionKey="movies" label="电影" />
     </main>
   )
 }

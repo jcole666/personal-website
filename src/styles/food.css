@@ -201,11 +201,6 @@
   transform: scale(1.04);
 }
 
-.food-card-photo-placeholder {
-  font-size: 1.8rem;
-  opacity: 0.3;
-}
-
 /* 照片左上角的摊位色标签 */
 .food-card-badge {
   position: absolute;
@@ -547,29 +542,7 @@
   color: rgba(0,0,0,0.2);
 }
 
-/* ============================================
-   导航栏覆盖
-   ============================================ */
-
-.navbar-food {
-  background-color: rgba(250, 246, 240, 0.94) !important;
-  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
-  backdrop-filter: blur(16px);
-}
-
-.navbar-food .nav-logo {
-  color: #2d2418 !important;
-  font-family: 'Playfair Display', 'Noto Serif SC', serif !important;
-  font-size: 1.4rem !important;
-  letter-spacing: 0.03em;
-}
-
-.navbar-food .nav-logo-tag { color: #8c7b68 !important; }
-
-.navbar-food .nav-links a { color: #8c7b68 !important; }
-.navbar-food .nav-links a:hover { color: #c47a5e !important; }
-.navbar-food .nav-links a.active { color: #2d2418 !important; }
-.navbar-food .nav-links a.active::after { background: #c47a5e !important; }
+/* 导航栏配色已移到 src/data/navTheme.js 的 '/food' 一项 */
 
 /* ============================================
    动画

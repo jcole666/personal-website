@@ -8,8 +8,11 @@ import {
   BackTop,
   Icon,
 } from 'animal-island-ui'
-import { experiences, experienceTypes } from '../data/experience.js'
+import { experiences as seedExperiences, experienceTypes as seedTypes } from '../data/experience.js'
+import { useData } from '../context/DataContext.jsx'
 import Villagers from '../components/Villagers.jsx'
+import EditButton from '../components/edit/EditButton.jsx'
+import PhotoArt from '../components/PhotoArt.jsx'
 
 // 类型标签颜色映射
 const typeColors = {
@@ -44,17 +47,16 @@ function DetailModal({ item, onClose }) {
           ✕
         </button>
 
-        {/* 封面图 */}
-        {item.cover ? (
-          <div className="exp-modal-cover">
-            <img src={item.cover} alt={item.title} />
-          </div>
-        ) : (
-          <div className="exp-modal-cover exp-modal-cover--placeholder">
-            <Icon name="icon-camera" size={48} />
-            <span>暂无照片</span>
-          </div>
-        )}
+        {/* 封面图：有 cover 用真照片，没有就画一张旅行明信片 */}
+        <div className="exp-modal-cover">
+          <PhotoArt
+            src={item.cover}
+            alt={item.title}
+            id={item.id}
+            label={item.type}
+            theme="journal"
+          />
+        </div>
 
         {/* 内容区 */}
         <div className="exp-modal-body">
@@ -73,6 +75,9 @@ function DetailModal({ item, onClose }) {
 }
 
 function Experience() {
+  const { data } = useData()
+  const { experiences, experienceTypes } = data.experience ?? { experiences: seedExperiences, experienceTypes: seedTypes }
+
   const [activeType, setActiveType] = useState(null) // null = 全部
   const [selectedItem, setSelectedItem] = useState(null)
 
@@ -80,7 +85,7 @@ function Experience() {
   const filtered = useMemo(() => {
     if (!activeType) return experiences
     return experiences.filter((e) => e.type === activeType)
-  }, [activeType])
+  }, [activeType, experiences])
 
   return (
     <main className="experience-world">
@@ -138,13 +143,13 @@ function Experience() {
             >
               {/* 照片区 */}
               <div className="exp-card-cover">
-                {item.cover ? (
-                  <img src={item.cover} alt={item.title} />
-                ) : (
-                  <div className="exp-card-cover--empty">
-                    <Icon name="icon-camera" size={32} />
-                  </div>
-                )}
+                <PhotoArt
+                  src={item.cover}
+                  alt={item.title}
+                  id={item.id}
+                  label={item.type}
+                  theme="journal"
+                />
               </div>
 
               {/* 信息区 */}
@@ -195,6 +200,7 @@ function Experience() {
 
       {/* 详情弹窗 */}
       <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      <EditButton sectionKey="experience" label="经历分享" />
     </main>
   )
 }

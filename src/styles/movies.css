@@ -196,20 +196,6 @@
   object-fit: cover;
 }
 
-.film-poster-placeholder {
-  color: #ebe8dd;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.2;
-  background: linear-gradient(135deg, #4a5880, #5c4e78);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .film-poster-title {
   display: block;
   font-size: 0.72rem;
@@ -1295,29 +1281,7 @@
   color: rgba(140, 138, 160, 0.4);
 }
 
-/* ============================================
-   导航栏覆盖
-   ============================================ */
-
-.navbar-movies {
-  background-color: rgba(34, 37, 64, 0.92) !important;
-  border-bottom: 1px solid rgba(140, 138, 160, 0.12) !important;
-  backdrop-filter: blur(16px);
-}
-
-.navbar-movies .nav-logo {
-  color: #ebe8dd !important;
-  font-family: 'Playfair Display', 'Noto Serif SC', serif !important;
-  font-size: 1.5rem !important;
-  letter-spacing: 0.04em;
-}
-
-.navbar-movies .nav-logo-tag { color: #8c8aa0 !important; }
-
-.navbar-movies .nav-links a { color: #8c8aa0 !important; }
-.navbar-movies .nav-links a:hover { color: #ffcf5c !important; }
-.navbar-movies .nav-links a.active { color: #ffcf5c !important; }
-.navbar-movies .nav-links a.active::after { background: #ffcf5c !important; }
+/* 导航栏配色已移到 src/data/navTheme.js 的 '/movies' 一项 */
 
 /* ============================================
    动画

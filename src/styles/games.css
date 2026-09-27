@@ -1,0 +1,509 @@
+/* ============================================
+   游戏 · 流前游戏 画廊版
+   海拉鲁图片背景 + 双标签筛选 + 卡片网格 + 弹窗
+   ============================================ */
+
+/* ===== 全局 ===== */
+.games-world {
+  min-height: calc(100vh - var(--nav-height));
+  background: #4a6840;
+  color: #3d3022;
+  position: relative;
+  overflow-x: hidden;
+  font-family: 'Noto Serif SC', 'Noto Sans SC', 'Microsoft YaHei', serif;
+}
+
+/* ===== 海拉鲁图片背景 ===== */
+.games-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background-image: url('/images/games-bg.png');
+  background-size: cover;
+  background-position: center;
+}
+
+/* 底部轻微暗化 */
+.games-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0) 40%,
+    rgba(30,20,10,0.35) 100%
+  );
+}
+
+/* ===== 动态云层 ===== */
+.games-cloud-layer {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(22px);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.games-cloud-layer-1 {
+  top: 12%; left: -10%;
+  width: 300px; height: 90px;
+  background: rgba(255,225,185,0.5);
+  animation: cloud-drift 40s linear infinite;
+}
+
+.games-cloud-layer-2 {
+  top: 20%; left: 50%;
+  width: 240px; height: 70px;
+  background: rgba(255,210,170,0.4);
+  animation: cloud-drift 50s linear infinite reverse;
+}
+
+@keyframes cloud-drift {
+  0%   { transform: translateX(-320px); }
+  100% { transform: translateX(calc(100vw + 320px)); }
+}
+
+/* ===== 内容区 ===== */
+.games-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== 标题 ===== */
+.games-hero {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.games-hero-title {
+  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
+  font-size: 3.5rem;
+  color: #3d3022;
+  margin: 0 0 6px;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 10px rgba(255,240,200,0.6);
+}
+
+.games-hero-sub {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.9rem;
+  color: #5a4a30;
+  text-shadow: 0 1px 6px rgba(255,240,200,0.7);
+}
+
+/* ===== 筛选标签 ===== */
+.games-filters {
+  margin-bottom: 32px;
+  background: rgba(245,240,226,0.5);
+  border-radius: 8px;
+  padding: 14px 18px;
+  backdrop-filter: blur(6px);
+}
+
+.games-filter-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.games-filter-row:last-child {
+  margin-bottom: 0;
+}
+
+.games-filter-btn {
+  padding: 6px 18px;
+  border: 1.5px solid rgba(61,48,34,0.2);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.4);
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.85rem;
+  color: #5a4a30;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.25s;
+}
+
+.games-filter-btn:hover {
+  border-color: #4aa8e0;
+  color: #3a8ab0;
+}
+
+.games-filter-btn--active {
+  background: #4aa8e0;
+  border-color: #4aa8e0;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(74,168,224,0.35);
+}
+
+.games-filter-btn--genre.games-filter-btn--active {
+  background: #c8a050;
+  border-color: #c8a050;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(200,160,80,0.35);
+}
+
+/* ===== 画廊网格 ===== */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* ===== 游戏卡片 ===== */
+.games-card {
+  background: rgba(245,240,226,0.92);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  border: 1px solid rgba(61,48,34,0.08);
+  box-shadow: 0 3px 14px rgba(40,30,20,0.12);
+  backdrop-filter: blur(4px);
+}
+
+.games-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 26px rgba(40,30,20,0.2);
+}
+
+.games-card-stripe {
+  width: 5px;
+  flex-shrink: 0;
+}
+
+.games-card-body {
+  padding: 18px 18px 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.games-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.games-card-status {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.72rem;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-weight: 600;
+}
+
+.games-card-platform {
+  font-size: 0.68rem;
+  color: #9c9080;
+  margin-left: auto;
+}
+
+.games-card-title {
+  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
+  font-size: 1.5rem;
+  color: #3d3022;
+  margin: 0 0 2px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.games-card-subtitle {
+  font-size: 0.66rem;
+  color: #9c9080;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+.games-card-rating {
+  color: #c4504a;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.games-card-feeling {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.78rem;
+  color: #6b5030;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  border-left: 3px solid #c8a050;
+  padding-left: 8px;
+  opacity: 0.85;
+}
+
+.games-card-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.games-card-tag {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.66rem;
+  color: #9c9080;
+  padding: 1px 8px;
+  border: 1px solid rgba(156,144,128,0.25);
+  border-radius: 999px;
+}
+
+.games-card-tag--genre {
+  background: rgba(200,160,80,0.15);
+  color: #8a7030;
+  border-color: rgba(200,160,80,0.3);
+  font-weight: 600;
+}
+
+/* ===== 查看更多 ===== */
+.games-more-wrap {
+  text-align: center;
+  margin-top: 28px;
+}
+
+.games-more-btn {
+  padding: 10px 44px;
+  border: 1.5px solid rgba(74,168,224,0.4);
+  border-radius: 999px;
+  background: rgba(245,240,226,0.5);
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.9rem;
+  color: #4aa8e0;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.3s;
+  backdrop-filter: blur(4px);
+}
+
+.games-more-btn:hover {
+  border-color: #4aa8e0;
+  background: rgba(74,168,224,0.15);
+  box-shadow: 0 2px 14px rgba(74,168,224,0.25);
+}
+
+/* ===== 弹窗 ===== */
+.games-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(40,30,20,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: games-fade-in 0.2s ease;
+  backdrop-filter: blur(5px);
+}
+
+.games-modal {
+  background: #f5f0e2;
+  border-radius: 3px 7px 5px 4px / 6px 4px 7px 2px;
+  max-width: 580px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 48px rgba(40,30,20,0.25);
+  animation: games-modal-in 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes games-modal-in {
+  0% { transform: scale(0.15); opacity: 0; }
+  70% { transform: scale(1.03); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.games-modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  border: none; background: transparent;
+  cursor: pointer; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0;
+}
+
+.games-modal-close::before,
+.games-modal-close::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 2px;
+  background: #3d3022;
+  border-radius: 1px;
+}
+
+.games-modal-close::before { transform: rotate(45deg); }
+.games-modal-close::after { transform: rotate(-45deg); }
+
+.games-modal-body {
+  padding: 28px 30px 34px;
+}
+
+.games-modal-top {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.games-modal-status {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.75rem;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: rgba(74,168,224,0.12);
+  color: #3a8ab0;
+  font-weight: 600;
+}
+
+.games-modal-genre {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.7rem;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(200,160,80,0.15);
+  color: #8a7030;
+}
+
+.games-modal-title {
+  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
+  font-size: 2.4rem;
+  color: #3d3022;
+  margin: 0 0 2px;
+  letter-spacing: 0.04em;
+}
+
+.games-modal-subtitle {
+  font-size: 0.75rem; color: #9c9080; font-style: italic;
+  margin-bottom: 8px;
+}
+
+.games-modal-meta {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 0.82rem; color: #9c9080;
+  margin-bottom: 8px;
+}
+
+.games-modal-rating {
+  color: #c4504a;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.games-modal-sep {
+  height: 1px; border: none;
+  background: repeating-linear-gradient(90deg, #c0b8a0 0px, #c0b8a0 4px, transparent 4px, transparent 10px);
+  margin: 14px 0;
+}
+
+.games-modal-review {
+  font-size: 0.88rem; color: #3d3022;
+  line-height: 1.75; margin-bottom: 14px;
+}
+
+.games-modal-review p { margin-bottom: 0.7em; }
+
+.games-modal-moments-title {
+  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
+  font-size: 0.95rem; color: #c4504a;
+  margin-bottom: 6px;
+}
+
+.games-modal-moment {
+  font-size: 0.8rem; color: #3d3022;
+  padding: 2px 0 2px 16px;
+  position: relative;
+  line-height: 1.5;
+  margin-bottom: 2px;
+}
+
+.games-modal-moment::before {
+  content: '✦';
+  position: absolute; left: 0;
+  color: #c8a050; font-size: 0.5rem; top: 5px;
+}
+
+/* ===== 页脚 ===== */
+.games-footer {
+  background: rgba(245,240,226,0.18);
+  padding: 22px 28px;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  position: relative; z-index: 2;
+  backdrop-filter: blur(3px);
+}
+
+.games-footer-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 32px; flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.games-footer-brand { display: flex; flex-direction: column; gap: 2px; }
+
+.games-footer-logo {
+  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
+  font-size: 1.1rem; color: #3d3022; letter-spacing: 0.04em;
+}
+
+.games-footer-tag { font-size: 0.65rem; color: #9c9080; }
+
+.games-footer-links { display: flex; gap: 20px; }
+
+.games-footer-links a {
+  font-size: 0.72rem; color: #9c9080; text-decoration: none;
+  transition: color 0.3s;
+}
+
+.games-footer-links a:hover { color: #4aa8e0; }
+
+.games-footer-bottom {
+  max-width: 1000px; margin: 12px auto 0;
+  font-size: 0.62rem; color: rgba(156,144,128,0.4);
+}
+
+/* 导航栏配色已移到 src/data/navTheme.js 的 '/games' 一项 */
+
+/* ===== 滚动条 ===== */
+.games-world ::-webkit-scrollbar { width: 5px; }
+.games-world ::-webkit-scrollbar-track { background: transparent; }
+.games-world ::-webkit-scrollbar-thumb { background: rgba(156,144,128,0.2); border-radius: 3px; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 900px) {
+  .games-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+
+@media (max-width: 768px) {
+  .games-inner { padding: 28px 18px 60px; }
+  .games-hero-title { font-size: 2.5rem; }
+  .games-card-title { font-size: 1.3rem; }
+  .games-modal { max-width: 100%; }
+  .games-modal-body { padding: 22px 22px 28px; }
+  .games-modal-title { font-size: 1.8rem; }
+}
+
+@media (max-width: 480px) {
+  .games-grid { grid-template-columns: 1fr; gap: 12px; }
+  .games-hero-title { font-size: 2rem; }
+}
+
+/* ===== 动画 ===== */
+@keyframes games-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

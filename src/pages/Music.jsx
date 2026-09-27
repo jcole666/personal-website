@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react'
-import musicData, { extractAllTags, filterByTag } from '../data/music.js'
+import seedMusicData, { extractAllTags, filterByTag } from '../data/music.js'
+import { useData } from '../context/DataContext.jsx'
 import Turntable, { VinylDisc } from '../components/Turntable.jsx'
+import EditButton from '../components/edit/EditButton.jsx'
 
 /* 小工具 */
 function renderParagraphs(text) {
@@ -271,11 +273,14 @@ function TagFilter({ tags, activeTag, onSelect }) {
 }
 
 function Music() {
-  const allTags = useMemo(() => extractAllTags(musicData), [])
+  const { data } = useData()
+  const musicData = data.music ?? seedMusicData
+
+  const allTags = useMemo(() => extractAllTags(musicData), [musicData])
   const [activeTag, setActiveTag] = useState(null)
-  const singles = useMemo(() => filterByTag(musicData.singles, activeTag), [activeTag])
-  const albums = useMemo(() => filterByTag(musicData.albums, activeTag), [activeTag])
-  const artists = useMemo(() => filterByTag(musicData.artists, activeTag), [activeTag])
+  const singles = useMemo(() => filterByTag(musicData.singles, activeTag), [activeTag, musicData])
+  const albums = useMemo(() => filterByTag(musicData.albums, activeTag), [activeTag, musicData])
+  const artists = useMemo(() => filterByTag(musicData.artists, activeTag), [activeTag, musicData])
 
   const [modalItem, setModalItem] = useState(null)
   const [featuredItem, setFeaturedItem] = useState(null)
@@ -324,6 +329,8 @@ function Music() {
       {fullListType === 'albums' && <FullListModal title="📀 全部专辑" items={albums} renderAs="row" onItemClick={(item) => { setFullListType(null); setModalItem(item) }} onClose={() => setFullListType(null)} />}
       {fullListType === 'artists' && <FullListModal title="👤 全部音乐人" items={artists} renderAs="circle" onItemClick={(artist) => { setFullListType(null); setArtistItem(artist) }} onClose={() => setFullListType(null)} />}
       {fullListType === 'featured' && <FullListModal title="🎙 全部深度聆听" items={albums.filter((a) => a.featured && a.featuredText)} renderAs="card" onItemClick={(item) => { setFullListType(null); setFeaturedItem(item) }} onClose={() => setFullListType(null)} />}
+
+      <EditButton sectionKey="music" label="音乐" />
     </main>
   )
 }

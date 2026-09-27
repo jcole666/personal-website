@@ -1,21 +1,23 @@
 import { useState, useMemo } from 'react'
 import {
-  profile,
-  books,
-  dailyQuotes,
-  tagDimensions,
-  notes,
+  profile as seedProfile,
+  books as seedBooks,
+  dailyQuotes as seedDailyQuotes,
+  tagDimensions as seedTagDimensions,
+  notes as seedNotes,
   getReadingBooks,
   getFinishedBooks,
   getWantToReadBooks,
   filterByTags,
   getTodayQuote,
 } from '../data/reading.js'
+import { useData } from '../context/DataContext.jsx'
 import {
   ScribbleDivider,
   ScribbleProgress,
   ScribbleBookmark,
 } from '../components/Scribble.jsx'
+import EditButton from '../components/edit/EditButton.jsx'
 
 /* ===================================================================
    小工具
@@ -112,7 +114,7 @@ function DetailModal({ book, onClose }) {
    区块 1：每日金句横幅 + 历史记录
    =================================================================== */
 
-function QuoteBanner() {
+function QuoteBanner({ dailyQuotes }) {
   const [showHistory, setShowHistory] = useState(false)
   const todayQuote = getTodayQuote(dailyQuotes)
 
@@ -176,7 +178,7 @@ function QuoteBanner() {
    区块 2：统计数字
    =================================================================== */
 
-function StatsRow() {
+function StatsRow({ profile }) {
   return (
     <div className="reading-stats">
       <div className="reading-stat-item">
@@ -199,7 +201,7 @@ function StatsRow() {
    区块 3：在读
    =================================================================== */
 
-function CurrentlyReading() {
+function CurrentlyReading({ books }) {
   const readingBooks = getReadingBooks(books)
 
   if (readingBooks.length === 0) {
@@ -259,8 +261,8 @@ function CurrentlyReading() {
 
 const PAGE_SIZE = 15
 
-function FinishedGallery() {
-  const finishedBooks = useMemo(() => getFinishedBooks(books), [])
+function FinishedGallery({ books, tagDimensions }) {
+  const finishedBooks = useMemo(() => getFinishedBooks(books), [books])
 
   // 类型多选 + 国家单选
   const [selectedTags, setSelectedTags] = useState([])
@@ -436,7 +438,7 @@ function FinishedGallery() {
    区块 5：想读
    =================================================================== */
 
-function WantToRead() {
+function WantToRead({ books }) {
   const wantBooks = getWantToReadBooks(books)
   if (wantBooks.length === 0) return null
 
@@ -472,7 +474,7 @@ function WantToRead() {
 
 const NOTES_PREVIEW = 6
 
-function ReflectionsWall() {
+function ReflectionsWall({ notes }) {
   const [showAll, setShowAll] = useState(false)
   const visibleNotes = showAll ? notes : notes.slice(0, NOTES_PREVIEW)
   const hasMore = notes.length > NOTES_PREVIEW && !showAll
@@ -576,15 +578,24 @@ function EndMark() {
    =================================================================== */
 
 function Reading() {
+  const { data } = useData()
+  const readingData = data.reading ?? {
+    profile: seedProfile,
+    books: seedBooks,
+    dailyQuotes: seedDailyQuotes,
+    tagDimensions: seedTagDimensions,
+    notes: seedNotes,
+  }
+
   return (
     <main className="reading-world">
       <div className="reading-inner">
-        <QuoteBanner />
-        <StatsRow />
-        <CurrentlyReading />
-        <FinishedGallery />
-        <WantToRead />
-        <ReflectionsWall />
+        <QuoteBanner dailyQuotes={readingData.dailyQuotes} />
+        <StatsRow profile={readingData.profile} />
+        <CurrentlyReading books={readingData.books} />
+        <FinishedGallery books={readingData.books} tagDimensions={readingData.tagDimensions} />
+        <WantToRead books={readingData.books} />
+        <ReflectionsWall notes={readingData.notes} />
         <EndMark />
       </div>
 
@@ -605,6 +616,7 @@ function Reading() {
           <span>© 2026 流前 · 用 React + Rough.js 手工打造</span>
         </div>
       </footer>
+      <EditButton sectionKey="reading" label="读书笔记" />
     </main>
   )
 }

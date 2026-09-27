@@ -15,17 +15,17 @@
 }
 
 /* 自定义滚动条 —— 琥珀色，与主题协调 */
-.music-world ::-webkit-scrollbar {
+.music-world::-webkit-scrollbar {
   width: 6px;
 }
-.music-world ::-webkit-scrollbar-track {
+.music-world::-webkit-scrollbar-track {
   background: transparent;
 }
-.music-world ::-webkit-scrollbar-thumb {
+.music-world::-webkit-scrollbar-thumb {
   background: rgba(212, 168, 83, 0.25);
   border-radius: 3px;
 }
-.music-world ::-webkit-scrollbar-thumb:hover {
+.music-world::-webkit-scrollbar-thumb:hover {
   background: rgba(212, 168, 83, 0.45);
 }
 
@@ -380,8 +380,6 @@
   text-align: center;
   line-height: 1.4;
   transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-  background: #353540;
 }
 
 .music-single-cover {
@@ -1198,42 +1196,7 @@
   color: rgba(107, 101, 96, 0.45);
 }
 
-/* ============================================
-   导航栏覆盖
-   ============================================ */
-
-.navbar-music {
-  background-color: rgba(30, 30, 36, 0.9) !important;
-  border-bottom: 1px solid rgba(107, 101, 96, 0.15) !important;
-  backdrop-filter: blur(16px);
-}
-
-.navbar-music .nav-logo {
-  color: #d4d0c8 !important;
-  font-family: 'Playfair Display', 'Noto Serif SC', serif !important;
-  font-size: 1.5rem !important;
-  letter-spacing: 0.04em;
-}
-
-.navbar-music .nav-logo-tag {
-  color: #6b6560 !important;
-}
-
-.navbar-music .nav-links a {
-  color: #6b6560 !important;
-}
-
-.navbar-music .nav-links a:hover {
-  color: #d4a853 !important;
-}
-
-.navbar-music .nav-links a.active {
-  color: #d4a853 !important;
-}
-
-.navbar-music .nav-links a.active::after {
-  background: #d4a853 !important;
-}
+/* 导航栏配色已移到 src/data/navTheme.js 的 '/music' 一项 */
 
 /* ============================================
    动画

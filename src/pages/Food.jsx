@@ -1,21 +1,10 @@
 import { useState } from 'react'
-import foodData from '../data/food.js'
+import seedFood from '../data/food.js'
+import { useData } from '../context/DataContext.jsx'
+import EditButton from '../components/edit/EditButton.jsx'
+import PhotoArt from '../components/PhotoArt.jsx'
 
 /* ====== 工具 ====== */
-function getPhotoGradient(id) {
-  const palettes = [
-    ['#e8c4a0', '#d4a878'], ['#c4a888', '#b89870'],
-    ['#d4b896', '#c4a076'], ['#e0ccb0', '#ccb088'],
-    ['#dcc8a8', '#c8b490'], ['#e8d4b8', '#d0bc98'],
-    ['#c8b090', '#b8a080'], ['#d8c4a8', '#c8b488'],
-    ['#e4d0b4', '#ccb894'], ['#ccc0a0', '#bcb088'],
-  ]
-  let hash = 0
-  for (let i = 0; i < id.length; i++) { hash = ((hash << 5) - hash) + id.charCodeAt(i); hash |= 0 }
-  const idx = Math.abs(hash) % palettes.length
-  return `linear-gradient(135deg, ${palettes[idx][0]}, ${palettes[idx][1]})`
-}
-
 function renderParagraphs(text) {
   if (!text) return null
   return text.trim().split('\n\n').map((para, i) => <p key={i}>{para.trim()}</p>)
@@ -37,12 +26,16 @@ function StarsText({ rating }) {
 function FoodCard({ item, badge, onSelect }) {
   return (
     <div className="food-card" onClick={() => onSelect(item)}>
-      <div className="food-card-photo" style={{ background: getPhotoGradient(item.id) }}>
-        {item.photoUrl ? (
-          <img src={item.photoUrl} alt={item.name} />
-        ) : (
-          <span className="food-card-photo-placeholder">🍽️</span>
-        )}
+      <div className="food-card-photo">
+        {/* 有 photoUrl 显示真照片，没有就画一张手绘食谱卡 */}
+        <PhotoArt
+          src={item.photoUrl}
+          alt={item.name}
+          id={item.id}
+          label={item.name}
+          theme="food"
+          accent={badge}
+        />
         {badge && (
           <span className="food-card-badge" style={{ background: badge }}>
             {item.tags?.[0] || ''}
@@ -62,18 +55,21 @@ function FoodCard({ item, badge, onSelect }) {
 }
 
 /* ====== 详情弹窗 ====== */
-function FoodModal({ item, onClose }) {
+function FoodModal({ item, accent, onClose }) {
   if (!item) return null
   return (
     <div className="food-modal-overlay" onClick={onClose}>
       <div className="food-modal" onClick={(e) => e.stopPropagation()}>
         <button className="food-modal-close" onClick={onClose}>✕</button>
         <div className="food-modal-photo">
-          {item.photoUrl ? (
-            <img src={item.photoUrl} alt={item.name} />
-          ) : (
-            <span style={{ fontSize: '3rem', opacity: 0.2 }}>🍽️</span>
-          )}
+          <PhotoArt
+            src={item.photoUrl}
+            alt={item.name}
+            id={item.id}
+            label={item.name}
+            theme="food"
+            accent={accent}
+          />
         </div>
         <div className="food-modal-body">
           <div className="food-modal-tags">
@@ -135,7 +131,7 @@ function Stall({ stall }) {
         </button>
       )}
 
-      <FoodModal item={modalItem} onClose={() => setModalItem(null)} />
+      <FoodModal item={modalItem} accent={stall.color} onClose={() => setModalItem(null)} />
 
       {showAll && (
         <FullListModal
@@ -152,6 +148,9 @@ function Stall({ stall }) {
 
 /* ====== 主组件 ====== */
 function Food() {
+  const { data } = useData()
+  const foodData = data.food ?? seedFood
+
   return (
     <main className="food-world">
       <div className="food-inner">
@@ -199,6 +198,7 @@ function Food() {
           <span>© 2026 流前</span>
         </div>
       </footer>
+      <EditButton sectionKey="food" label="市集" />
     </main>
   )
 }

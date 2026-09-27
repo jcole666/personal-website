@@ -1014,40 +1014,7 @@
   color: rgba(90, 70, 45, 0.35);
 }
 
-/* ============================================
-   导航栏覆盖
-   ============================================ */
-
-.navbar-reading {
-  background-color: rgba(250, 247, 242, 0.88) !important;
-  border-bottom: 1px solid rgba(180, 160, 140, 0.25) !important;
-}
-
-.navbar-reading .nav-logo {
-  color: #5c4b32 !important;
-  font-family: 'Long Cang', 'Noto Serif SC', cursive !important;
-  font-size: 1.7rem !important;
-}
-
-.navbar-reading .nav-logo-tag {
-  color: #b0a090 !important;
-}
-
-.navbar-reading .nav-links a {
-  color: #8a7a62 !important;
-}
-
-.navbar-reading .nav-links a:hover {
-  color: #c8a24b !important;
-}
-
-.navbar-reading .nav-links a.active {
-  color: #c8a24b !important;
-}
-
-.navbar-reading .nav-links a.active::after {
-  background: #c8a24b !important;
-}
+/* 导航栏配色已移到 src/data/navTheme.js 的 '/reading' 一项 */
 
 /* ============================================
    动画

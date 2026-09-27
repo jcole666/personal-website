@@ -1,0 +1,610 @@
+/* ============================================
+   代码开发 · 坐标纸 + 整齐画廊
+   大字号 / 三色分类 / 灵感碎片卡片
+   ============================================ */
+
+/* ===== 全局：旧图纸 ===== */
+.projects-world {
+  min-height: calc(100vh - var(--nav-height));
+  /* 新背景：中性灰 + 颗粒噪点 + 酒红/白晕染（复古暗房工作台）
+     去掉 background-attachment:fixed 和 blend-mode，降低滚动时的重绘开销 */
+  background-color: #d7d5d5;
+  background-image: radial-gradient(circle at 66.94% 46.43%, rgba(215, 213, 213, 1) 0%, rgba(215, 213, 213, 0.844) 19.02%, rgba(215, 213, 213, 0.5) 38.05%, rgba(215, 213, 213, 0.156) 57.07%, rgba(215, 213, 213, 0) 76.1%), radial-gradient(circle at 34.69% 66.31%, rgba(49, 5, 39, 1) 0%, rgba(49, 5, 39, 0.844) 11.06%, rgba(49, 5, 39, 0.5) 22.13%, rgba(49, 5, 39, 0.156) 33.19%, rgba(49, 5, 39, 0) 44.25%), radial-gradient(circle at 48.93% 19.32%, rgba(57, 5, 31, 1) 0%, rgba(57, 5, 31, 0.844) 17.36%, rgba(57, 5, 31, 0.5) 34.73%, rgba(57, 5, 31, 0.156) 52.09%, rgba(57, 5, 31, 0) 69.45%), radial-gradient(circle at 80.23% 87.54%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.844) 10.28%, rgba(255, 255, 255, 0.5) 20.55%, rgba(255, 255, 255, 0.156) 30.83%, rgba(255, 255, 255, 0) 41.1%);
+  background-size: auto, auto, auto, auto;
+  color: #1e2a35;
+  position: relative;
+  overflow-x: hidden;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+
+/* （网格已按需移除） */
+
+
+.projects-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 52px 32px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 滚动条 */
+.projects-world ::-webkit-scrollbar { width: 6px; }
+.projects-world ::-webkit-scrollbar-track { background: transparent; }
+.projects-world ::-webkit-scrollbar-thumb { background: rgba(180,160,140,0.3); border-radius: 3px; }
+
+/* ===== 头部 ===== */
+.projects-hero {
+  margin-bottom: 40px;
+}
+
+.projects-hero-title {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 5rem;
+  font-weight: 700;
+  color: #f5eef1;
+  margin: 0 0 8px;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  display: inline-block;
+  position: relative;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* 荧光笔划痕（统一为酒红色调，浅色） */
+.projects-hero-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: -4px; right: -4px;
+  height: 8px;
+  background: rgba(232, 163, 182, 0.5);
+  border-radius: 3px;
+}
+
+.projects-hero-sub {
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: 1rem;
+  color: #d9c3cc;
+  letter-spacing: 0.08em;
+  margin-top: 14px;
+}
+
+/* ===== 筛选标签 ===== */
+.projects-filter {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+
+.projects-filter-btn {
+  padding: 6px 22px;
+  border: 1.5px solid rgba(245, 238, 241, 0.35);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: 0.9rem;
+  color: #e6d3db;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+}
+
+.projects-filter-btn:hover {
+  border-color: #f5eef1;
+  color: #ffffff;
+}
+
+.projects-filter-btn--active {
+  background: #d76a8a;
+  border-color: #d76a8a;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ===== 画廊网格 ===== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* ===== 项目卡片（GradientCard 风格） ===== */
+.projects-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 260px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 12px rgba(50, 20, 40, 0.08);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+}
+
+/* 渐变变体 */
+.projects-card--green  { background: linear-gradient(135deg, #d9f0d9, #cfe8dc); }
+.projects-card--purple { background: linear-gradient(135deg, #e3ddff, #d6d9f2); }
+.projects-card--gray   { background: linear-gradient(135deg, #eceaf0, #e0e0e6); }
+
+.projects-card:hover {
+  transform: scale(1.03) translateY(-4px);
+  box-shadow: 0 12px 32px rgba(50, 20, 40, 0.18), 0 0 0 1px rgba(215,106,138,0.3);
+}
+
+/* 装饰背景图形（模拟原组件的 imageUrl，hover 缩放+旋转） */
+.projects-card-graphic {
+  position: absolute;
+  right: -14%;
+  bottom: -14%;
+  width: 62%;
+  aspect-ratio: 1;
+  border-radius: 26%;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95), transparent 62%),
+    radial-gradient(circle at 70% 68%, rgba(255,255,255,0.5), transparent 58%),
+    conic-gradient(from 210deg, rgba(255,255,255,0.35), rgba(255,255,255,0.05), rgba(255,255,255,0.35));
+  filter: blur(1px);
+  transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  transform: scale(1) rotate(0deg);
+}
+.projects-card:hover .projects-card-graphic {
+  transform: scale(1.12) rotate(4deg);
+}
+
+/* 内容容器 */
+.projects-card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* 徽章 */
+.projects-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #3a3444;
+  font-size: 0.78rem;
+  font-weight: 600;
+  width: fit-content;
+  backdrop-filter: blur(4px);
+}
+.projects-card-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* 标题 */
+.projects-card-title {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #26222d;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+
+/* 技术栈 */
+.projects-card-tech {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.projects-card-tag {
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: #4a4454;
+  letter-spacing: 0.03em;
+}
+
+/* 描述 */
+.projects-card-desc {
+  font-size: 0.92rem;
+  color: #55505e;
+  line-height: 1.55;
+  flex-grow: 1;
+}
+
+/* CTA */
+.projects-card-cta {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #26222d;
+}
+.projects-card-cta-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s ease;
+}
+.projects-card:hover .projects-card-cta-arrow {
+  transform: translateX(4px);
+}
+
+/* 进度条 */
+.projects-card-progress {
+  margin-top: 12px;
+}
+.projects-card-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+.projects-card-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #b85573, #d76a8a);
+  transition: width 1s ease-out;
+}
+.projects-card-pct {
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: 0.72rem;
+  color: #7a7284;
+  text-align: right;
+  margin-top: 3px;
+}
+
+/* ===== 废弃卡片 ===== */
+.projects-card--abandoned {
+  opacity: 0.6;
+}
+.projects-card--abandoned::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, transparent 44%, #9ca3af 48%, #9ca3af 52%, transparent 56%);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.45;
+}
+.projects-card--abandoned:hover {
+  opacity: 0.85;
+}
+.projects-card--abandoned .projects-card-title {
+  opacity: 0.65;
+}
+
+/* ===== 灵感碎片 ===== */
+.projects-ideas-section {
+  margin: 48px 0 0;
+}
+
+.projects-ideas-title {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e2a35;
+  margin: 0 0 20px;
+  letter-spacing: 0.05em;
+  position: relative;
+  display: inline-block;
+}
+
+.projects-ideas-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: -3px; right: -3px;
+  height: 6px;
+  background: rgba(135,184,70,0.35);
+  border-radius: 2px;
+}
+
+.projects-ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* 灵感卡片（GradientCard 风格，与项目卡片同语言） */
+.projects-idea-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 20px;
+  min-height: 140px;
+  display: flex;
+  cursor: default;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 12px rgba(50, 20, 40, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.projects-idea-card:nth-child(1) { transform: rotate(-1.5deg); }
+.projects-idea-card:nth-child(2) { transform: rotate(1deg); }
+.projects-idea-card:nth-child(3) { transform: rotate(-0.8deg); }
+
+.projects-idea-card:hover {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow: 0 12px 28px rgba(50, 20, 40, 0.16);
+}
+
+.projects-idea-card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.projects-idea-card-text {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 1.3rem;
+  color: #26222d;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+/* ===== 弹窗 ===== */
+.projects-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(30, 25, 20, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: proj-fade-in 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+
+.projects-modal {
+  background: linear-gradient(160deg, #f7f4fa, #eceaf2);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  max-width: 560px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(50, 20, 40, 0.28);
+  animation: proj-modal-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes proj-modal-in {
+  0% { clip-path: inset(0 0 100% 0); opacity: 0; }
+  100% { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+.projects-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0;
+  transition: background 0.2s;
+}
+
+.projects-modal-close::before,
+.projects-modal-close::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 2.5px;
+  background: #3a3444;
+  border-radius: 1px;
+}
+
+.projects-modal-close::before { transform: rotate(45deg); }
+.projects-modal-close::after { transform: rotate(-45deg); }
+
+.projects-modal-close:hover { background: rgba(215,106,138,0.25); }
+
+.projects-modal-body {
+  padding: 36px 38px 40px;
+}
+
+.projects-modal-head {
+  margin-bottom: 4px;
+}
+
+.projects-modal-title {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #26222d;
+  margin: 0 0 14px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.projects-modal-tags {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.projects-modal-tag {
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: 0.78rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #4a4454;
+  letter-spacing: 0.03em;
+}
+
+.projects-modal-date {
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: #7a7284;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.projects-modal-sep {
+  height: 1px;
+  background: rgba(74, 68, 84, 0.12);
+  border: none;
+  margin: 18px 0;
+}
+
+.projects-modal-desc {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #26222d;
+  margin-bottom: 18px;
+}
+
+.projects-modal-detail {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #3a3444;
+}
+
+.projects-modal-detail p { margin-bottom: 0.7em; }
+
+.projects-modal-highlights { margin: 18px 0; }
+
+.projects-modal-highlight {
+  font-size: 0.9rem;
+  color: #4a4454;
+  padding: 4px 0 4px 18px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.projects-modal-highlight::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #d76a8a;
+  font-size: 0.75rem;
+  top: 4px;
+}
+
+.projects-modal-link {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 8px 22px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #b85573, #d76a8a);
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: 0.85rem;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.projects-modal-link-a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.projects-modal-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(215,106,138,0.4);
+}
+
+/* ===== 页脚 ===== */
+.projects-footer {
+  padding: 28px 32px 24px;
+  border-top: 1px solid rgba(180,160,140,0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.projects-footer-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(180,160,140,0.12);
+}
+
+.projects-footer-brand { display: flex; flex-direction: column; gap: 2px; }
+
+.projects-footer-logo {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 1.3rem;
+  color: #1e2a35;
+  letter-spacing: 0.04em;
+}
+
+.projects-footer-tag {
+  font-size: 0.75rem;
+  color: #a09080;
+  font-family: 'Fira Code', 'Space Mono', monospace;
+}
+
+.projects-footer-links { display: flex; gap: 24px; }
+
+.projects-footer-links a {
+  font-size: 0.85rem;
+  color: #a09080;
+  text-decoration: none;
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  transition: color 0.3s;
+}
+
+.projects-footer-links a:hover { color: #87b846; }
+
+.projects-footer-bottom {
+  max-width: 1000px;
+  margin: 14px auto 0;
+  font-size: 0.72rem;
+  color: rgba(160,144,128,0.4);
+  font-family: 'Fira Code', 'Space Mono', monospace;
+}
+
+/* 导航栏配色已移到 src/data/navTheme.js 的 '/projects' 一项 */
+
+/* ===== 动画 ===== */
+@keyframes proj-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 900px) {
+  .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .projects-ideas-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+
+@media (max-width: 768px) {
+  .projects-inner { padding: 32px 20px 60px; }
+  .projects-hero-title { font-size: 3.5rem; }
+  .projects-hero-sub { font-size: 0.85rem; }
+  .projects-ideas-title { font-size: 2.2rem; }
+  .projects-card-title { font-size: 1.4rem; }
+  .projects-modal { max-width: 100%; border-radius: 2px; }
+  .projects-modal-body { padding: 24px 22px 28px; }
+  .projects-modal-title { font-size: 2rem; }
+}
+
+@media (max-width: 480px) {
+  .projects-grid { grid-template-columns: 1fr; gap: 12px; }
+  .projects-ideas-grid { grid-template-columns: 1fr; gap: 12px; }
+  .projects-hero-title { font-size: 2.8rem; }
+  .projects-ideas-title { font-size: 1.8rem; }
+}
