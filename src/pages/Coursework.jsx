@@ -3,6 +3,8 @@ import seedCourseData from '../data/courses.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import FileAttach from '../components/FileAttach.jsx'
+import { useEditMode } from '../context/EditModeContext.jsx'
 
 /**
  * 课程学习 · Memphis 孟菲斯风格
@@ -112,9 +114,12 @@ function CourseCard({ course, onSelect }) {
 }
 
 /* ====== 弹窗 ====== */
-function CourseModal({ course, onClose }) {
+function CourseModal({ course, onClose, onFilesChange }) {
+  const { editMode } = useEditMode()
   if (!course) return null
   const c = courseColor[course.color] || DEFAULT_COLOR
+  const files = course.files ?? []
+  const notes = course.notes ?? []
 
   return (
     <div className="mp-modal-overlay" onClick={onClose}>
@@ -158,14 +163,25 @@ function CourseModal({ course, onClose }) {
             <blockquote className="mp-modal-quote">「{course.feeling}」</blockquote>
           )}
 
-          {course.notes?.length > 0 && (
+          {/* 学习笔记 = 文字笔记 + 附件（PDF / Markdown / 作业 ZIP） */}
+          {(notes.length > 0 || files.length > 0 || editMode) && (
             <div className="mp-modal-notes">
               <h4 className="mp-modal-label">学习笔记</h4>
-              <ul>
-                {course.notes.map((n, i) => (
-                  <li key={i}>{n}</li>
-                ))}
-              </ul>
+
+              {notes.length > 0 && (
+                <ul>
+                  {notes.map((n, i) => (
+                    <li key={i}>{n}</li>
+                  ))}
+                </ul>
+              )}
+
+              <FileAttach
+                files={files}
+                onChange={onFilesChange}
+                label="笔记 / 作业"
+                emptyHint="这门课还没有上传笔记或作业。"
+              />
             </div>
           )}
 
@@ -187,13 +203,26 @@ function CourseModal({ course, onClose }) {
 
 /* ====== 主组件 ====== */
 function Courses() {
-  const { data } = useData()
+  const { data, saveSection } = useData()
   const courseData = data.courses ?? seedCourseData
 
   const [statusFilter, setStatusFilter] = useState('all')
   const [subjectFilter, setSubjectFilter] = useState('all')
-  const [modalItem, setModalItem] = useState(null)
+  // 存 id 而不是快照 —— 上传附件后 courseData 会更新，按 id 重新查才能拿到最新的 files
+  const [modalId, setModalId] = useState(null)
   const [showCount, setShowCount] = useState(4)
+
+  const modalCourse = modalId ? courseData.courses.find((c) => c.id === modalId) : null
+
+  /** 上传 / 删除附件后，把整个 courses 文档存回后端 */
+  async function handleFilesChange(files) {
+    if (!modalCourse) return
+    const next = {
+      ...courseData,
+      courses: courseData.courses.map((c) => (c.id === modalCourse.id ? { ...c, files } : c)),
+    }
+    await saveSection('courses', next)
+  }
 
   const filtered = useMemo(() => {
     let list = courseData.courses
@@ -293,7 +322,7 @@ function Courses() {
       <section className="mp-grid-section">
         <div className="mp-grid">
           {visible.map((course) => (
-            <CourseCard key={course.id} course={course} onSelect={setModalItem} />
+            <CourseCard key={course.id} course={course} onSelect={(c) => setModalId(c.id)} />
           ))}
         </div>
 
@@ -310,7 +339,11 @@ function Courses() {
 
       <SiteFooter path="/coursework" />
 
-      <CourseModal course={modalItem} onClose={() => setModalItem(null)} />
+      <CourseModal
+        course={modalCourse}
+        onClose={() => setModalId(null)}
+        onFilesChange={handleFilesChange}
+      />
       <EditButton sectionKey="courses" label="课程学习" />
     </main>
   )

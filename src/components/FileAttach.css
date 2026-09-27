@@ -1,0 +1,203 @@
+/* ============================================
+   FileAttach — 附件列表 + 上传
+
+   默认配色是 Memphis 孟菲斯风（粗黑边 + 硬边偏移阴影，无模糊）。
+   别的页面要用的话，覆盖 .fa 上的这几个变量就行，不用改结构。
+   ============================================ */
+
+.fa {
+  --fa-ink: #000000;
+  --fa-bg: #fef9ef;
+  --fa-accent: #ff6b6b;
+  --fa-border: 3px solid var(--fa-ink);
+  --fa-shadow: 3px 3px 0 var(--fa-ink);
+  --fa-shadow-lg: 6px 6px 0 var(--fa-ink);
+  --fa-t: 150ms ease-out;
+}
+
+/* ===== 列表 ===== */
+.fa-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fa-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--fa-bg);
+  border: var(--fa-border);
+  box-shadow: var(--fa-shadow);
+  transition: transform var(--fa-t), box-shadow var(--fa-t);
+}
+
+.fa-item:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--fa-shadow-lg);
+}
+
+.fa-icon {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.fa-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.fa-name {
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.35;
+  color: var(--fa-ink);
+  word-break: break-all;
+}
+
+.fa-sub {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--fa-ink);
+  opacity: 0.6;
+}
+
+.fa-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ===== 按钮：粗边 + 硬阴影，hover 放大阴影并抬起来 ===== */
+.fa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  background: var(--fa-bg);
+  color: var(--fa-ink);
+  border: 2px solid var(--fa-ink);
+  box-shadow: 2px 2px 0 var(--fa-ink);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--fa-t), box-shadow var(--fa-t), transform var(--fa-t);
+}
+
+.fa-btn:hover {
+  background: var(--fa-accent);
+  box-shadow: 4px 4px 0 var(--fa-ink);
+  transform: translate(-1px, -1px);
+}
+
+/* 玩具按键：按下去贴地 */
+.fa-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.fa-btn--danger:hover {
+  background: var(--fa-ink);
+  color: var(--fa-bg);
+}
+
+/* ===== 上传区 ===== */
+.fa-file {
+  /* 用视觉隐藏而不是 display:none —— 后者会让文件输入框无法被辅助技术访问 */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.fa-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.fa-btn--pick {
+  padding: 9px 20px;
+  font-size: 0.88rem;
+  box-shadow: 3px 3px 0 var(--fa-ink);
+}
+
+.fa-btn--pick:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
+.fa-hint {
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+/* ===== 空态 / 错误 ===== */
+.fa-empty {
+  margin: 0;
+  padding: 14px 16px;
+  border: 2px dashed var(--fa-ink);
+  font-size: 0.88rem;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+.fa-error {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  background: #ff6b6b;
+  color: #000000;
+  border: 2px solid var(--fa-ink);
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 600px) {
+  .fa-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .fa-meta {
+    flex-basis: calc(100% - 44px);
+  }
+  .fa-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fa-item,
+  .fa-btn {
+    transition: none;
+  }
+  .fa-item:hover,
+  .fa-btn:hover,
+  .fa-btn:active {
+    transform: none;
+  }
+}

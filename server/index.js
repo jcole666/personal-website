@@ -13,6 +13,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import dataRouter from './routes/data.js'
+import { filesRoutes, UPLOAD_DIR } from './routes/files.js'
 import { authRoutes } from './auth.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -34,7 +35,11 @@ app.use(
 // API
 app.use('/api/auth', authRoutes())
 app.use('/api/data', dataRouter)
+app.use('/api/files', filesRoutes())
 app.get('/api/health', (req, res) => res.json({ ok: true }))
+
+// 附件静态托管。必须放在下面的 SPA 回退之前，否则会被回退吃掉、返回 index.html
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d' }))
 
 // 生产：托管 dist/
 const distDir = path.join(__dirname, '..', 'dist')
