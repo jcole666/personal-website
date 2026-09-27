@@ -5,7 +5,8 @@
 /* ----- 全局（稍微提亮）----- */
 .music-world {
   min-height: calc(100vh - var(--nav-height));
-  background: #1e1e24;
+  /* 氛围光见 common.css 的「全站氛围光」区块 */
+  background: var(--ambient), #1e1e24;
   color: #d4d0c8;
 }
 

@@ -6,7 +6,8 @@
 /* ----- 全局 + 夜空渐变 ----- */
 .movies-world {
   min-height: calc(100vh - var(--nav-height));
-  background: linear-gradient(180deg, #222540 0%, #2a2d50 50%, #323660 100%);
+  /* 氛围光见 common.css 的「全站氛围光」区块 */
+  background: var(--ambient), linear-gradient(180deg, #222540 0%, #2a2d50 50%, #323660 100%);
   color: #ebe8dd;
   position: relative;
   overflow-x: hidden;

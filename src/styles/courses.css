@@ -6,7 +6,8 @@
 /* ===== 全局 ===== */
 .courses-world {
   min-height: calc(100vh - var(--nav-height));
-  background: #0a0a0f;
+  /* 氛围光见 common.css 的「全站氛围光」区块 */
+  background: var(--ambient), #0a0a0f;
   color: #e0dce0;
   position: relative;
   overflow-x: hidden;

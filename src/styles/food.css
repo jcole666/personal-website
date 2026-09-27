@@ -6,7 +6,8 @@
 /* ----- 全局 ----- */
 .food-world {
   min-height: calc(100vh - var(--nav-height));
-  background: #fcfaf7;
+  /* 氛围光见 common.css 的「全站氛围光」区块 */
+  background: var(--ambient), #fcfaf7;
   color: #2d2418;
   position: relative;
   font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;

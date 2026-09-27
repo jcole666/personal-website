@@ -1,5 +1,4 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
 import { TransitionProvider } from './context/TransitionContext.jsx'
 import LoadingTransition from './components/LoadingTransition.jsx'
 import Navbar from './components/Navbar.jsx'
@@ -21,27 +20,13 @@ function App() {
   const { pathname } = useLocation()
   const isHome = pathname === '/'
 
-  // 背景光斑视差：鼠标位置写进全局 CSS 变量 --par-x / --par-y（-0.5 ~ 0.5）
-  useEffect(() => {
-    const onMove = (e) => {
-      document.documentElement.style.setProperty(
-        '--par-x',
-        (e.clientX / window.innerWidth - 0.5).toFixed(3),
-      )
-      document.documentElement.style.setProperty(
-        '--par-y',
-        (e.clientY / window.innerHeight - 0.5).toFixed(3),
-      )
-    }
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [])
-
   return (
     <TransitionProvider>
       <div className={`app${isHome ? ' app--home' : ''}`}>
-        {/* 首页：AcidSquares WebGL 动态背景；其他页面：液态玻璃光斑层 */}
-        {isHome ? (
+        {/* 首页用 AcidSquares WebGL 动态背景；
+            其他页面的氛围光已写进各页自己的 background（见 common.css「全站氛围光」），
+            不再需要一层固定光斑 —— 那层被各页底色盖住，从来没被看见过 */}
+        {isHome && (
           <div className="acid-bg" aria-hidden="true">
             <AcidSquares
               color1="#d9d3e8"
@@ -67,15 +52,6 @@ function App() {
               grain
               grainIntensity={0.05}
             />
-          </div>
-        ) : (
-          <div className="glass-ambient" aria-hidden="true">
-            <span className="glass-orb glass-orb--1" />
-            <span className="glass-orb glass-orb--2" />
-            <span className="glass-orb glass-orb--3" />
-            <span className="glass-orb glass-orb--4" />
-            <span className="glass-orb glass-orb--5" />
-            <span className="glass-orb glass-orb--6" />
           </div>
         )}
         {/* 内容层（z-index:1，压在背景之上） */}

@@ -80,16 +80,52 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ===== 液态玻璃背景光斑层（z-index:0，让玻璃 backdrop-filter 能抓到它） ===== */
-.glass-ambient {
-  position: fixed;
-  inset: -80px; /* 比视口大一圈，给视差移动留空间，避免露边 */
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  /* 视差：光斑跟着鼠标轻微漂移，缓动营造"流动感" */
-  translate: calc(var(--par-x, 0) * 44px) calc(var(--par-y, 0) * 44px);
-  transition: translate 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+/* ============================================
+   全站氛围光 —— 全站唯一一份
+   每个板块用「自己配色」的一层柔光，让纯色底不那么平。
+   用法：各页 CSS 里写 background: var(--ambient), <原底色>;
+
+   以前这里是一层固定的紫色光斑（.glass-ambient + 6 个 blur(56px) 圆球），
+   但它在 .app-content 下面，被各页的不透明底色整块盖住 —— 从来没人看见过，
+   而且 6 个持续模糊的固定元素一直在拖累滚动。
+   现在改成写进各页自己的 background，零额外元素、零运行时开销。
+
+   代码开发页本来就有 4 层晕染、游戏页是整屏照片，这两页不需要配。
+   ============================================ */
+.courses-world {
+  --ambient:
+    radial-gradient(60% 40% at 14% 5%, rgba(255, 45, 149, 0.15), transparent 70%),
+    radial-gradient(65% 42% at 88% 24%, rgba(0, 240, 255, 0.11), transparent 70%);
+}
+
+.experience-world {
+  --ambient:
+    radial-gradient(58% 40% at 14% 6%, rgba(25, 200, 185, 0.11), transparent 70%),
+    radial-gradient(55% 38% at 86% 22%, rgba(121, 79, 39, 0.08), transparent 70%);
+}
+
+.reading-world {
+  --ambient:
+    radial-gradient(60% 42% at 16% 5%, rgba(200, 162, 75, 0.1), transparent 70%),
+    radial-gradient(55% 38% at 88% 24%, rgba(92, 75, 50, 0.07), transparent 70%);
+}
+
+.music-world {
+  --ambient:
+    radial-gradient(65% 45% at 16% 6%, rgba(212, 168, 83, 0.11), transparent 70%),
+    radial-gradient(55% 40% at 88% 30%, rgba(150, 130, 190, 0.1), transparent 70%);
+}
+
+.movies-world {
+  --ambient:
+    radial-gradient(60% 40% at 18% 5%, rgba(255, 207, 92, 0.11), transparent 70%),
+    radial-gradient(70% 45% at 86% 26%, rgba(126, 134, 214, 0.15), transparent 70%);
+}
+
+.food-world {
+  --ambient:
+    radial-gradient(55% 40% at 12% 5%, rgba(196, 122, 94, 0.1), transparent 70%),
+    radial-gradient(60% 42% at 88% 20%, rgba(92, 158, 140, 0.09), transparent 70%);
 }
 
 /* 内容层：压在光斑之上，玻璃卡片才能对光斑做 backdrop-filter */
@@ -235,93 +271,7 @@ body {
   pointer-events: none;
 }
 
-.glass-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(56px);
-  opacity: 0.62;
-  /* 叠加混合：让光斑像"玻璃折射光"一样提亮叠加区域 */
-  mix-blend-mode: screen;
-  /* 缓慢漂移，营造"动态模糊 / 折射光斑"的流动感 */
-  animation: orb-drift 18s ease-in-out infinite alternate;
-}
-
-.glass-orb--1 {
-  width: 520px;
-  height: 520px;
-  top: -140px;
-  left: -90px;
-  background: #c9b4ec;
-}
-
-.glass-orb--2 {
-  width: 460px;
-  height: 460px;
-  top: 8%;
-  right: -120px;
-  background: #b6c6f0;
-  animation-delay: -6s;
-}
-
-.glass-orb--3 {
-  width: 420px;
-  height: 420px;
-  bottom: -140px;
-  left: 22%;
-  background: #e6c2d8;
-  animation-delay: -13s;
-}
-
-.glass-orb--4 {
-  width: 360px;
-  height: 360px;
-  bottom: 6%;
-  right: 18%;
-  background: #e8d6b0;
-  animation-delay: -19s;
-}
-
-/* 高饱和折射光斑：更像玻璃棱镜边缘的紫/金色切光 */
-.glass-orb--5 {
-  width: 300px;
-  height: 300px;
-  top: 30%;
-  left: 38%;
-  background: radial-gradient(circle, #a78bfa 0%, rgba(167, 139, 250, 0) 70%);
-  animation-delay: -9s;
-  opacity: 0.5;
-}
-
-.glass-orb--6 {
-  width: 220px;
-  height: 220px;
-  top: 4%;
-  left: 30%;
-  background: radial-gradient(circle, #e9c46a 0%, rgba(233, 196, 106, 0) 70%);
-  animation-delay: -15s;
-  opacity: 0.4;
-}
-
-@keyframes orb-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  33% {
-    transform: translate3d(40px, -30px, 0) scale(1.14);
-  }
-  66% {
-    transform: translate3d(-26px, 30px, 0) scale(0.96);
-  }
-  100% {
-    transform: translate3d(72px, -52px, 0) scale(1.2);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .glass-orb {
-    animation: none;
-  }
-}
+/* 6 个 .glass-orb 光斑与 orb-drift 动画已删除 —— 它们被各页底色盖住，从未可见 */
 
 /* ===== 导航栏 · 美术馆导览条 ===== */
 /* ============================================
@@ -1025,7 +975,7 @@ body {
 
 .experience-world {
   min-height: calc(100vh - var(--nav-height));
-  background: #f8f8f0;
+  background: var(--ambient), #f8f8f0;
 }
 
 /* 经历页全局动森叶子光标 —— !important 覆盖一切 */

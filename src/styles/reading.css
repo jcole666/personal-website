@@ -6,7 +6,9 @@
 .reading-world {
   min-height: calc(100vh - var(--nav-height));
   background-color: #faf7f2;
+  /* 氛围光见 common.css 的「全站氛围光」区块 */
   background-image:
+    var(--ambient),
     repeating-linear-gradient(
       0deg,
       transparent,
