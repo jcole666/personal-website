@@ -468,6 +468,136 @@
 }
 
 /* ============================================
+   区块头右侧的「查看全部」链接
+   ============================================ */
+.ed-see-all {
+  padding: 0 0 3px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-ink);
+}
+
+/* ============================================
+   「查看全部」面板：整屏的一张纸，自己滚动
+   （不做嵌套弹窗：点条目时先关面板、再开详情）
+   ============================================ */
+.ed-all {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  overflow-y: auto;
+  background: var(--ed-bg);
+  animation: ed-fade-in 0.3s var(--ed-ease);
+}
+
+.ed-all-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 96px 48px 160px;
+}
+
+.ed-all-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ed-line);
+}
+
+.ed-all-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* 复用详情弹窗的方钮关闭键：这里要留在文档流里，所以不能 absolute；
+   但也必须是 relative —— 否则里面的 × 会失去定位参照，跑到面板正中间去 */
+.ed-all-close {
+  position: relative;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.ed-all-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 48px;
+  flex-wrap: wrap;
+  padding: 40px 0 24px;
+}
+
+.ed-all-count {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-ink-2);
+}
+
+/* 底线输入框 + 浮动标签（Editorial 的表单语言） */
+.ed-field {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 26rem;
+  padding-top: 22px;
+}
+
+.ed-field-input {
+  width: 100%;
+  padding: 6px 0 10px;
+  border: none;
+  border-bottom: 1px solid rgba(28, 28, 28, 0.2);
+  background: none;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--ed-ink);
+  transition: border-color 0.5s var(--ed-ease);
+}
+
+.ed-field-input:focus {
+  outline: none;
+  border-bottom-color: var(--ed-ink);
+}
+
+/* 去掉浏览器给 type=search 加的默认清除按钮 */
+.ed-field-input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.ed-field-label {
+  position: absolute;
+  left: 0;
+  top: 30px;
+  font-size: 1.1rem;
+  color: var(--ed-ink-2);
+  pointer-events: none;
+  transition:
+    top 0.4s var(--ed-ease),
+    font-size 0.4s var(--ed-ease),
+    letter-spacing 0.4s var(--ed-ease);
+}
+
+.ed-field-input:focus ~ .ed-field-label,
+.ed-field-input:not(:placeholder-shown) ~ .ed-field-label {
+  top: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ============================================
    响应式：全站三档 900 / 768 / 480
    ============================================ */
 @media (max-width: 900px) {
@@ -476,6 +606,9 @@
   }
   .ed-row-main {
     gap: 32px;
+  }
+  .ed-all-inner {
+    padding: 72px 32px 120px;
   }
 }
 
@@ -514,6 +647,18 @@
   }
   .ed-modal-body {
     padding: 40px 24px 32px;
+  }
+  .ed-all-inner {
+    padding: 48px 24px 96px;
+  }
+  .ed-all-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 28px;
+    padding: 32px 0 20px;
+  }
+  .ed-field {
+    max-width: none;
   }
 }
 

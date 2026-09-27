@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import seedProjectData from '../data/projects.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
@@ -24,6 +24,16 @@ function renderParagraphs(text) {
 
 const statusLabels = { active: '进行中', done: '已完成', abandoned: '搁置' }
 
+const FILTERS = [
+  { key: 'all', label: '全部' },
+  { key: 'active', label: '进行中' },
+  { key: 'done', label: '已完成' },
+  { key: 'abandoned', label: '搁置' },
+]
+
+/** 首页面上只列这么多，其余收进「查看全部」面板 —— 项目会越写越多，不能一直往下堆 */
+const PREVIEW_COUNT = 5
+
 /**
  * 滚动进入视口时淡入上浮
  * 参考文件用的是同一套（IntersectionObserver + 0.8s cubic-bezier(0.16,1,0.3,1)）。
@@ -44,13 +54,10 @@ function useReveal() {
       setShown(true)
       return
     }
+    // 进出都同步 shown —— 不要 disconnect，否则只有第一次进入会播，
+    // 用户往上滑走再滑回来就不会再出现了
     const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true)
-          io.disconnect()
-        }
-      },
+      ([entry]) => setShown(entry.isIntersecting),
       { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
     )
     io.observe(el)
@@ -172,27 +179,103 @@ function ProjectModal({ project, onClose }) {
   )
 }
 
+/* ====== 「查看全部」面板：全屏列表 + 搜索 + 筛选 ====== */
+function AllProjectsPanel({ projects, onClose, onSelect }) {
+  const [query, setQuery] = useState('')
+  const [status, setStatus] = useState('all')
+
+  // Esc 关闭
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  // 面板是整屏的，锁住背后页面的滚动，否则滚轮会穿透
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [])
+
+  const results = useMemo(() => {
+    const kw = query.trim().toLowerCase()
+    return projects.filter((p) => {
+      if (status !== 'all' && p.status !== status) return false
+      if (!kw) return true
+      const hay = [p.title, p.description, ...(p.techStack ?? [])].join(' ').toLowerCase()
+      return hay.includes(kw)
+    })
+  }, [projects, query, status])
+
+  return (
+    <div className="ed-all" role="dialog" aria-modal="true" aria-label="全部项目">
+      <div className="ed-all-inner">
+        <div className="ed-all-head">
+          <h2 className="ed-all-title">全部项目</h2>
+          <button className="ed-modal-close ed-all-close" onClick={onClose} aria-label="关闭" />
+        </div>
+
+        <div className="ed-all-controls">
+          {/* 底线输入框 + 浮动标签（Editorial 风格的表单语言） */}
+          <label className="ed-field">
+            <input
+              className="ed-field-input"
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder=" "
+              autoFocus
+            />
+            <span className="ed-field-label">搜索项目 / 技术栈</span>
+          </label>
+
+          <nav className="ed-filters">
+            {FILTERS.map((f) => (
+              <button
+                key={f.key}
+                className={`ed-filter${status === f.key ? ' ed-filter--active' : ''}`}
+                onClick={() => setStatus(f.key)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        <p className="ed-all-count">
+          {results.length} / {projects.length} 个项目
+        </p>
+
+        <div className="ed-list">
+          {results.map((p, i) => (
+            <ProjectRow key={p.id} project={p} index={i} onSelect={onSelect} />
+          ))}
+        </div>
+
+        {results.length === 0 && <p className="ed-empty">没有匹配的项目，换个关键词试试。</p>}
+      </div>
+    </div>
+  )
+}
+
 /* ====== 主组件 ====== */
 function Projects() {
   const { data } = useData()
   const projectData = data.projects ?? seedProjectData
 
-  const [filter, setFilter] = useState('all')
   const [modalItem, setModalItem] = useState(null)
+  const [showAll, setShowAll] = useState(false)
 
   const allProjects = projectData.active
     ? [projectData.active, ...projectData.done, ...projectData.abandoned]
     : [...projectData.done, ...projectData.abandoned]
 
-  const filtered =
-    filter === 'all' ? allProjects : allProjects.filter((p) => p.status === filter)
-
-  const filters = [
-    { key: 'all', label: '全部' },
-    { key: 'active', label: '进行中' },
-    { key: 'done', label: '已完成' },
-    { key: 'abandoned', label: '搁置' },
-  ]
+  const preview = allProjects.slice(0, PREVIEW_COUNT)
 
   return (
     <main className="ed-world">
@@ -216,26 +299,17 @@ function Projects() {
         <section className="ed-section">
           <div className="ed-sec-head">
             <h2 className="ed-label">项目</h2>
-            <nav className="ed-filters">
-              {filters.map((f) => (
-                <button
-                  key={f.key}
-                  className={`ed-filter${filter === f.key ? ' ed-filter--active' : ''}`}
-                  onClick={() => setFilter(f.key)}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </nav>
+            {/* 项目会越写越多，页面上只列前几个，筛选和搜索都收进面板里 */}
+            <button className="ed-see-all hover-underline" onClick={() => setShowAll(true)}>
+              查看全部 {allProjects.length} 个
+            </button>
           </div>
 
           <div className="ed-list">
-            {filtered.map((item, i) => (
+            {preview.map((item, i) => (
               <ProjectRow key={item.id} project={item} index={i} onSelect={setModalItem} />
             ))}
           </div>
-
-          {filtered.length === 0 && <p className="ed-empty">这个分类下暂时没有项目。</p>}
         </section>
 
         {/* 灵感碎片 */}
@@ -255,6 +329,18 @@ function Projects() {
       </div>
 
       <SiteFooter path="/projects" />
+
+      {showAll && (
+        <AllProjectsPanel
+          projects={allProjects}
+          onClose={() => setShowAll(false)}
+          onSelect={(p) => {
+            // 先关面板再开详情 —— 不做嵌套弹窗
+            setShowAll(false)
+            setModalItem(p)
+          }}
+        />
+      )}
 
       <ProjectModal project={modalItem} onClose={() => setModalItem(null)} />
       <EditButton sectionKey="projects" label="代码开发" />
