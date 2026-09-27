@@ -4,7 +4,7 @@ import './SiteFooter.css'
 /** 联系方式只在这里写一次 —— 之前 8 个页脚写的是假的 me@example.com */
 const GITHUB_URL = 'https://github.com/jcole666'
 const EMAIL = 'lq2107668126@gmail.com'
-const COPYRIGHT = '© 2026 流前 · 个人展览馆'
+const COPYRIGHT = '© 2026 流前'
 
 /**
  * 全站统一页脚

@@ -15,8 +15,12 @@
  *   ink        品牌主色
  *   tagInk     副标签颜色，省略则同 muted
  *   muted      链接与副文字色
- *   faint      版权小字色
+ *   faint      版权小字色（省略则同 muted）
  *   accent     链接 hover 色
+ *
+ * 配色硬性要求：muted / faint / tagInk 与页脚底色的对比度必须 ≥ 4.5:1
+ * （WCAG AA 小字号标准）。这些字都是 12~14px 的小字，达不到就是看不清。
+ * 改色后请用 CDP 实测复验，别凭眼睛判断 —— 深色页面尤其容易误判。
  *   font       品牌字体
  *   size       品牌字号
  *   spacing    品牌字距
@@ -54,8 +58,8 @@ export const footerThemes = {
     border: 'rgba(180, 160, 140, 0.2)',
     divider: 'rgba(180, 160, 140, 0.15)',
     ink: '#1e2a35',
-    muted: '#a09080',
-    faint: 'rgba(160, 144, 128, 0.4)',
+    muted: '#5b5249',
+    faint: '#645a50',
     accent: '#87b846',
     font: "'Noto Sans SC', 'Microsoft YaHei', sans-serif",
     size: '1.3rem',
@@ -69,8 +73,8 @@ export const footerThemes = {
     border: 'rgba(255, 45, 149, 0.2)',
     divider: 'rgba(0, 240, 255, 0.12)',
     ink: '#e0dce0',
-    muted: '#706878',
-    faint: 'rgba(112, 104, 120, 0.5)',
+    muted: '#87808e',
+    faint: '#7e7786',
     accent: '#00f0ff',
     font: "'Orbitron', 'Fira Code', sans-serif",
     size: '1.2rem',
@@ -85,9 +89,8 @@ export const footerThemes = {
     border: 'rgba(25, 200, 185, 0.25)',
     divider: 'rgba(121, 79, 39, 0.12)',
     ink: '#794f27',
-    muted: 'rgba(121, 79, 39, 0.6)',
-    tagInk: 'rgba(121, 79, 39, 0.55)',
-    faint: 'rgba(121, 79, 39, 0.45)',
+    muted: '#794f27',
+    faint: '#794f27',
     accent: '#19c8b9',
     font: "Nunito, 'Microsoft YaHei', sans-serif",
     size: '1.5rem',
@@ -101,8 +104,7 @@ export const footerThemes = {
     divider: 'rgba(180, 160, 140, 0.15)',
     ink: '#5c4b32',
     muted: '#7a6240',
-    tagInk: 'rgba(90, 70, 45, 0.45)',
-    faint: 'rgba(90, 70, 45, 0.35)',
+    faint: '#7a6240',
     accent: '#c8a24b',
     font: "'Long Cang', 'Noto Serif SC', cursive",
     size: '1.6rem',
@@ -115,8 +117,8 @@ export const footerThemes = {
     border: 'rgba(107, 101, 96, 0.12)',
     divider: 'rgba(107, 101, 96, 0.1)',
     ink: '#d4d0c8',
-    muted: '#6b6560',
-    faint: 'rgba(107, 101, 96, 0.45)',
+    muted: '#948f8c',
+    faint: '#8b8682',
     accent: '#d4a853',
     font: "'Playfair Display', 'Noto Serif SC', serif",
     size: '1.5rem',
@@ -129,8 +131,8 @@ export const footerThemes = {
     border: 'rgba(140, 138, 160, 0.1)',
     divider: 'rgba(140, 138, 160, 0.08)',
     ink: '#ebe8dd',
-    muted: '#8c8aa0',
-    faint: 'rgba(140, 138, 160, 0.4)',
+    muted: '#9896aa',
+    faint: '#8f8da2',
     accent: '#ffcf5c',
     font: "'Playfair Display', 'Noto Serif SC', serif",
     size: '1.5rem',
@@ -140,13 +142,15 @@ export const footerThemes = {
   '/games': {
     brand: '流前游戏',
     tag: 'PLAYTHROUGH LOG · SINCE 2023',
-    bg: 'rgba(245, 240, 226, 0.18)',
-    border: 'rgba(0, 0, 0, 0.04)',
-    divider: 'rgba(0, 0, 0, 0.05)',
+    // 这一页背景是照片。原来只有 0.18 的不透明度，合成出来的底色是中间调的绿色，
+    // 任何文字颜色都到不了 4.5:1，所以提到 0.9（保留一点点照片透出来）
+    bg: 'rgba(245, 240, 226, 0.9)',
+    border: 'rgba(0, 0, 0, 0.06)',
+    divider: 'rgba(0, 0, 0, 0.08)',
     ink: '#3d3022',
-    muted: '#9c9080',
-    faint: 'rgba(156, 144, 128, 0.4)',
-    accent: '#4aa8e0',
+    muted: '#645c52',
+    faint: '#665e54',
+    accent: '#2a7ab0',
     font: "'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive",
     size: '1.1rem',
     spacing: '0.04em',
@@ -159,8 +163,8 @@ export const footerThemes = {
     border: 'rgba(0, 0, 0, 0.05)',
     divider: 'rgba(0, 0, 0, 0.05)',
     ink: '#2d2418',
-    muted: '#8c7b68',
-    faint: 'rgba(0, 0, 0, 0.2)',
+    muted: '#6f6252',
+    faint: '#6f6252',
     accent: '#c47a5e',
     font: "'Playfair Display', 'Noto Serif SC', serif",
     size: '1.3rem',
