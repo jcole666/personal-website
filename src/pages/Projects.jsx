@@ -4,6 +4,18 @@ import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 
+/**
+ * 代码开发 · Editorial 编辑杂志风
+ *
+ * 参考 参考/editorial-showcase 的版式语言：
+ *   巨型衬线标题（第二行斜体、降透明度）+ 右侧小号大写宽字距说明
+ *   编号式列表（01 / 02 …）配发丝分隔线，hover 时标题转斜体
+ *   标签一律 font-sans text-xs tracking-[0.2em] uppercase
+ *
+ * 禁用（这一条很重要，别加回来）：渐变、背景图案、阴影、彩色强调色、
+ * 大圆角、单侧粗边框装饰。整页是纯单色 + 发丝线。
+ */
+
 /* ====== 工具 ====== */
 function renderParagraphs(text) {
   if (!text) return null
@@ -12,131 +24,95 @@ function renderParagraphs(text) {
 
 const statusLabels = { active: '进行中', done: '已完成', abandoned: '搁置' }
 
-/* ====== 项目卡片（图纸卡） ======
-   状态色不再让整张卡变色（那样会变成"彩色便利贴"，和纸底打架），
-   而是通过 --status-color 只作用于左侧色条与状态点 */
-const statusColorMap = { active: '#3f8f63', done: '#6b5cc4', abandoned: '#9c949c' }
-
-function ProjectCard({ project, onSelect }) {
-  const statusColor = statusColorMap[project.status] || statusColorMap.abandoned
+/* ====== 项目条目 ====== */
+function ProjectRow({ project, index, onSelect }) {
+  const abandoned = project.status === 'abandoned'
 
   return (
     <div
-      className={`projects-card${project.status === 'abandoned' ? ' projects-card--abandoned' : ''}`}
-      style={{ '--status-color': statusColor }}
+      className={`ed-row${abandoned ? ' ed-row--abandoned' : ''}`}
       onClick={() => onSelect(project)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect(project)
+        }
+      }}
     >
-      {/* 卡片内容 */}
-      <div className="projects-card-content">
-        {/* 徽章 */}
-        <div className="projects-card-badge">
-          <span className="projects-card-badge-dot" />
-          {statusLabels[project.status] || statusLabels.done}
+      <div className="ed-row-main">
+        <span className="ed-row-num">{String(index + 1).padStart(2, '0')}</span>
+        <div className="ed-row-body">
+          <h3 className="ed-row-title">{project.title}</h3>
+          <p className="ed-row-desc">{project.description}</p>
+          {project.techStack?.length > 0 && (
+            <p className="ed-row-tech">{project.techStack.join(' · ')}</p>
+          )}
         </div>
-
-        {/* 标题 */}
-        <h3 className="projects-card-title">{project.title}</h3>
-
-        {/* 技术栈 */}
-        <div className="projects-card-tech">
-          {project.techStack?.map((t) => (
-            <span key={t} className="projects-card-tag">{t}</span>
-          ))}
-        </div>
-
-        {/* 描述 */}
-        <p className="projects-card-desc">{project.description}</p>
-
-        {/* 进度（可选） */}
-        {project.progress != null && (
-          <div className="projects-card-progress">
-            <div className="projects-card-bar">
-              <div className="projects-card-fill" style={{ width: `${project.progress}%` }} />
-            </div>
-            <div className="projects-card-pct">{project.progress}%</div>
-          </div>
-        )}
-
-        {/* CTA */}
-        <span className="projects-card-cta">
-          查看详情
-          <svg className="projects-card-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14" /><path d="M12 5l7 7-7 7" />
-          </svg>
-        </span>
       </div>
+      <span className="ed-row-meta">
+        {statusLabels[project.status] || statusLabels.done}
+        {project.progress != null && ` · ${project.progress}%`}
+      </span>
     </div>
   )
 }
 
-/* ====== 灵感碎片卡片（小张图纸） ====== */
-const ideaColorMap = { green: '#3f8f63', blue: '#6b5cc4', pink: '#c2557e' }
-
+/* ====== 灵感碎片 ====== */
 function IdeaCard({ idea }) {
-  const statusColor = ideaColorMap[idea.color] || ideaColorMap.green
-
   return (
-    <div className="projects-idea-card" style={{ '--status-color': statusColor }}>
-      <div className="projects-idea-card-content">
-        <div className="projects-card-badge">
-          <span className="projects-card-badge-dot" />
-          灵感
-        </div>
-        <div className="projects-idea-card-text">{idea.text}</div>
-      </div>
+    <div className="ed-idea">
+      <p className="ed-idea-text">{idea.text}</p>
     </div>
   )
 }
 
-/* ====== 弹窗（GradientCard 风格） ====== */
+/* ====== 弹窗 ====== */
 function ProjectModal({ project, onClose }) {
   if (!project) return null
-  const statusColor = statusColorMap[project.status] || statusColorMap.abandoned
 
   return (
-    <div className="projects-modal-overlay" onClick={onClose}>
-      <div
-        className="projects-modal"
-        style={{ '--status-color': statusColor }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="projects-modal-close" onClick={onClose} aria-label="关闭" />
-        <div className="projects-modal-body">
-          <div className="projects-modal-head">
-            <div className="projects-card-badge">
-              <span className="projects-card-badge-dot" />
+    <div className="ed-modal-overlay" onClick={onClose}>
+      <div className="ed-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="ed-modal-close" onClick={onClose} aria-label="关闭" />
+
+        <div className="ed-modal-body">
+          <div className="ed-modal-head">
+            <span className="ed-label">
               {statusLabels[project.status] || statusLabels.done}
-            </div>
-            <h2 className="projects-modal-title">{project.title}</h2>
-            <div className="projects-modal-tags">
-              {project.techStack?.map((t) => (
-                <span key={t} className="projects-modal-tag">{t}</span>
-              ))}
-            </div>
-            <span className="projects-modal-date">
-              {project.startedAt || project.date}
+              {project.startedAt || project.date ? ` · ${project.startedAt || project.date}` : ''}
               {project.completedAt ? ` → ${project.completedAt}` : ''}
             </span>
+            <h2 className="ed-modal-title">{project.title}</h2>
+            {project.techStack?.length > 0 && (
+              <p className="ed-modal-tech">{project.techStack.join(' · ')}</p>
+            )}
           </div>
-          <hr className="projects-modal-sep" />
+
           {project.detail ? (
-            <div className="projects-modal-detail">{renderParagraphs(project.detail)}</div>
+            <div className="ed-modal-detail">{renderParagraphs(project.detail)}</div>
           ) : (
-            <div className="projects-modal-desc">{project.description}</div>
+            <p className="ed-modal-detail">{project.description}</p>
           )}
+
           {project.highlights?.length > 0 && (
-            <div className="projects-modal-highlights">
+            <ul className="ed-modal-highlights">
               {project.highlights.map((h, i) => (
-                <div key={i} className="projects-modal-highlight">{h}</div>
+                <li key={i}>{h}</li>
               ))}
-            </div>
+            </ul>
           )}
+
           {project.repoUrl && (
-            <span className="projects-modal-link">
-              <a href={project.repoUrl} target="_blank" rel="noreferrer" className="projects-modal-link-a">
-                → 仓库
-              </a>
-            </span>
+            <a
+              className="ed-modal-link hover-underline"
+              href={project.repoUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              仓库 ↗
+            </a>
           )}
         </div>
       </div>
@@ -156,9 +132,8 @@ function Projects() {
     ? [projectData.active, ...projectData.done, ...projectData.abandoned]
     : [...projectData.done, ...projectData.abandoned]
 
-  const filtered = filter === 'all'
-    ? allProjects
-    : allProjects.filter((p) => p.status === filter)
+  const filtered =
+    filter === 'all' ? allProjects : allProjects.filter((p) => p.status === filter)
 
   const filters = [
     { key: 'all', label: '全部' },
@@ -168,43 +143,63 @@ function Projects() {
   ]
 
   return (
-    <main className="projects-world">
-      <div className="projects-inner">
-        {/* 头部 */}
-        <div className="projects-hero">
-          <h1 className="projects-hero-title">代码开发</h1>
-          <p className="projects-hero-sub">GRAPH PAPER · WRENCH IT TILL IT WORKS</p>
-        </div>
+    <main className="ed-world">
+      <div className="ed-inner">
+        {/* Hero：巨型衬线标题 + 斜体副行，右侧小号大写说明 */}
+        <header className="ed-hero">
+          <div className="ed-hero-row">
+            <h1 className="ed-hero-title">
+              代码开发
+              <br />
+              <em>写下来的东西。</em>
+            </h1>
+            <p className="ed-hero-note">
+              课余写的项目、踩过的坑，以及那些还没动手的念头。
+              每一个都留着当时的思路和取舍。
+            </p>
+          </div>
+        </header>
 
-        {/* 筛选按钮 */}
-        <div className="projects-filter">
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              className={`projects-filter-btn ${filter === f.key ? 'projects-filter-btn--active' : ''}`}
-              onClick={() => setFilter(f.key)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+        {/* 项目列表 */}
+        <section className="ed-section">
+          <div className="ed-sec-head">
+            <h2 className="ed-label">项目</h2>
+            <nav className="ed-filters">
+              {filters.map((f) => (
+                <button
+                  key={f.key}
+                  className={`ed-filter${filter === f.key ? ' ed-filter--active' : ''}`}
+                  onClick={() => setFilter(f.key)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </nav>
+          </div>
 
-        {/* 项目画廊 */}
-        <div className="projects-grid">
-          {filtered.map((item) => (
-            <ProjectCard key={item.id} project={item} onSelect={setModalItem} />
-          ))}
-        </div>
-
-        {/* 灵感碎片 */}
-        <div className="projects-ideas-section">
-          <h2 className="projects-ideas-title">灵感碎片</h2>
-          <div className="projects-ideas-grid">
-            {projectData.ideas.map((idea) => (
-              <IdeaCard key={idea.id} idea={idea} />
+          <div className="ed-list">
+            {filtered.map((item, i) => (
+              <ProjectRow key={item.id} project={item} index={i} onSelect={setModalItem} />
             ))}
           </div>
-        </div>
+
+          {filtered.length === 0 && <p className="ed-empty">这个分类下暂时没有项目。</p>}
+        </section>
+
+        {/* 灵感碎片 */}
+        {projectData.ideas?.length > 0 && (
+          <section className="ed-section">
+            <div className="ed-sec-head">
+              <h2 className="ed-label">灵感碎片</h2>
+              <span className="ed-label ed-label--muted">还没动手</span>
+            </div>
+            <div className="ed-grid">
+              {projectData.ideas.map((idea) => (
+                <IdeaCard key={idea.id} idea={idea} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       <SiteFooter path="/projects" />

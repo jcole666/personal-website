@@ -50,16 +50,20 @@ export const DEFAULT_NAV_THEME = {
  */
 export const navThemes = {
   '/projects': {
+    // 代码开发页是 Editorial 编辑杂志风：暖米纸底 + 纯单色墨 + 发丝线。
+    // 所以导航栏也跟着换成同一套 —— 米纸底、墨色文字、强调色就是墨色本身，
+    // 并关掉毛玻璃（那个风格明确禁止玻璃态）。
     tag: 'WORKSHOP',
-    bg: 'rgba(45, 16, 33, 0.55)',
-    border: 'rgba(255, 255, 255, 0.12)',
-    ink: '#f5eef1',
-    accent: '#e8a3b6',
-    tagInk: '#e8a3b6',
-    logoFont: "'Noto Sans SC', 'Microsoft YaHei', sans-serif",
-    logoSize: '1.4rem',
-    logoSpacing: '0.04em',
-    blur: 'blur(14px)',
+    bg: 'rgba(249, 248, 246, 0.92)',
+    border: 'rgba(28, 28, 28, 0.1)',
+    ink: '#1c1c1c',
+    accent: '#1c1c1c',
+    tagInk: 'rgba(28, 28, 28, 0.65)',
+    // 衬线 logo —— 该风格要求标题一律衬线
+    logoFont: 'var(--font-display)',
+    logoSize: '1.35rem',
+    logoSpacing: '-0.01em',
+    blur: 'none',
   },
   '/coursework': {
     tag: 'NIGHT CITY',

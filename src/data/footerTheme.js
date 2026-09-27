@@ -52,19 +52,23 @@ export const DEFAULT_FOOTER_THEME = {
 
 export const footerThemes = {
   '/projects': {
-    brand: '流前 · 坐标纸',
-    tag: 'GRAPH PAPER · SINCE 2025',
-    bg: 'transparent',
-    border: 'rgba(180, 160, 140, 0.2)',
-    divider: 'rgba(180, 160, 140, 0.15)',
-    ink: '#1e2a35',
-    muted: '#5b5249',
-    faint: '#645a50',
-    accent: '#87b846',
-    font: "'Noto Sans SC', 'Microsoft YaHei', sans-serif",
-    size: '1.3rem',
-    uiFont: "'Fira Code', 'Space Mono', monospace",
-    max: '1000px',
+    // 配合代码开发页的 Editorial 风格：暖米纸底 + 纯单色墨 + 发丝线。
+    // 品牌名从「坐标纸」改成「工作台」—— 那一版没有坐标纸了，
+    // tag 也换成和导航栏一致的 WORKSHOP。
+    brand: '流前 · 工作台',
+    tag: 'WORKSHOP · SINCE 2025',
+    bg: '#f9f8f6',
+    border: 'rgba(28, 28, 28, 0.1)',
+    divider: 'rgba(28, 28, 28, 0.1)',
+    ink: '#1c1c1c',
+    muted: 'rgba(28, 28, 28, 0.65)',
+    faint: 'rgba(28, 28, 28, 0.65)',
+    accent: '#1c1c1c',
+    font: 'var(--font-display)',
+    size: '1.35rem',
+    spacing: '-0.01em',
+    // 1104 = 页面内容宽（1200）减掉页面左右内边距（48×2），让页脚和正文左右对齐
+    max: '1104px',
   },
   '/coursework': {
     brand: '流前 · 夜之城',

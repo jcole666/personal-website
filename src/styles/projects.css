@@ -1,629 +1,513 @@
 /* ============================================
-   代码开发 · 坐标纸 + 整齐画廊
-   大字号 / 三色分类 / 灵感碎片卡片
+   代码开发 · Editorial 编辑杂志风
+   参考 参考/editorial-showcase
+
+   ⚠️ 这一版的硬约束（和上一版完全相反，别加回来）：
+     禁用 渐变 / 背景图案 / 阴影 / 彩色强调色 / 大圆角 / 单侧粗边框装饰
+     整页只有一种墨色 #1C1C1C，靠透明度分层，靠发丝线分隔
+
+   关于透明度：风格指南写的是 /60 /40 /10 三档，但 /40 的小字实测对比度只有 2.8，
+   达不到指南自己要求的 WCAG AA（≥4.5:1）。所以小字一律收到 /65（实测 5.1），
+   /60 只留给超大号的斜体副行（大字号只需 3:1）。发丝线保持 /10。
    ============================================ */
 
-/* ===== 全局：工程图纸底 =====
-   全部是静态 background-image 叠加：零额外元素、零模糊、零重绘开销
-     ① 副网格 20px  ② 主网格 100px —— 真实坐标纸就是「主线 + 副线」两级
-     ③ 纸张受光不均 + 边缘暗角 —— 同色系的明暗，不是"污渍"
+.ed-world {
+  --ed-ink: #1c1c1c;
+  --ed-ink-2: rgba(28, 28, 28, 0.65);
+  --ed-ink-3: rgba(28, 28, 28, 0.6);
+  --ed-line: rgba(28, 28, 28, 0.1);
+  --ed-bg: #f9f8f6;
+  --ed-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-   以前那两层全不透明的暗紫 / 暗酒红晕染已去掉。它们把底弄成"发霉的旧纸"，
-   还逼得文字分裂成两套颜色体系（暗处用浅字、亮处用深字）—— 那正是"塑料感"的根源，
-   而且极脆：暗块一移位，浅色标题就看不见了（实测对比度只有 1.28）。 */
-.projects-world {
   min-height: calc(100vh - var(--nav-height));
-  background-color: #e5e1db;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(66, 56, 66, 0.042) 0 1px, transparent 1px 20px),
-    repeating-linear-gradient(90deg, rgba(66, 56, 66, 0.042) 0 1px, transparent 1px 20px),
-    repeating-linear-gradient(0deg, rgba(66, 56, 66, 0.08) 0 1px, transparent 1px 100px),
-    repeating-linear-gradient(90deg, rgba(66, 56, 66, 0.08) 0 1px, transparent 1px 100px),
-    radial-gradient(130% 70% at 18% 0%, rgba(255, 253, 249, 0.7), transparent 62%),
-    radial-gradient(120% 80% at 88% 92%, rgba(120, 104, 120, 0.09), transparent 60%),
-    radial-gradient(150% 120% at 50% 50%, transparent 52%, rgba(92, 78, 94, 0.11) 100%);
-  color: #241d28;
+  background: var(--ed-bg);
+  color: var(--ed-ink);
   position: relative;
   overflow-x: hidden;
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-family: var(--font-body);
 }
 
-
-.projects-inner {
-  max-width: 1000px;
+.ed-inner {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 52px 32px 80px;
-  position: relative;
-  z-index: 1;
+  padding: 0 48px;
 }
 
-/* 滚动条 */
-.projects-world ::-webkit-scrollbar { width: 6px; }
-.projects-world ::-webkit-scrollbar-track { background: transparent; }
-.projects-world ::-webkit-scrollbar-thumb { background: rgba(180,160,140,0.3); border-radius: 3px; }
-
-/* ===== 头部 ===== */
-.projects-hero {
-  margin-bottom: 40px;
+/* ============================================
+   Hero：巨型衬线标题（第二行斜体降透明度）+ 右侧小号大写说明
+   ============================================ */
+.ed-hero {
+  padding-top: 128px;
+  padding-bottom: 64px;
 }
 
-.projects-hero-title {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 4rem;
-  font-weight: 700;
-  /* 深墨。原来是 #f5eef1（近白），靠背景暗块恰好落在标题下面才看得见，
-     实测对底色对比度只有 1.28 —— 暗块一移位标题就消失 */
-  color: #241d28;
-  margin: 0 0 8px;
-  letter-spacing: 0.02em;
-  line-height: 1.1;
-  display: inline-block;
-  position: relative;
-}
-
-/* 标注下划线：像图纸上用红笔划的一道，不是荧光笔 */
-.projects-hero-title::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: -4px;
-  right: -4px;
-  height: 5px;
-  background: rgba(184, 85, 115, 0.3);
-}
-
-.projects-hero-sub {
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  color: #665e72;
-  letter-spacing: 0.18em;
-  margin-top: 14px;
-}
-
-/* ===== 筛选标签 ===== */
-.projects-filter {
+.ed-hero-row {
   display: flex;
-  gap: var(--sp-2);
-  margin-bottom: var(--sp-6);
-  flex-wrap: wrap;
-}
-
-/* 筛选：做成"图纸上的勾选框"，方角、细边、等宽字 */
-.projects-filter-btn {
-  padding: 5px 16px;
-  border: 1px solid rgba(58, 46, 58, 0.18);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.42);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: #5d5566;
-  cursor: pointer;
-  letter-spacing: 0.08em;
-  transition: all var(--t-fast) ease;
-}
-
-.projects-filter-btn:hover {
-  border-color: rgba(58, 46, 58, 0.34);
-  color: #241d28;
-}
-
-.projects-filter-btn--active {
-  background: #ae4f6b;
-  border-color: #ae4f6b;
-  color: #fdfcfa;
-}
-
-/* ===== 画廊网格 ===== */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-4);
-}
-
-/* ===== 项目卡片 · 图纸卡 =====
-   质感来自三件事，缺一不可：
-     ① 纸面：极淡的竖向渐变（模拟纸张受光），不是纯色填充
-     ② 描边：1px 半透明深色 —— 白色描边是"塑料贴纸"的标志，纸没有白边
-     ③ 投影：四层，近处紧、远处散 —— 单层均匀糊影是廉价感最大的来源
-   圆角收到 8px：16px 是 App 卡片的语言，8px 才是图纸上的一张纸片 */
-.projects-card {
-  position: relative;
-  border-radius: 8px;
-  padding: 22px 22px 18px 26px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  min-height: 248px;
-  background-color: #fcfbf8;
-  background-image: linear-gradient(178deg, #fefdfb 0%, #faf8f5 100%);
-  border: 1px solid rgba(58, 46, 58, 0.13);
-  box-shadow:
-    0 1px 1px rgba(52, 34, 50, 0.05),
-    0 2px 4px rgba(52, 34, 50, 0.04),
-    0 8px 16px -6px rgba(52, 34, 50, 0.07),
-    0 22px 36px -16px rgba(52, 34, 50, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  transition:
-    transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow var(--t-base) ease,
-    border-color var(--t-base) ease;
-}
-
-/* 左侧状态色条：上下内缩，不碰圆角，比整条贴边更收敛 */
-.projects-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 16px;
-  bottom: 16px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: var(--status-color, #9c949c);
-}
-
-/* hover：克制的上浮 + 投影加深。
-   去掉了原来的 scale(1.03) 与 Q 弹曲线 cubic-bezier(0.34,1.56,0.64,1) ——
-   弹性缩放是"廉价感"的另一个来源 */
-.projects-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(58, 46, 58, 0.22);
-  box-shadow:
-    0 1px 1px rgba(52, 34, 50, 0.05),
-    0 3px 6px rgba(52, 34, 50, 0.05),
-    0 12px 24px -8px rgba(52, 34, 50, 0.11),
-    0 30px 48px -20px rgba(52, 34, 50, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
-}
-
-/* 内容容器 */
-.projects-card-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-/* 状态标签：去掉白胶囊底 —— 那是通用组件语言。
-   改成"极小号 + 大字距 + 小圆点"，是精密仪器的标签语言 */
-.projects-card-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 14px;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  /* 中文不能用大字距 —— 拉丁文大字距显得精密，中文大字距只是松散 */
-  letter-spacing: 0.08em;
-  color: #5f5765;
-}
-.projects-card-badge-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: var(--status-color, #9c949c);
-}
-
-/* 标题：1.8rem/700 → 1.2rem/600。
-   大字 + 淡色底 = 海报感 = 塑料感；小字 + 纸面才像"文件卡" */
-.projects-card-title {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #241d28;
-  line-height: 1.4;
-  letter-spacing: 0.01em;
-  margin-bottom: 10px;
-}
-
-/* 技术栈：等宽 + 中点分隔（React · Vite · Router），比空格平铺更有工程感 */
-.projects-card-tech {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-.projects-card-tag {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: #6b6373;
-  letter-spacing: 0.03em;
-}
-/* 分隔符加在「非最后一个」的后面，而不是每个的前面 ——
-   否则换行时行首会出现一个孤立的「·」 */
-.projects-card-tag:not(:last-child)::after {
-  content: '·';
-  margin: 0 6px;
-  color: rgba(125, 116, 132, 0.45);
-}
-
-/* 描述 */
-.projects-card-desc {
-  font-size: 0.82rem;
-  color: #5d5566;
-  line-height: 1.62;
-  flex-grow: 1;
-}
-
-/* CTA：做成卡片底部一行"表尾"，带一条细分隔线 */
-.projects-card-cta {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(58, 46, 58, 0.08);
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  color: #6f6674;
-}
-.projects-card-cta-arrow {
-  width: 14px;
-  height: 14px;
-  transition: transform var(--t-fast) ease;
-}
-.projects-card:hover .projects-card-cta-arrow {
-  transform: translateX(3px);
+  align-items: flex-end;
+  gap: 48px;
+  flex-wrap: wrap;
 }
 
-/* 进度：2px 细线 + 等宽数字，像图纸上的量度线 */
-.projects-card-progress {
-  margin-top: 12px;
-}
-.projects-card-bar {
-  height: 2px;
-  background: rgba(58, 46, 58, 0.1);
-  overflow: hidden;
-}
-.projects-card-fill {
-  height: 100%;
-  background: #b85573;
-  transition: width 1s ease-out;
-}
-.projects-card-pct {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  color: #8a8194;
-  text-align: right;
-  margin-top: 4px;
+.ed-hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 7vw, 5rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
 }
 
-/* ===== 搁置卡片 ===== */
-.projects-card--abandoned {
-  opacity: 0.68;
-}
-/* 一道细斜线划掉 —— 比原来的粗色带克制，但"作废"的语义还在 */
-.projects-card--abandoned::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom right,
-    transparent 49.5%,
-    rgba(150, 142, 152, 0.55) 49.85%,
-    rgba(150, 142, 152, 0.55) 50.15%,
-    transparent 50.5%
-  );
-  pointer-events: none;
-}
-.projects-card--abandoned:hover {
-  opacity: 0.9;
-}
-.projects-card--abandoned .projects-card-title {
-  color: #6f6674;
+.ed-hero-title em {
+  font-style: italic;
+  color: var(--ed-ink-3);
 }
 
-/* ===== 灵感碎片：三张小图纸 ===== */
-.projects-ideas-section {
-  margin: var(--sp-7) 0 0;
+.ed-hero-note {
+  max-width: 20rem;
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  line-height: 2;
+  /* 中文不用 0.2em —— 那是拉丁文的字距，中文会被撑散 */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ed-ink-2);
 }
 
-.projects-ideas-title {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #241d28;
-  margin: 0 0 20px;
-  letter-spacing: 0.02em;
-  position: relative;
-  display: inline-block;
+/* ============================================
+   通用：标签 / 区块头 / hover 下划线
+   ============================================ */
+.ed-label {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-ink);
 }
 
-.projects-ideas-title::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: -3px;
-  right: -3px;
-  height: 5px;
-  background: rgba(184, 85, 115, 0.3);
+.ed-label--muted {
+  font-weight: 400;
+  color: var(--ed-ink-2);
 }
 
-.projects-ideas-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-4);
+.ed-section {
+  padding: 96px 0 160px;
 }
 
-/* 灵感卡本身就是一小张坐标纸 —— 数据里每条灵感只有两行字，
-   留白本来会显得"没做完"；铺上网格后，空白变成了质感 */
-.projects-idea-card {
-  position: relative;
-  border-radius: 8px;
-  padding: 18px 18px 18px 22px;
-  min-height: 116px;
+.ed-sec-head {
   display: flex;
-  cursor: default;
-  background-color: #fefdfb;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(66, 56, 66, 0.055) 0 1px, transparent 1px 14px),
-    repeating-linear-gradient(90deg, rgba(66, 56, 66, 0.055) 0 1px, transparent 1px 14px);
-  border: 1px solid rgba(58, 46, 58, 0.13);
-  box-shadow:
-    0 1px 1px rgba(52, 34, 50, 0.05),
-    0 4px 10px -4px rgba(52, 34, 50, 0.08),
-    0 14px 24px -14px rgba(52, 34, 50, 0.1);
-  transition:
-    transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow var(--t-base) ease;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--ed-line);
+  padding-bottom: 24px;
 }
 
-.projects-idea-card::before {
+/* 下划线动画：从右下角展开、往左下角收起 */
+.hover-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.hover-underline::after {
   content: '';
   position: absolute;
   left: 0;
-  top: 14px;
-  bottom: 14px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: var(--status-color, #9c949c);
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.5s var(--ed-ease);
 }
 
-/* 轻微倾斜：像随手钉在图纸上的便签，但幅度收小（原来 ±1.5deg 太散） */
-.projects-idea-card:nth-child(1) { transform: rotate(-0.7deg); }
-.projects-idea-card:nth-child(2) { transform: rotate(0.5deg); }
-.projects-idea-card:nth-child(3) { transform: rotate(-0.4deg); }
-
-.projects-idea-card:hover {
-  transform: rotate(0deg) translateY(-2px);
-  box-shadow:
-    0 1px 1px rgba(52, 34, 50, 0.05),
-    0 6px 14px -6px rgba(52, 34, 50, 0.1),
-    0 20px 32px -18px rgba(52, 34, 50, 0.14);
+.hover-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }
 
-.projects-idea-card-content {
+/* ============================================
+   筛选：极简文字按钮，激活态带下划线
+   ============================================ */
+.ed-filters {
+  display: flex;
+  gap: 24px;
+}
+
+.ed-filter {
   position: relative;
-  z-index: 1;
+  padding: 0 0 3px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-ink-2);
+  transition: color 0.5s var(--ed-ease);
+}
+
+.ed-filter:hover,
+.ed-filter--active {
+  color: var(--ed-ink);
+}
+
+.ed-filter--active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+}
+
+/* ============================================
+   项目列表：编号 + 衬线标题 + 发丝分隔线
+   ============================================ */
+.ed-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 100%;
 }
 
-.projects-idea-card-text {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #2a2230;
-  line-height: 1.55;
+.ed-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 48px;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--ed-line);
+  cursor: pointer;
+  transition: border-color 0.5s var(--ed-ease);
+}
+
+.ed-row:hover,
+.ed-row:focus-visible {
+  border-color: rgba(28, 28, 28, 0.4);
+  outline: none;
+}
+
+.ed-row-main {
+  display: flex;
+  align-items: baseline;
+  gap: 48px;
+  min-width: 0;
+}
+
+.ed-row-num {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--ed-ink-2);
+}
+
+.ed-row-body {
+  min-width: 0;
+}
+
+.ed-row-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  transition: font-style 0.5s var(--ed-ease);
+}
+
+/* group-hover:italic —— 悬停时标题转斜体 */
+.ed-row:hover .ed-row-title,
+.ed-row:focus-visible .ed-row-title {
+  font-style: italic;
+}
+
+.ed-row-desc {
+  margin: 10px 0 0;
+  max-width: 46ch;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--ed-ink-2);
+}
+
+.ed-row-tech {
+  margin: 8px 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ed-ink-2);
+}
+
+.ed-row-meta {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-ink-2);
+}
+
+/* 搁置：靠排版表达，不用颜色 —— 标题划掉 + 整行降透明度 */
+.ed-row--abandoned {
+  opacity: 0.55;
+}
+
+.ed-row--abandoned .ed-row-title {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.ed-empty {
+  padding: 64px 0;
+  font-size: 0.9rem;
+  color: var(--ed-ink-2);
+}
+
+/* ============================================
+   灵感碎片：两列极简卡片，只有发丝边框
+   ============================================ */
+/* 不要用「gap + 灰底」做发丝线 —— 条目数不整除列数时空格会露出灰块。
+   改成每张卡自己带顶线，偶数列带左竖线，网格收一条底线 */
+.ed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-bottom: 1px solid var(--ed-line);
+}
+
+.ed-idea {
+  padding: 40px 32px 40px 0;
+  border-top: 1px solid var(--ed-line);
+}
+
+.ed-idea:nth-child(odd) {
+  padding-right: 32px;
+}
+
+.ed-idea:nth-child(even) {
+  padding-left: 32px;
+  padding-right: 0;
+  border-left: 1px solid var(--ed-line);
+}
+
+.ed-idea-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.3;
   white-space: pre-line;
+  transition: font-style 0.5s var(--ed-ease);
 }
 
-/* ===== 弹窗 ===== */
-.projects-modal-overlay {
+.ed-idea:hover .ed-idea-text {
+  font-style: italic;
+}
+
+/* ============================================
+   弹窗：放大的一张纸，没有阴影没有圆角
+   ============================================ */
+.ed-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(36, 29, 40, 0.42);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--sp-5);
-  animation: proj-fade-in 0.2s ease;
-  backdrop-filter: blur(6px);
+  padding: 24px;
+  background: rgba(28, 28, 28, 0.5);
+  animation: ed-fade-in 0.3s var(--ed-ease);
 }
 
-/* 弹窗就是放大的一张图纸卡，材质和卡片保持一致 */
-.projects-modal {
-  background-color: #fcfbf8;
-  background-image: linear-gradient(178deg, #fefdfb 0%, #faf8f5 100%);
-  border-radius: 10px;
-  border: 1px solid rgba(58, 46, 58, 0.15);
-  max-width: 560px;
+.ed-modal {
+  position: relative;
   width: 100%;
+  max-width: 620px;
   max-height: 85vh;
   overflow-y: auto;
-  position: relative;
-  box-shadow:
-    0 2px 6px rgba(52, 34, 50, 0.08),
-    0 16px 32px -12px rgba(52, 34, 50, 0.18),
-    0 48px 80px -32px rgba(52, 34, 50, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  animation: proj-modal-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--ed-bg);
+  border: 1px solid var(--ed-line);
+  animation: ed-modal-in 0.5s var(--ed-ease);
 }
 
-@keyframes proj-modal-in {
-  0% { clip-path: inset(0 0 100% 0); opacity: 0; }
-  100% { clip-path: inset(0 0 0 0); opacity: 1; }
+@keyframes ed-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* 关闭按钮：圆钮 → 细边方钮，和图纸卡的方角语言一致 */
-.projects-modal-close {
+@keyframes ed-modal-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ed-modal-close {
   position: absolute;
-  top: var(--sp-4);
-  right: var(--sp-4);
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(58, 46, 58, 0.16);
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 4px;
+  top: 20px;
+  right: 20px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--ed-line);
+  background: none;
   cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 0;
-  transition: background var(--t-fast) ease, border-color var(--t-fast) ease;
+  transition: border-color 0.5s var(--ed-ease);
 }
 
-.projects-modal-close::before,
-.projects-modal-close::after {
+.ed-modal-close::before,
+.ed-modal-close::after {
   content: '';
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: 12px;
-  height: 1.5px;
-  background: #5d5566;
-}
-
-.projects-modal-close::before { transform: rotate(45deg); }
-.projects-modal-close::after { transform: rotate(-45deg); }
-
-.projects-modal-close:hover {
-  background: rgba(184, 85, 115, 0.1);
-  border-color: rgba(184, 85, 115, 0.4);
-}
-
-.projects-modal-body {
-  padding: 36px 38px 40px;
-}
-
-.projects-modal-head {
-  margin-bottom: 4px;
-}
-
-.projects-modal-title {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #241d28;
-  margin: 0 0 14px;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
-}
-
-.projects-modal-tags {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
-/* 标签用细边方角，和筛选按钮同一套语言（原来是白底胶囊） */
-.projects-modal-tag {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 1px solid rgba(58, 46, 58, 0.16);
-  color: #5d5566;
-  letter-spacing: 0.03em;
-}
-
-.projects-modal-date {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.8rem;
-  color: #7a7284;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.projects-modal-sep {
   height: 1px;
-  background: rgba(74, 68, 84, 0.12);
-  border: none;
-  margin: 18px 0;
+  background: var(--ed-ink);
 }
 
-.projects-modal-desc {
-  font-size: 1rem;
-  line-height: 1.75;
-  color: #26222d;
-  margin-bottom: 18px;
+.ed-modal-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.ed-modal-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.ed-modal-close:hover {
+  border-color: rgba(28, 28, 28, 0.4);
 }
 
-.projects-modal-detail {
+.ed-modal-body {
+  padding: 56px 56px 48px;
+}
+
+.ed-modal-head {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ed-line);
+  margin-bottom: 32px;
+}
+
+.ed-modal-title {
+  margin: 16px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.ed-modal-tech {
+  margin: 14px 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ed-ink-2);
+}
+
+.ed-modal-detail {
   font-size: 0.95rem;
-  line-height: 1.8;
-  color: #3a3444;
+  line-height: 1.9;
+  color: var(--ed-ink);
 }
 
-.projects-modal-detail p { margin-bottom: 0.7em; }
-
-.projects-modal-highlights { margin: 18px 0; }
-
-.projects-modal-highlight {
-  font-size: 0.9rem;
-  color: #4a4454;
-  padding: 4px 0 4px 18px;
-  position: relative;
-  line-height: 1.5;
+.ed-modal-detail p {
+  margin: 0 0 1.1em;
+  max-width: 62ch;
 }
 
-.projects-modal-highlight::before {
-  content: '▸';
-  position: absolute;
-  left: 0;
-  color: #b85573;
-  font-size: 0.75rem;
-  top: 4px;
+.ed-modal-highlights {
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ed-line);
 }
 
-.projects-modal-link {
+.ed-modal-highlights li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--ed-line);
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--ed-ink-2);
+}
+
+.ed-modal-link {
   display: inline-block;
-  margin-top: 18px;
-  padding: 8px 22px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #b85573, #d76a8a);
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.85rem;
-  color: #fff;
-  text-decoration: none;
-  letter-spacing: 0.03em;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 32px;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-ink);
 }
 
-.projects-modal-link-a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.projects-modal-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(215,106,138,0.4);
-}
-/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
-
-/* 导航栏配色已移到 src/data/navTheme.js 的 '/projects' 一项 */
-
-/* ===== 动画 ===== */
-@keyframes proj-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-/* ===== 响应式 ===== */
+/* ============================================
+   响应式：全站三档 900 / 768 / 480
+   ============================================ */
 @media (max-width: 900px) {
-  .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  .projects-ideas-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .ed-inner {
+    padding: 0 32px;
+  }
+  .ed-row-main {
+    gap: 32px;
+  }
 }
 
 @media (max-width: 768px) {
-  .projects-inner { padding: 32px 20px 60px; }
-  .projects-hero-title { font-size: 3.5rem; }
-  .projects-hero-sub { font-size: 0.85rem; }
-  .projects-ideas-title { font-size: 2.2rem; }
-  .projects-card-title { font-size: 1.4rem; }
-  .projects-modal { max-width: 100%; border-radius: 2px; }
-  .projects-modal-body { padding: 24px 22px 28px; }
-  .projects-modal-title { font-size: 2rem; }
+  .ed-inner {
+    padding: 0 24px;
+  }
+  .ed-hero {
+    padding-top: 72px;
+    padding-bottom: 40px;
+  }
+  .ed-hero-row {
+    gap: 24px;
+  }
+  .ed-section {
+    padding: 64px 0 96px;
+  }
+  .ed-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 28px 0;
+  }
+  .ed-row-main {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ed-grid {
+    grid-template-columns: 1fr;
+  }
+  .ed-idea,
+  .ed-idea:nth-child(odd),
+  .ed-idea:nth-child(even) {
+    padding: 28px 0;
+    border-left: none;
+  }
+  .ed-modal-body {
+    padding: 40px 24px 32px;
+  }
 }
 
 @media (max-width: 480px) {
-  .projects-grid { grid-template-columns: 1fr; gap: 12px; }
-  .projects-ideas-grid { grid-template-columns: 1fr; gap: 12px; }
-  .projects-hero-title { font-size: 2.8rem; }
-  .projects-ideas-title { font-size: 1.8rem; }
+  .ed-filters {
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-row,
+  .ed-row-title,
+  .ed-filter,
+  .ed-idea,
+  .ed-idea-text,
+  .ed-modal,
+  .ed-modal-close {
+    transition: none;
+  }
+  .hover-underline::after {
+    transition: none;
+  }
+  .ed-modal-overlay,
+  .ed-modal {
+    animation: none;
+  }
 }
