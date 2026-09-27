@@ -11,9 +11,9 @@ import { useTransition } from '../context/TransitionContext.jsx'
  * ③ 圆圈扩散是 <Loading> 组件自带的（时长由它内部公式 hypot/2+50 ÷ 1500 算出，
  *    改不了），这里只是扩散播完后再多留一点缓冲才收尾。
  */
-const CURTAIN_MS = 600
-const ISLAND_MS = 350
-const REVEAL_PAD_MS = 150
+const CURTAIN_MS = 800
+const ISLAND_MS = 700
+const REVEAL_PAD_MS = 200
 
 function LoadingTransition() {
   const { phase, handleCovered, handleRevealed } = useTransition()

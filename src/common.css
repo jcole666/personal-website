@@ -998,7 +998,7 @@ body {
 /* 关幕动画：透明圆从 120vmax 缩到 0，四周 → 中间
    时长必须与 LoadingTransition.jsx 里的 CURTAIN_MS 一致，否则动画播一半就被切走 */
 .transition-curtain--closing {
-  animation: curtain-close 0.6s ease-in-out forwards;
+  animation: curtain-close 0.8s ease-in-out forwards;
 }
 
 @keyframes curtain-close {
