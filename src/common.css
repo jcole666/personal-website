@@ -142,11 +142,7 @@ body {
 
    代码开发页本来就有 4 层晕染、游戏页是整屏照片，这两页不需要配。
    ============================================ */
-.courses-world {
-  --ambient:
-    radial-gradient(60% 40% at 14% 5%, rgba(255, 45, 149, 0.15), transparent 70%),
-    radial-gradient(65% 42% at 88% 24%, rgba(0, 240, 255, 0.11), transparent 70%);
-}
+/* 课程学习页改成 Memphis 风格后自带渐变 hero 与撞色块，不需要氛围光 */
 
 .experience-world {
   --ambient:
@@ -338,7 +334,7 @@ body {
   background: var(--nav-bg, rgba(255, 255, 255, 0.18));
   backdrop-filter: var(--nav-blur, var(--glass-blur));
   -webkit-backdrop-filter: var(--nav-blur, var(--glass-blur));
-  border-bottom: 1px solid var(--nav-border, rgba(255, 255, 255, 0.3));
+  border-bottom: var(--nav-border-width, 1px) solid var(--nav-border, rgba(255, 255, 255, 0.3));
   display: flex;
   align-items: center;
 }
@@ -360,7 +356,7 @@ body {
   font-family: var(--nav-logo-font, var(--font-display));
   font-size: var(--nav-logo-size, 1.5rem);
   letter-spacing: var(--nav-logo-spacing, normal);
-  font-weight: 600;
+  font-weight: var(--nav-logo-weight, 600);
   color: var(--nav-ink, var(--purple-deep));
   text-shadow: var(--nav-logo-glow, none);
   text-decoration: none;
@@ -400,7 +396,7 @@ body {
   height: 36px;
   padding: 0 var(--sp-3);
   font-size: var(--fs-base);
-  font-weight: 500;
+  font-weight: var(--nav-menu-weight, 500);
   line-height: 1;
   color: var(--nav-ink, var(--purple-deep));
   text-shadow: var(--nav-menu-shadow, none);

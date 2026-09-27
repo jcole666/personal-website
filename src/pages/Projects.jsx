@@ -54,10 +54,16 @@ function useReveal() {
       setShown(true)
       return
     }
-    // 进出都同步 shown —— 不要 disconnect，否则只有第一次进入会播，
-    // 用户往上滑走再滑回来就不会再出现了
+    // 只播一次：进入视口后就把观察器断开，元素从此保持显示。
+    // （试过"离开也复位"让动画反复播放，但上下滑时屏幕上一直有东西在动，观感偏晕，
+    //   用户最终选择回到只播一次）
     const io = new IntersectionObserver(
-      ([entry]) => setShown(entry.isIntersecting),
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          io.disconnect()
+        }
+      },
       { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
     )
     io.observe(el)

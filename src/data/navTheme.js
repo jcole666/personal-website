@@ -44,6 +44,9 @@ export const DEFAULT_NAV_THEME = {
  *   logoFont    logo 字体，省略则用 --font-display
  *   logoSize    logo 字号，省略则 1.5rem
  *   logoSpacing logo 字距，省略则不额外设置（同样是按字体微调）
+ *   logoWeight  logo 字重，省略则 600（Memphis 这类风格要 900）
+ *   menuWeight  菜单项字重，省略则 500
+ *   borderWidth 底边框宽度，省略则 1px（Memphis 禁止细边框，要 4px）
  *   logoGlow    logo 的 text-shadow，用于课程页的霓虹感
  *   menuShadow  菜单文字的 text-shadow，用于游戏页（半透明导航压在背景图上）
  *   blur        毛玻璃强度，省略则跟随全局 --glass-blur
@@ -66,16 +69,21 @@ export const navThemes = {
     blur: 'none',
   },
   '/coursework': {
-    tag: 'NIGHT CITY',
-    bg: 'rgba(10, 10, 15, 0.94)',
-    border: 'rgba(255, 45, 149, 0.15)',
-    ink: '#e0dce0',
-    accent: '#ff2d95',
-    tagInk: '#ff2d95',
-    logoFont: "'Orbitron', 'Fira Code', sans-serif",
-    logoSize: '1.3rem',
-    logoSpacing: '0.06em',
-    logoGlow: '0 0 8px rgba(255, 45, 149, 0.5)',
+    // 课程学习页是 Memphis 孟菲斯风格：暖米底 + 纯黑粗边 + 高饱和撞色。
+    // 那个风格明令禁止细边框，所以 borderWidth 拉到 4px；字体也要极粗（900）。
+    tag: 'COURSEWORK',
+    bg: '#fef9ef',
+    border: '#000000',
+    borderWidth: '4px',
+    ink: '#000000',
+    accent: '#ff6b6b',
+    tagInk: '#000000',
+    logoFont: "'Noto Sans SC', 'Microsoft YaHei', sans-serif",
+    logoSize: '1.35rem',
+    logoSpacing: '-0.01em',
+    logoWeight: '900',
+    menuWeight: '900',
+    blur: 'none',
   },
   '/experience': {
     tag: 'ISLAND JOURNAL',
@@ -159,6 +167,9 @@ export function navThemeVars(theme) {
     '--nav-logo-font': theme.logoFont ?? 'var(--font-display)',
     '--nav-logo-size': theme.logoSize ?? '1.5rem',
     '--nav-logo-spacing': theme.logoSpacing ?? 'normal',
+    '--nav-logo-weight': theme.logoWeight ?? '600',
+    '--nav-menu-weight': theme.menuWeight ?? '500',
+    '--nav-border-width': theme.borderWidth ?? '1px',
     '--nav-logo-glow': theme.logoGlow ?? 'none',
     '--nav-menu-shadow': theme.menuShadow ?? 'none',
     '--nav-blur': theme.blur ?? 'var(--glass-blur)',

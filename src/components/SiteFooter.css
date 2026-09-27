@@ -9,7 +9,7 @@
 
 .site-footer {
   background: var(--ft-bg);
-  border-top: 1px solid var(--ft-border);
+  border-top: var(--ft-border-width, 1px) solid var(--ft-border);
   color: var(--ft-ink);
   padding: var(--sp-6) var(--sp-5) var(--sp-5);
   position: relative;
@@ -38,7 +38,7 @@
 .site-footer-logo {
   font-family: var(--ft-font);
   font-size: var(--ft-size);
-  font-weight: 600;
+  font-weight: var(--ft-weight, 600);
   letter-spacing: var(--ft-spacing);
   color: var(--ft-ink);
 }

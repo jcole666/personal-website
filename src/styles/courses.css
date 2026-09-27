@@ -1,604 +1,777 @@
 /* ============================================
-   课程学习 · 夜之城霓虹 v2
-   大标题 + 双标签筛选 + 画廊 + 弹窗 + 查看更多
+   课程学习 · Memphis 孟菲斯风格
+   参考 参考/memphis-showcase
+
+   ⚠️ 这一版的硬约束（和上一版赛博朋克夜城完全相反）：
+     必须 4px 纯黑粗边 + 硬边偏移阴影（无模糊）+ 高饱和撞色 + 几何装饰 + 点状图案
+     禁止 单调配色 / 对称规整布局 / 细边框 / 省略几何装饰 / 装饰在 hover 时静止
+
+   关于一处指南自相矛盾：Token 字典写 hover 时阴影"收到"2px，
+   但「必须遵守」和「绝对禁止」都要求 hover"增大阴影 + 换色，不要向阴影方向移动"。
+   按"禁止项优先级最高"，这里采用 —— hover 阴影放大到 8px 并把元素往上抬（远离阴影），
+   active 才位移 6px 且阴影归零（模拟玩具按键完全贴地）。
    ============================================ */
 
-/* ===== 全局 ===== */
-.courses-world {
+.mp-world {
+  --mp-black: #000000;
+  --mp-cream: #fef9ef;
+  --mp-red: #ff6b6b;
+  --mp-yellow: #feca57;
+  --mp-cyan: #48dbfb;
+  --mp-pink: #ff9ff3;
+  --mp-green: #1dd1a1;
+  --mp-purple: #5f27cd;
+
+  /* 硬边偏移阴影 —— 孟菲斯的标志，永远不带模糊 */
+  --mp-shadow-sm: 3px 3px 0 var(--mp-black);
+  --mp-shadow: 5px 5px 0 var(--mp-black);
+  --mp-shadow-lg: 8px 8px 0 var(--mp-black);
+  --mp-shadow-xl: 12px 12px 0 var(--mp-black);
+  --mp-border: 4px solid var(--mp-black);
+
+  /* 波普玩具的干脆感：一律 150ms ease-out */
+  --mp-t: 150ms ease-out;
+
   min-height: calc(100vh - var(--nav-height));
-  /* 氛围光见 common.css 的「全站氛围光」区块 */
-  background: var(--ambient), #0a0a0f;
-  color: #e0dce0;
-  position: relative;
+  background: var(--mp-cream);
+  color: var(--mp-black);
+  font-family: var(--font-body);
   overflow-x: hidden;
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
 }
 
-.courses-world::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 200px;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(30,20,50,0.35) 0%, transparent 100%);
+/* ============================================
+   动画（取自参考文件的定义）
+   ============================================ */
+@keyframes mp-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes mp-spin-rev {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes mp-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes mp-fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== 建筑剪影 ===== */
-.courses-buildings {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.courses-buildings::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; bottom: 0;
-  width: 7vw; max-width: 100px;
-  background: #0d0d14;
-  border-right: 1px solid rgba(255,45,149,0.04);
-}
-.courses-buildings::after {
-  content: '';
-  position: absolute;
-  top: 0; right: 0; bottom: 0;
-  width: 7vw; max-width: 100px;
-  background: #0d0d14;
-  border-left: 1px solid rgba(0,240,255,0.04);
+/* ============================================
+   Hero：渐变底 + 散布几何装饰 + 多层硬阴影标题
+   ============================================ */
+.mp-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 96px 48px 80px;
+  background: linear-gradient(135deg, #feca57 0%, #ff9ff3 50%, #48dbfb 100%);
+  border-bottom: var(--mp-border);
 }
 
-/* ===== 湿路面 ===== */
-.courses-road {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 160px;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(0deg, #1a1520 0%, rgba(10,10,15,0) 100%);
-}
-.courses-road::before {
-  content: '';
-  position: absolute;
-  bottom: 20px;
-  left: 10%; right: 10%;
-  height: 4px;
-  background: linear-gradient(90deg,
-    transparent, rgba(255,45,149,0.1) 15%, transparent 25%,
-    rgba(0,240,255,0.08) 40%, transparent 55%,
-    rgba(255,184,0,0.08) 70%, transparent 85%,
-    rgba(57,255,20,0.08) 95%, transparent
-  );
-  filter: blur(6px);
-}
-
-/* ===== 内容区 ===== */
-.courses-inner {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 52px 28px 100px;
+.mp-hero-inner {
   position: relative;
   z-index: 1;
-}
-
-/* ===== 标题 ===== */
-.courses-hero {
+  max-width: 1104px;
+  margin: 0 auto;
   text-align: center;
-  margin-bottom: 36px;
+  animation: mp-fade-up 500ms ease-out both;
 }
 
-.courses-hero-title {
-  font-family: 'Orbitron', 'Fira Code', sans-serif;
-  font-size: 6rem;
-  font-weight: 800;
-  color: #ff2d95;
-  text-shadow:
-    0 0 8px #ff2d95,
-    0 0 20px #ff2d95,
-    0 0 44px rgba(255,45,149,0.45),
-    0 0 80px rgba(255,45,149,0.2);
-  letter-spacing: 0.08em;
-  margin: 0 0 14px;
-  line-height: 1.1;
+/* 全屏点阵叠加 */
+.mp-hero-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#000 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+  opacity: 0.07;
+  pointer-events: none;
 }
 
-.courses-hero-sub {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.9rem;
-  color: #706878;
-  letter-spacing: 0.06em;
+/* 散布的几何装饰 —— 圆 / 环 / 方块 / 三角，各自动各自的 */
+.mp-deco {
+  position: absolute;
+  pointer-events: none;
 }
 
-/* ===== 筛选按钮 ===== */
-.courses-filters {
-  margin-bottom: 36px;
+.mp-deco--1 {
+  top: 30px;
+  left: 5%;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--mp-red);
+  border: 3px solid var(--mp-black);
+  animation: mp-bounce 1.4s ease-in-out infinite;
 }
 
-.courses-filter-row {
+.mp-deco--2 {
+  top: 20%;
+  right: 7%;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 8px solid var(--mp-cyan);
+  outline: 3px solid var(--mp-black);
+  outline-offset: -11px;
+  animation: mp-spin 8s linear infinite;
+}
+
+.mp-deco--3 {
+  bottom: 16%;
+  left: 8%;
+  width: 44px;
+  height: 44px;
+  background: var(--mp-green);
+  border: 3px solid var(--mp-black);
+  animation: mp-spin-rev 12s linear infinite;
+}
+
+/* 三角形：外层黑色三角 + ::after 内缩的彩色三角，叠出粗描边 */
+.mp-deco--4 {
+  bottom: 14%;
+  right: 10%;
+  width: 0;
+  height: 0;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-bottom: 46px solid var(--mp-black);
+  animation: mp-bounce 1.9s ease-in-out infinite 0.3s;
+}
+.mp-deco--4::after {
+  content: '';
+  position: absolute;
+  /* 0×0 元素的 border-box 以内容框为中心左右各扩 28px，顶点就在内容框原点，
+     所以内三角的 left 必须是 0 才能和外三角的顶点对齐（写 4px 会整体偏右） */
+  left: 0;
+  top: 6px;
+  width: 0;
+  height: 0;
+  border-left: 24px solid transparent;
+  border-right: 24px solid transparent;
+  border-bottom: 36px solid var(--mp-red);
+}
+
+.mp-deco--5 {
+  /* 原来放在 58%/44%，正好压在正文上；挪到标题上方的左侧空区 */
+  top: 14%;
+  left: 22%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--mp-purple);
+  border: 3px solid var(--mp-black);
+  animation: mp-spin 6s linear infinite;
+}
+
+/* 徽章：黑底黄字 + 硬阴影 */
+.mp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding: 8px 20px;
+  background: var(--mp-black);
+  color: var(--mp-yellow);
+  border: 3px solid var(--mp-black);
+  box-shadow: 4px 4px 0 var(--mp-red);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.mp-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--mp-cream);
+  flex-shrink: 0;
+}
+
+/* 标题：多层错位硬阴影 —— 孟菲斯最标志性的手法 */
+.mp-hero-title {
+  margin: 0 0 20px;
+  font-family: var(--font-body);
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--mp-black);
+  text-shadow: 4px 4px 0 var(--mp-red), 8px 8px 0 var(--mp-cyan);
+}
+
+.mp-hero-sub {
+  max-width: 34rem;
+  margin: 0 auto 40px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--mp-black);
+}
+
+/* 统计块：撞色方块 + 粗边 + 硬阴影 */
+.mp-stats {
   display: flex;
   justify-content: center;
-  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  gap: 20px;
 }
 
-.courses-filter-btn {
-  padding: 6px 18px;
-  border: 1.5px solid rgba(255,255,255,0.1);
-  border-radius: 3px;
-  background: rgba(12,12,20,0.6);
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.72rem;
-  color: #706878;
-  cursor: pointer;
+.mp-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 24px;
+  background: var(--mp-color);
+  border: var(--mp-border);
+  box-shadow: var(--mp-shadow);
+  transition: transform var(--mp-t), box-shadow var(--mp-t);
+}
+
+.mp-stat:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--mp-shadow-lg);
+}
+
+.mp-stat b {
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.mp-stat span {
+  font-size: 0.9rem;
+  font-weight: 900;
   letter-spacing: 0.04em;
-  transition: all 0.25s;
 }
 
-.courses-filter-btn:hover {
-  border-color: rgba(255,45,149,0.4);
-  color: #c0bcc4;
+/* ============================================
+   按钮：粗边 + 硬阴影；hover 换撞色并放大阴影
+   ============================================ */
+.mp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 22px;
+  border: var(--mp-border);
+  background: var(--mp-cream);
+  color: var(--mp-black);
+  box-shadow: var(--mp-shadow);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--mp-t), box-shadow var(--mp-t), transform var(--mp-t);
 }
 
-.courses-filter-btn--active {
-  border-color: #ff2d95;
-  color: #ff2d95;
-  background: rgba(255,45,149,0.1);
-  text-shadow: 0 0 6px rgba(255,45,149,0.4);
-  box-shadow: 0 0 8px rgba(255,45,149,0.15), 0 0 20px rgba(255,45,149,0.05);
+.mp-btn:hover {
+  background: var(--mp-pink);
+  box-shadow: var(--mp-shadow-lg);
+  transform: translate(-2px, -2px);
 }
 
-.courses-filter-btn--subject.courses-filter-btn--active {
-  border-color: #00f0ff;
-  color: #00f0ff;
-  background: rgba(0,240,255,0.1);
-  text-shadow: 0 0 6px rgba(0,240,255,0.4);
-  box-shadow: 0 0 8px rgba(0,240,255,0.15), 0 0 20px rgba(0,240,255,0.05);
+/* 玩具按键：按下去完全贴地 */
+.mp-btn:active {
+  transform: translate(6px, 6px);
+  box-shadow: none;
 }
 
-/* ===== 画廊 ===== */
-.courses-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.mp-btn--on {
+  background: var(--mp-red);
+  box-shadow: var(--mp-shadow-lg);
+}
+
+.mp-btn--on:hover {
+  background: var(--mp-yellow);
+}
+
+.mp-btn--sm {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  box-shadow: var(--mp-shadow-sm);
+}
+
+.mp-btn--lg {
+  padding: 14px 34px;
+  font-size: 1.05rem;
+}
+
+/* ============================================
+   筛选
+   ============================================ */
+.mp-filters {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 48px 0;
+  display: flex;
+  flex-direction: column;
   gap: 18px;
 }
 
-/* ===== 卡片 ===== */
-.courses-card {
-  background: rgba(12,12,20,0.85);
-  border: 1.5px solid var(--neon-color, #ff2d95);
-  border-radius: 4px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+.mp-filter-row {
   display: flex;
-  box-shadow:
-    0 0 4px var(--neon-color, #ff2d95),
-    0 0 12px rgba(255,45,149,0.15);
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
-.courses-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 0 8px var(--neon-color, #ff2d95),
-    0 0 20px rgba(255,45,149,0.3),
-    0 0 36px rgba(255,45,149,0.1);
+/* ============================================
+   卡片网格
+   ============================================ */
+.mp-grid-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 48px 120px;
 }
 
-.courses-card-stripe {
-  width: 4px;
-  flex-shrink: 0;
-  background: var(--neon-color, #ff2d95);
-  box-shadow: 0 0 6px var(--neon-color, #ff2d95);
+.mp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
 }
 
-.courses-card-body {
-  padding: 18px 20px;
-  flex: 1;
-  min-width: 0;
+.mp-card {
+  position: relative;
+  overflow: hidden;
+  padding: 26px;
+  border: var(--mp-border);
+  background: var(--mp-color, var(--mp-red));
+  color: var(--mp-ink, var(--mp-black));
+  box-shadow: var(--mp-shadow);
+  cursor: pointer;
+  transition: transform var(--mp-t), box-shadow var(--mp-t);
 }
 
-.courses-card-top {
+.mp-card:hover,
+.mp-card:focus-visible {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--mp-shadow-xl);
+  outline: none;
+}
+
+/* 卡片里的几何装饰：hover 时各自朝不同方向动（Playful Chaos），不统一方向 */
+.mp-card-deco {
+  position: absolute;
+  pointer-events: none;
+  transition: transform var(--mp-t);
+}
+
+.mp-card-deco--circle {
+  top: 14px;
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--mp-cream);
+  border: 3px solid var(--mp-black);
+}
+
+.mp-card:hover .mp-card-deco--circle {
+  transform: translate(16px, -8px);
+}
+
+.mp-card-deco--tri {
+  bottom: 16px;
+  left: 14px;
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-bottom: 30px solid var(--mp-black);
+  opacity: 0.22;
+}
+
+.mp-card:hover .mp-card-deco--tri {
+  transform: translate(-8px, 6px) rotate(14deg);
+}
+
+.mp-card-deco--ring {
+  bottom: 22px;
+  right: 18px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 5px solid var(--mp-black);
+  opacity: 0.22;
+}
+
+.mp-card:hover .mp-card-deco--ring {
+  transform: rotate(-40deg) scale(1.2);
+}
+
+.mp-card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mp-card-top {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.courses-card-status {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-weight: 600;
-}
-
-.courses-card-status--learning {
-  color: #39ff14;
-  border: 1px solid rgba(57,255,20,0.3);
-  text-shadow: 0 0 4px rgba(57,255,20,0.3);
-}
-
-.courses-card-status--completed {
-  color: #00f0ff;
-  border: 1px solid rgba(0,240,255,0.3);
-  text-shadow: 0 0 4px rgba(0,240,255,0.3);
-}
-
-.courses-card-status--planned {
-  color: #ffb800;
-  border: 1px solid rgba(255,184,0,0.3);
-  text-shadow: 0 0 4px rgba(255,184,0,0.3);
-}
-
-.courses-card-rating {
-  color: #ffb800;
+/* 状态胶囊：粗边 */
+.mp-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: var(--mp-black);
+  color: #ffffff;
+  border: 3px solid var(--mp-black);
   font-size: 0.72rem;
-  letter-spacing: 0.04em;
+  font-weight: 900;
+  letter-spacing: 0.1em;
 }
 
-.courses-card-title {
-  font-family: 'Orbitron', 'Fira Code', sans-serif;
-  font-size: 1.4rem;
+.mp-chip--learning {
+  background: var(--mp-cyan);
+  color: var(--mp-black);
+}
+
+.mp-chip--completed {
+  background: var(--mp-green);
+  color: var(--mp-black);
+}
+
+.mp-chip--planned {
+  background: var(--mp-yellow);
+  color: var(--mp-black);
+}
+
+.mp-stars {
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--mp-ink, var(--mp-black));
+}
+
+.mp-card-title {
+  margin: 0 0 6px;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.mp-card-subtitle {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--neon-color, #ff2d95);
-  text-shadow: 0 0 5px var(--neon-color, #ff2d95), 0 0 12px rgba(255,45,149,0.2);
-  letter-spacing: 0.03em;
-  margin-bottom: 4px;
+  opacity: 0.75;
 }
 
-.courses-card-school {
-  font-size: 0.78rem;
-  color: #9a94a0;
-  margin-bottom: 8px;
-}
-
-.courses-card-tags {
-  display: flex; gap: 5px; flex-wrap: wrap;
-  margin-bottom: 6px;
-}
-
-.courses-card-tag {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.6rem;
-  padding: 1px 7px;
-  border-radius: 2px;
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #706878;
-}
-
-.courses-card-feeling {
-  font-size: 0.72rem;
-  color: #9a94a0;
-  font-style: italic;
-  line-height: 1.4;
+.mp-card-school {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
   opacity: 0.7;
 }
 
-.courses-card-progress {
-  margin-top: 8px;
+.mp-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
 }
 
-.courses-card-bar {
-  height: 3px; border-radius: 2px;
-  background: rgba(255,255,255,0.05);
+.mp-card-tag {
+  padding: 3px 10px;
+  background: var(--mp-cream);
+  color: var(--mp-black);
+  border: 2px solid var(--mp-black);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+/* 进度条：粗边方块，填充是黑 */
+.mp-card-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.mp-card-bar {
+  flex: 1;
+  height: 14px;
+  background: var(--mp-cream);
+  border: 3px solid var(--mp-black);
   overflow: hidden;
-  margin-bottom: 3px;
 }
 
-.courses-card-fill {
-  height: 100%; border-radius: 2px;
-  background: var(--neon-color, #39ff14);
-  box-shadow: 0 0 6px var(--neon-color, #39ff14);
-  transition: width 1s ease-out;
+.mp-card-fill {
+  height: 100%;
+  background: var(--mp-black);
 }
 
-.courses-card-pct {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.58rem;
-  color: var(--neon-color, #39ff14);
-  text-align: right;
+.mp-card-pct {
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
-/* ===== 查看更多 ===== */
-.courses-more-wrap {
-  text-align: center;
-  margin-top: 28px;
+.mp-card-cta {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
 }
 
-.courses-more-btn {
-  padding: 10px 40px;
-  border: 1.5px solid rgba(255,45,149,0.3);
-  border-radius: 3px;
-  background: rgba(12,12,20,0.6);
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.78rem;
-  color: #ff2d95;
-  cursor: pointer;
-  letter-spacing: 0.06em;
-  transition: all 0.3s;
+.mp-empty {
+  padding: 64px 0;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
-.courses-more-btn:hover {
-  border-color: #ff2d95;
-  background: rgba(255,45,149,0.1);
-  box-shadow: 0 0 12px rgba(255,45,149,0.2), 0 0 24px rgba(255,45,149,0.08);
-  text-shadow: 0 0 8px rgba(255,45,149,0.4);
+.mp-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
 }
 
-/* ===== 弹窗 ===== */
-.courses-modal-overlay {
+/* ============================================
+   弹窗
+   ============================================ */
+.mp-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(5,5,8,0.78);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  animation: courses-fade-in 0.2s ease;
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.55);
+  animation: mp-fade-up 200ms ease-out;
 }
 
-.courses-modal {
-  background: rgba(14,14,24,0.96);
-  border: 1.5px solid var(--neon-color, #ff2d95);
-  border-radius: 4px;
-  max-width: 560px;
+.mp-modal {
+  position: relative;
   width: 100%;
-  max-height: 85vh;
+  max-width: 640px;
+  max-height: 86vh;
   overflow-y: auto;
-  position: relative;
-  box-shadow:
-    0 0 10px var(--neon-color, #ff2d95),
-    0 0 24px rgba(255,45,149,0.25),
-    0 0 48px rgba(255,45,149,0.08);
-  animation: courses-modal-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  background: var(--mp-cream);
+  border: var(--mp-border);
+  box-shadow: var(--mp-shadow-xl);
 }
 
-@keyframes courses-modal-in {
-  0% { transform: scale(0.3); opacity: 0; }
-  70% { transform: scale(1.03); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.courses-modal-close {
+.mp-modal-close {
   position: absolute;
-  top: 14px; right: 14px;
-  width: 30px; height: 30px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
+  top: 16px;
+  right: 16px;
   z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mp-cream);
+  border: 3px solid var(--mp-black);
+  box-shadow: var(--mp-shadow-sm);
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background var(--mp-t), box-shadow var(--mp-t), transform var(--mp-t);
 }
 
-.courses-modal-close::before,
-.courses-modal-close::after {
-  content: '';
-  position: absolute;
-  width: 16px; height: 2.5px;
-  background: #706878;
-  border-radius: 1px;
-  transition: background 0.2s;
+.mp-modal-close:hover {
+  background: var(--mp-red);
+  box-shadow: var(--mp-shadow);
+  transform: translate(-2px, -2px);
 }
 
-.courses-modal-close::before { transform: rotate(45deg); }
-.courses-modal-close::after { transform: rotate(-45deg); }
-.courses-modal-close:hover::before,
-.courses-modal-close:hover::after { background: var(--neon-color, #ff2d95); }
-
-.courses-modal-body {
-  padding: 28px 30px 34px;
+.mp-modal-close:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
-.courses-modal-top {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 14px;
+.mp-modal-head {
+  padding: 36px 36px 28px;
+  border-bottom: var(--mp-border);
+  color: var(--mp-ink, var(--mp-black));
 }
 
-.courses-modal-status {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 3px 10px;
-  border-radius: 2px;
-  font-weight: 600;
+.mp-modal-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
-.courses-modal-status--learning {
-  color: #39ff14;
-  border: 1px solid rgba(57,255,20,0.3);
-  text-shadow: 0 0 4px rgba(57,255,20,0.3);
+.mp-modal-title {
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.18);
 }
 
-.courses-modal-status--completed {
-  color: #00f0ff;
-  border: 1px solid rgba(0,240,255,0.3);
-  text-shadow: 0 0 4px rgba(0,240,255,0.3);
-}
-
-.courses-modal-status--planned {
-  color: #ffb800;
-  border: 1px solid rgba(255,184,0,0.3);
-  text-shadow: 0 0 4px rgba(255,184,0,0.3);
-}
-
-.courses-modal-rating {
-  color: #ffb800;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-}
-
-.courses-modal-title {
-  font-family: 'Orbitron', 'Fira Code', sans-serif;
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: var(--neon-color, #ff2d95);
-  text-shadow: 0 0 8px var(--neon-color, #ff2d95), 0 0 20px rgba(255,45,149,0.3);
-  letter-spacing: 0.04em;
+.mp-modal-subtitle {
   margin: 0 0 6px;
-  line-height: 1.2;
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0.8;
 }
 
-.courses-modal-subtitle {
-  font-size: 0.85rem;
-  color: #9a94a0;
-  margin-bottom: 4px;
+.mp-modal-school {
+  margin: 0 0 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  opacity: 0.72;
 }
 
-.courses-modal-school {
-  font-size: 0.85rem;
-  color: #c0bcc4;
-  margin-bottom: 12px;
+.mp-modal-body {
+  padding: 32px 36px 36px;
 }
 
-.courses-modal-tags {
-  display: flex; gap: 6px; flex-wrap: wrap;
-  margin-bottom: 6px;
-}
-
-.courses-modal-tag {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.65rem;
-  padding: 2px 10px;
-  border-radius: 2px;
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #706878;
-}
-
-.courses-modal-sep {
-  height: 1.5px;
-  background: rgba(255,255,255,0.06);
-  border: none;
-  margin: 18px 0;
-}
-
-.courses-modal-section-title {
-  font-family: 'Orbitron', 'Fira Code', sans-serif;
-  font-size: 0.7rem;
-  color: var(--neon-color, #ff2d95);
-  text-shadow: 0 0 4px var(--neon-color, #ff2d95);
-  letter-spacing: 0.06em;
-  margin-bottom: 10px;
+.mp-modal-label {
+  margin: 0 0 14px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
-.courses-modal-feeling {
-  font-size: 0.95rem;
-  color: #9a94a0;
-  font-style: italic;
+.mp-modal-review p {
+  margin: 0 0 1.1em;
+  font-size: 0.98rem;
+  line-height: 1.85;
+  max-width: 62ch;
+}
+
+.mp-modal-quote {
+  margin: 0;
+  padding: 20px 24px;
+  background: var(--mp-yellow);
+  border: var(--mp-border);
+  box-shadow: var(--mp-shadow-sm);
+  font-size: 1.1rem;
+  font-weight: 700;
   line-height: 1.6;
-  margin-bottom: 16px;
 }
 
-.courses-modal-review {
-  margin-bottom: 16px;
+.mp-modal-notes {
+  margin-top: 32px;
 }
 
-.courses-modal-review p {
-  font-size: 0.9rem;
-  color: #c0bcc4;
-  line-height: 1.75;
-  margin-bottom: 0.8em;
+.mp-modal-notes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.courses-modal-notes {
-  margin-bottom: 16px;
+.mp-modal-notes li {
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 3px solid var(--mp-black);
+  font-size: 0.92rem;
+  line-height: 1.7;
 }
 
-.courses-modal-note-item {
-  font-size: 0.82rem;
-  color: #c0bcc4;
-  line-height: 1.55;
-  padding: 3px 0 3px 16px;
-  position: relative;
-  margin-bottom: 4px;
+.mp-modal-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 32px;
 }
 
-.courses-modal-note-item::before {
-  content: '▸';
-  position: absolute;
-  left: 0;
-  color: var(--neon-color, #ff2d95);
-  font-size: 0.58rem;
-  top: 5px;
+.mp-modal-file {
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
-.courses-modal-links {
-  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+/* ============================================
+   响应式：全站三档 900 / 768 / 480
+   ============================================ */
+@media (max-width: 900px) {
+  .mp-hero {
+    padding: 72px 32px 64px;
+  }
+  .mp-filters {
+    padding: 44px 32px 0;
+  }
+  .mp-grid-section {
+    padding: 32px 32px 96px;
+  }
+  .mp-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
 }
 
-.courses-modal-link {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--neon-color, #ff2d95);
-  text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 4px 12px;
-  border-radius: 2px;
-  transition: all 0.2s;
-}
-
-.courses-modal-link:hover {
-  border-color: var(--neon-color, #ff2d95);
-  box-shadow: 0 0 8px rgba(255,45,149,0.2);
-}
-
-.courses-modal-download {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.65rem;
-  color: #706878;
-  margin-left: auto;
-}
-
-/* ===== 底部 ===== */
-.courses-footer-bar {
-  height: 2px;
-  margin: 48px auto 10px;
-  max-width: 600px;
-  background: linear-gradient(90deg,
-    transparent, #ff2d95 10%, transparent 25%,
-    #00f0ff 40%, transparent 55%,
-    #ffb800 70%, transparent 85%,
-    #39ff14 95%, transparent
-  );
-  box-shadow: 0 0 6px rgba(0,240,255,0.2);
-  position: relative; z-index: 1;
-}
-/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
-
-/* 导航栏配色已移到 src/data/navTheme.js 的 '/coursework' 一项 */
-
-/* 滚动条 */
-.courses-world ::-webkit-scrollbar { width: 5px; }
-.courses-world ::-webkit-scrollbar-track { background: transparent; }
-.courses-world ::-webkit-scrollbar-thumb { background: rgba(255,45,149,0.2); border-radius: 3px; }
-
-/* ===== 响应式 ===== */
 @media (max-width: 768px) {
-  .courses-grid { grid-template-columns: 1fr; }
-  .courses-hero-title { font-size: 3rem; }
-  .courses-inner { padding: 36px 18px 80px; }
-  .courses-modal { max-width: 100%; }
-  .courses-modal-body { padding: 22px 20px 28px; }
-  .courses-modal-title { font-size: 1.8rem; }
+  .mp-hero {
+    padding: 56px 20px 48px;
+  }
+  .mp-filters {
+    padding: 36px 20px 0;
+  }
+  .mp-grid-section {
+    padding: 28px 20px 72px;
+  }
+  .mp-grid {
+    grid-template-columns: 1fr;
+  }
+  .mp-deco--2,
+  .mp-deco--5 {
+    display: none;
+  }
+  .mp-stats {
+    gap: 14px;
+  }
+  .mp-stat {
+    padding: 12px 18px;
+  }
+  .mp-modal-head {
+    padding: 28px 20px 22px;
+  }
+  .mp-modal-body {
+    padding: 24px 20px 28px;
+  }
 }
 
 @media (max-width: 480px) {
-  .courses-hero-title { font-size: 2.2rem; }
-  .courses-card-title { font-size: 1.2rem; }
+  .mp-filter-row {
+    gap: 10px;
+  }
+  .mp-deco--3,
+  .mp-deco--4 {
+    display: none;
+  }
 }
 
-/* ===== 动画 ===== */
-@keyframes courses-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .mp-deco,
+  .mp-hero-inner,
+  .mp-modal-overlay {
+    animation: none;
+  }
+  .mp-btn,
+  .mp-card,
+  .mp-card-deco,
+  .mp-stat,
+  .mp-modal-close {
+    transition: none;
+  }
+  .mp-btn:hover,
+  .mp-card:hover,
+  .mp-stat:hover,
+  .mp-modal-close:hover {
+    transform: none;
+  }
 }

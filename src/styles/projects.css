@@ -114,30 +114,22 @@
    过渡列表里一并带上 border-color / background，这样 .ed-row 这类元素
    不用再单独写一条 transition（同一元素上只有最后一条 transition 生效）
    ============================================ */
-/* 离开视口：快速归位，而且不带延迟。
-   如果这里也用 1.1s 淡出，上下滑时屏幕上会一直有元素在动，看着晕 */
+/* 只在首次进入视口时播一次，之后一直保持显示（JS 里进入后就 disconnect 了）。
+   曲线用 easeOutQuad：原来那条 cubic-bezier(0.16, 1, 0.3, 1) 前 10% 的时间就走完一半路程，
+   观感是"啪"地闪出来；这条起步平缓得多。位移 6px，只是微微浮一下。 */
 .ed-reveal {
   opacity: 0;
   transform: translateY(6px);
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease,
-    border-color 0.5s var(--ed-ease),
-    background 0.5s var(--ed-ease);
-}
-
-/* 进入视口：慢、柔和。
-   原来用的是 cubic-bezier(0.16, 1, 0.3, 1) —— 那条曲线前 10% 的时间就走完一半路程，
-   观感是"啪"地闪出来；换成 easeOutQuad 这条，起步平缓得多。
-   位移也从 16px 收到 10px，动得少就没那么晕。 */
-.ed-reveal.is-shown {
-  opacity: 1;
-  transform: none;
   transition:
     opacity 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms),
     transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms),
     border-color 0.5s var(--ed-ease),
     background 0.5s var(--ed-ease);
+}
+
+.ed-reveal.is-shown {
+  opacity: 1;
+  transform: none;
 }
 
 /* 下划线动画：从右下角展开、往左下角收起 */

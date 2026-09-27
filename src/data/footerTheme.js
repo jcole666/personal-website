@@ -24,6 +24,8 @@
  *   font       品牌字体
  *   size       品牌字号
  *   spacing    品牌字距
+ *   weight     品牌字重，省略则 600（Memphis 这类风格要 900）
+ *   borderWidth 顶边框宽度，省略则 1px（Memphis 禁止细边框，要 4px）
  *   uiFont     副标签/链接/版权的字体，省略则继承页面字体
  *   max        内容最大宽度（跟各页正文宽度保持一致，别让它比正文还宽）
  */
@@ -71,20 +73,23 @@ export const footerThemes = {
     max: '1104px',
   },
   '/coursework': {
-    brand: '流前 · 夜之城',
-    tag: 'NIGHT CITY · 学习日志',
-    bg: 'transparent',
-    border: 'rgba(255, 45, 149, 0.2)',
-    divider: 'rgba(0, 240, 255, 0.12)',
-    ink: '#e0dce0',
-    muted: '#87808e',
-    faint: '#7e7786',
-    accent: '#00f0ff',
-    font: "'Orbitron', 'Fira Code', sans-serif",
-    size: '1.2rem',
-    spacing: '0.06em',
-    uiFont: "'Fira Code', 'Space Mono', monospace",
-    max: '1080px',
+    // 配合 Memphis 风格：整块纯黑底 + 白字 + 4px 黑边
+    //（参考文件里的页脚骨架就是 bg-black text-white）
+    brand: '流前 · 课堂',
+    tag: 'COURSEWORK · SINCE 2024',
+    bg: '#000000',
+    border: '#000000',
+    borderWidth: '4px',
+    divider: 'rgba(255, 255, 255, 0.25)',
+    ink: '#ffffff',
+    muted: 'rgba(255, 255, 255, 0.75)',
+    faint: 'rgba(255, 255, 255, 0.62)',
+    accent: '#feca57',
+    font: "'Noto Sans SC', 'Microsoft YaHei', sans-serif",
+    size: '1.35rem',
+    spacing: '-0.01em',
+    weight: '900',
+    max: '1104px',
   },
   '/experience': {
     brand: '流前',
@@ -196,6 +201,8 @@ export function footerThemeVars(theme) {
     '--ft-font': theme.font ?? 'var(--font-display)',
     '--ft-size': theme.size ?? '1.5rem',
     '--ft-spacing': theme.spacing ?? 'normal',
+    '--ft-weight': theme.weight ?? '600',
+    '--ft-border-width': theme.borderWidth ?? '1px',
     '--ft-ui-font': theme.uiFont ?? 'inherit',
     '--ft-max': theme.max ?? '1080px',
   }
