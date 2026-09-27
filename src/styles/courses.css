@@ -572,18 +572,7 @@
   box-shadow: 0 0 6px rgba(0,240,255,0.2);
   position: relative; z-index: 1;
 }
-
-.courses-footer-text {
-  text-align: center;
-  font-family: 'Orbitron', 'Fira Code', sans-serif;
-  font-size: 0.65rem;
-  color: #00f0ff;
-  text-shadow: 0 0 6px rgba(0,240,255,0.4);
-  letter-spacing: 0.1em;
-  padding: 6px 0 20px;
-  opacity: 0.45;
-  position: relative; z-index: 1;
-}
+/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
 
 /* 导航栏配色已移到 src/data/navTheme.js 的 '/coursework' 一项 */
 

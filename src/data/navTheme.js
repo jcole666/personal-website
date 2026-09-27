@@ -18,11 +18,15 @@
  *   强行统一字号反而会看起来不齐。所以这里统一的是"视觉高度"，字号按字体微调。
  */
 
-/** 首页与后台用的默认主题 */
+/**
+ * 首页与后台用的默认主题
+ * 首页是深色玻璃主题（.app--home 会重定义 --purple-deep 等变量），
+ * 所以底色用深色，文字色用变量而不是写死。
+ */
 export const DEFAULT_NAV_THEME = {
   tag: '首页',
-  bg: 'rgba(255, 255, 255, 0.18)',
-  border: 'rgba(255, 255, 255, 0.3)',
+  bg: 'rgba(36, 30, 55, 0.6)',
+  border: 'rgba(255, 255, 255, 0.14)',
   ink: 'var(--purple-deep)',
   accent: 'var(--gold)',
   tagInk: 'var(--gold)',

@@ -213,26 +213,9 @@ body {
     inset 0 0 28px rgba(255, 255, 255, 0.06);
 }
 
-/* footer 次要文字：硬编码深紫 → 浅紫白 */
-.app--home .footer-tagline {
-  color: rgba(232, 227, 245, 0.75);
-}
-.app--home .footer-tagline:hover {
-  color: var(--gold);
-}
-.app--home .footer-top {
-  color: var(--purple);
-  border: 1px solid rgba(184, 155, 255, 0.4);
-}
-.app--home .footer-inner {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* 导航栏：深色玻璃底（稍微调浅） */
-.app--home .navbar {
-  background: rgba(36, 30, 55, 0.6);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-}
+/* 首页页脚与导航栏的深色配色已分别移到
+   src/data/footerTheme.js 与 src/data/navTheme.js —— 那里是唯一来源，
+   不再在这里重复覆盖一遍。 */
 
 /* 板块卡片 hover 边框不过亮 */
 .app--home .world-card:hover {
@@ -1027,107 +1010,8 @@ body {
 }
 
 /* ===== 页脚 ===== */
-.footer {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  color: var(--purple-deep);
-  padding: 60px 32px 32px;
-  border-top: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight);
-}
-
-.footer-inner {
-  max-width: 920px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 28px;
-  border-bottom: 1px solid rgba(108, 60, 158, 0.12);
-}
-
-/* 左侧品牌区：logo 和 email 上下排列 */
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.footer-logo {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--purple-deep);
-}
-
-.footer-tagline {
-  font-family: var(--font-display);
-  font-size: 0.98rem;
-  color: rgba(74, 36, 114, 0.75);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.footer-tagline:hover {
-  color: var(--purple);
-}
-
-.footer-links {
-  display: flex;
-  gap: 24px;
-}
-
-.footer-links a {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--purple);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.footer-links a:hover {
-  color: var(--gold);
-}
-
-.footer-bottom {
-  max-width: 920px;
-  margin: 24px auto 0;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.footer-top {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--purple);
-  background: none;
-  border: 1px solid rgba(108, 60, 158, 0.3);
-  border-radius: 999px;
-  padding: 8px 18px;
-  cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-.footer-top:hover {
-  color: var(--gold);
-  border-color: var(--gold);
-  transform: translateY(-2px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .footer-top {
-    transition: none;
-  }
-  .footer-top:hover {
-    transform: none;
-  }
-}
+/* 页脚样式已统一到 src/components/SiteFooter.css，
+   每页的配色与字体见 src/data/footerTheme.js */
 
 /* ===== 经历分享页 · 动森岛世界 ===== */
 
@@ -1461,66 +1345,7 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* ===== 经历分享· 独立页脚 ===== */
-.experience-footer {
-  background: #f8f8f0;
-  border-top: 1px solid rgba(25, 200, 185, 0.25);
-  padding: 32px 24px 24px;
-  color: #794f27;
-}
-
-.experience-footer-inner {
-  max-width: 960px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(121, 79, 39, 0.12);
-}
-
-.experience-footer-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.experience-footer-logo {
-  font-family: Nunito, 'Microsoft YaHei', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.experience-footer-tag {
-  font-size: 0.8rem;
-  color: rgba(121, 79, 39, 0.55);
-  font-family: Nunito, 'Microsoft YaHei', sans-serif;
-}
-
-.experience-footer-links {
-  display: flex;
-  gap: 20px;
-}
-
-.experience-footer-links a {
-  font-size: 0.85rem;
-  color: #794f27;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.experience-footer-links a:hover {
-  color: #19c8b9;
-}
-
-.experience-footer-bottom {
-  max-width: 960px;
-  margin: 16px auto 0;
-  font-size: 0.78rem;
-  color: rgba(121, 79, 39, 0.45);
-}
+/* 经历页页脚已统一到 SiteFooter，主题见 footerTheme.js 的 '/experience' */
 
 /* ===== 动森海浪（repeat-x 铺满全宽） ===== */
 .experience-sea {

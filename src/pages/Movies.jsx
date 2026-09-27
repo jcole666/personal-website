@@ -3,6 +3,7 @@ import seedMovieData, { extractMovieTags, filterByMovieTag } from '../data/movie
 import { useData } from '../context/DataContext.jsx'
 import Filmstrip, { Stars } from '../components/Filmstrip.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 /* 小工具 */
 function renderParagraphs(text) {
@@ -366,21 +367,7 @@ function Movies() {
         </section>
       </div>
 
-      <footer className="movies-footer">
-        <div className="movies-footer-inner">
-          <div className="movies-footer-brand">
-            <span className="movies-footer-logo">流前 · 露天影院</span>
-            <span className="movies-footer-tag">总有光，总会亮</span>
-          </div>
-          <nav className="movies-footer-links">
-            <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:me@example.com">Email</a>
-          </nav>
-        </div>
-        <div className="movies-footer-bottom">
-          <span>© 2026 流前 · 用 React + CSS 手工打造</span>
-        </div>
-      </footer>
+      <SiteFooter path="/movies" />
 
       <MovieModal movie={modalItem} onClose={() => setModalItem(null)} />
       <PersonModal person={personItem} onClose={() => setPersonItem(null)} />

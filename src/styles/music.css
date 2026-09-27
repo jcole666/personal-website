@@ -1131,70 +1131,7 @@
   color: #6b6560;
   font-size: 0.9rem;
 }
-
-/* ============================================
-   音乐页专属页脚
-   ============================================ */
-
-.music-footer {
-  background: #1e1e24;
-  border-top: 1px solid rgba(107, 101, 96, 0.12);
-  padding: 32px 24px 24px;
-}
-
-.music-footer-inner {
-  max-width: 1024px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(107, 101, 96, 0.08);
-}
-
-.music-footer-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.music-footer-logo {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.5rem;
-  color: #d4d0c8;
-  letter-spacing: 0.04em;
-  font-weight: 600;
-}
-
-.music-footer-tag {
-  font-size: 0.8rem;
-  color: #6b6560;
-}
-
-.music-footer-links {
-  display: flex;
-  gap: 20px;
-}
-
-.music-footer-links a {
-  font-size: 0.85rem;
-  color: #6b6560;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.music-footer-links a:hover {
-  color: #d4a853;
-}
-
-.music-footer-bottom {
-  max-width: 1024px;
-  margin: 16px auto 0;
-  font-size: 0.78rem;
-  color: rgba(107, 101, 96, 0.45);
-}
+/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
 
 /* 导航栏配色已移到 src/data/navTheme.js 的 '/music' 一项 */
 

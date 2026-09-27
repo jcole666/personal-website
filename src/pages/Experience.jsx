@@ -5,7 +5,6 @@ import {
   Divider,
   Typewriter,
   Time,
-  BackTop,
   Icon,
 } from 'animal-island-ui'
 import { experiences as seedExperiences, experienceTypes as seedTypes } from '../data/experience.js'
@@ -13,6 +12,7 @@ import { useData } from '../context/DataContext.jsx'
 import Villagers from '../components/Villagers.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import PhotoArt from '../components/PhotoArt.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 // 类型标签颜色映射
 const typeColors = {
@@ -175,27 +175,10 @@ function Experience() {
       </div>
 
       {/* 页脚 */}
-      <footer className="experience-footer">
-        <div className="experience-footer-inner">
-          <div className="experience-footer-brand">
-            <span className="experience-footer-logo">流前</span>
-            <span className="experience-footer-tag">
-              <Icon name="icon-miles" size={18} /> 岛屿日志
-            </span>
-          </div>
-          <nav className="experience-footer-links">
-            <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:me@example.com">Email</a>
-          </nav>
-        </div>
-        <div className="experience-footer-bottom">
-          <span>© 2026 流前 · 用 React + 动森 UI 手工打造</span>
-        </div>
-      </footer>
+      <SiteFooter path="/experience" />
 
-      {/* 海浪 + 回到顶部 + 桌面宠物 */}
+      {/* 海浪 + 桌面宠物（回到顶部已统一放进页脚，这里不再重复放一个） */}
       <div className="experience-sea" />
-      <BackTop />
       <Villagers />
 
       {/* 详情弹窗 */}

@@ -435,46 +435,7 @@
   position: absolute; left: 0;
   color: #c8a050; font-size: 0.5rem; top: 5px;
 }
-
-/* ===== 页脚 ===== */
-.games-footer {
-  background: rgba(245,240,226,0.18);
-  padding: 22px 28px;
-  border-top: 1px solid rgba(0,0,0,0.04);
-  position: relative; z-index: 2;
-  backdrop-filter: blur(3px);
-}
-
-.games-footer-inner {
-  max-width: 1000px; margin: 0 auto;
-  display: flex; justify-content: space-between; align-items: flex-start;
-  gap: 32px; flex-wrap: wrap;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(0,0,0,0.03);
-}
-
-.games-footer-brand { display: flex; flex-direction: column; gap: 2px; }
-
-.games-footer-logo {
-  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
-  font-size: 1.1rem; color: #3d3022; letter-spacing: 0.04em;
-}
-
-.games-footer-tag { font-size: 0.65rem; color: #9c9080; }
-
-.games-footer-links { display: flex; gap: 20px; }
-
-.games-footer-links a {
-  font-size: 0.72rem; color: #9c9080; text-decoration: none;
-  transition: color 0.3s;
-}
-
-.games-footer-links a:hover { color: #4aa8e0; }
-
-.games-footer-bottom {
-  max-width: 1000px; margin: 12px auto 0;
-  font-size: 0.62rem; color: rgba(156,144,128,0.4);
-}
+/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
 
 /* 导航栏配色已移到 src/data/navTheme.js 的 '/games' 一项 */
 

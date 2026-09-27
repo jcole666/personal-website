@@ -18,6 +18,7 @@ import {
   ScribbleBookmark,
 } from '../components/Scribble.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 /* ===================================================================
    小工具
@@ -599,23 +600,7 @@ function Reading() {
         <EndMark />
       </div>
 
-      <footer className="reading-footer">
-        <div className="reading-footer-inner">
-          <div className="reading-footer-brand">
-            <span className="reading-footer-logo">流前 · 读书笔记</span>
-            <span className="reading-footer-tag">好记性不如烂笔头</span>
-          </div>
-          <nav className="reading-footer-links">
-            <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">
-              GitHub
-            </a>
-            <a href="mailto:me@example.com">Email</a>
-          </nav>
-        </div>
-        <div className="reading-footer-bottom">
-          <span>© 2026 流前 · 用 React + Rough.js 手工打造</span>
-        </div>
-      </footer>
+      <SiteFooter path="/reading" />
       <EditButton sectionKey="reading" label="读书笔记" />
     </main>
   )

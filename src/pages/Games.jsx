@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import seedGameData from '../data/games.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 /* ====== 工具 ====== */
 function Stars({ n }) {
@@ -225,21 +226,7 @@ function Games() {
         )}
       </div>
 
-      <footer className="games-footer">
-        <div className="games-footer-inner">
-          <div className="games-footer-brand">
-            <span className="games-footer-logo">流前游戏</span>
-            <span className="games-footer-tag">PLAYTHROUGH LOG · SINCE 2023</span>
-          </div>
-          <nav className="games-footer-links">
-            <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:me@example.com">Email</a>
-          </nav>
-        </div>
-        <div className="games-footer-bottom">
-          <span>© 2026 流前</span>
-        </div>
-      </footer>
+      <SiteFooter path="/games" />
 
       <GameModal game={modalItem} onClose={() => setModalItem(null)} />
       <EditButton sectionKey="games" label="游戏" />

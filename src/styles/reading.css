@@ -950,69 +950,7 @@
   gap: 12px;
   padding: 32px 0 16px;
 }
-
-/* ============================================
-   读书页专属页脚
-   ============================================ */
-
-.reading-footer {
-  background: #faf7f2;
-  border-top: 1px solid rgba(180, 160, 140, 0.2);
-  padding: 32px 24px 24px;
-}
-
-.reading-footer-inner {
-  max-width: 960px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(180, 160, 140, 0.12);
-}
-
-.reading-footer-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.reading-footer-logo {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.6rem;
-  color: #5c4b32;
-  letter-spacing: 0.04em;
-}
-
-.reading-footer-tag {
-  font-size: 0.8rem;
-  color: rgba(90, 70, 45, 0.45);
-}
-
-.reading-footer-links {
-  display: flex;
-  gap: 20px;
-}
-
-.reading-footer-links a {
-  font-size: 0.85rem;
-  color: #7a6240;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.reading-footer-links a:hover {
-  color: #c8a24b;
-}
-
-.reading-footer-bottom {
-  max-width: 960px;
-  margin: 16px auto 0;
-  font-size: 0.78rem;
-  color: rgba(90, 70, 45, 0.35);
-}
+/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
 
 /* 导航栏配色已移到 src/data/navTheme.js 的 '/reading' 一项 */
 

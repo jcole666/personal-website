@@ -2,6 +2,7 @@ import { useState } from 'react'
 import seedProjectData from '../data/projects.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 /* ====== 工具 ====== */
 function renderParagraphs(text) {
@@ -207,21 +208,7 @@ function Projects() {
         </div>
       </div>
 
-      <footer className="projects-footer">
-        <div className="projects-footer-inner">
-          <div className="projects-footer-brand">
-            <span className="projects-footer-logo">流前 · 坐标纸</span>
-            <span className="projects-footer-tag">GRAPH PAPER · SINCE 2025</span>
-          </div>
-          <nav className="projects-footer-links">
-            <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:me@example.com">Email</a>
-          </nav>
-        </div>
-        <div className="projects-footer-bottom">
-          <span>© 2026 流前</span>
-        </div>
-      </footer>
+      <SiteFooter path="/projects" />
 
       <ProjectModal project={modalItem} onClose={() => setModalItem(null)} />
       <EditButton sectionKey="projects" label="代码开发" />

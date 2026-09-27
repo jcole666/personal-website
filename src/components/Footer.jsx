@@ -1,13 +1,12 @@
 import { useLocation } from 'react-router-dom'
+import SiteFooter from './SiteFooter.jsx'
 
 /**
- * 全局页脚
+ * 首页与后台的页脚
  *
- * 只在首页和后台出现 —— 8 个板块页面都有各自写在页面组件里的专属页脚
- * （比如 .movies-footer / .food-footer / .experience-footer）。
- *
- * 之前这里列了 8 个 isXxxWorld 布尔判断，但每一个的作用都只是 return null，
- * 合起来等价于"只在首页和后台显示"，所以直接写成这一个条件。
+ * 8 个板块页面各自渲染自己那份 <SiteFooter path="/xxx" /> —— 因为页脚位置要在
+ * 各页自己的容器里（比如经历页的页脚后面还跟着一条海浪），所以这里只管首页和后台。
+ * 之前这里列了 8 个 isXxxWorld 判断，但每个的作用都只是 return null。
  */
 function Footer() {
   const { pathname } = useLocation()
@@ -15,32 +14,7 @@ function Footer() {
   const isGlobalFooter = pathname === '/' || pathname.startsWith('/admin')
   if (!isGlobalFooter) return null
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  return (
-    <footer className="footer">
-      <div className="footer-inner">
-        <div className="footer-brand">
-          <span className="footer-logo">流前</span>
-          <a className="footer-tagline" href="mailto:lq2107668126@gmail.com">
-            email：lq2107668126@gmail.com
-          </a>
-        </div>
-        <nav className="footer-links">
-          <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-        </nav>
-      </div>
-      <div className="footer-bottom">
-        <button className="footer-top" onClick={scrollToTop}>
-          回到顶部 ↑
-        </button>
-      </div>
-    </footer>
-  )
+  return <SiteFooter path="/" />
 }
 
 export default Footer

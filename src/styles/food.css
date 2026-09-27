@@ -490,57 +490,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
-
-/* ============================================
-   页脚
-   ============================================ */
-
-.food-footer {
-  background: #f5efe5;
-  padding: 32px 24px 24px;
-}
-
-.food-footer-inner {
-  max-width: 960px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.food-footer-brand { display: flex; flex-direction: column; gap: 4px; }
-
-.food-footer-logo {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.3rem;
-  color: #2d2418;
-  letter-spacing: 0.03em;
-  font-weight: 600;
-}
-
-.food-footer-tag { font-size: 0.8rem; color: #8c7b68; }
-
-.food-footer-links { display: flex; gap: 24px; }
-
-.food-footer-links a {
-  font-size: 0.82rem;
-  color: #8c7b68;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.food-footer-links a:hover { color: #c47a5e; }
-
-.food-footer-bottom {
-  max-width: 960px;
-  margin: 20px auto 0;
-  font-size: 0.75rem;
-  color: rgba(0,0,0,0.2);
-}
+/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
 
 /* 导航栏配色已移到 src/data/navTheme.js 的 '/food' 一项 */
 

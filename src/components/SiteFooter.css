@@ -1,0 +1,118 @@
+/* ============================================
+   全站统一页脚
+   骨架（布局、间距、字号）写死在这里，8 个页面共用；
+   每页专属的配色与字体由 src/data/footerTheme.js 注入的 --ft-* 变量提供。
+   ============================================ */
+
+.site-footer {
+  background: var(--ft-bg);
+  border-top: 1px solid var(--ft-border);
+  color: var(--ft-ink);
+  padding: 32px 24px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.site-footer-inner {
+  max-width: var(--ft-max);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ft-divider);
+}
+
+/* 品牌区 */
+.site-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.site-footer-logo {
+  font-family: var(--ft-font);
+  font-size: var(--ft-size);
+  font-weight: 600;
+  letter-spacing: var(--ft-spacing);
+  color: var(--ft-ink);
+}
+
+.site-footer-tag {
+  font-family: var(--ft-ui-font);
+  font-size: 0.8rem;
+  color: var(--ft-tag-ink);
+}
+
+/* 链接区 */
+.site-footer-links {
+  display: flex;
+  gap: 22px;
+}
+
+.site-footer-links a {
+  font-family: var(--ft-ui-font);
+  font-size: 0.85rem;
+  color: var(--ft-muted);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.site-footer-links a:hover {
+  color: var(--ft-accent);
+}
+
+/* 底部行：版权 + 回到顶部 */
+.site-footer-bottom {
+  max-width: var(--ft-max);
+  margin: 16px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.site-footer-copy {
+  font-family: var(--ft-ui-font);
+  font-size: 0.78rem;
+  color: var(--ft-faint);
+}
+
+.site-footer-top {
+  font-family: var(--ft-ui-font);
+  font-size: 0.78rem;
+  color: var(--ft-muted);
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.site-footer-top:hover {
+  color: var(--ft-accent);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer-top {
+    transition: none;
+  }
+  .site-footer-top:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 28px 18px 20px;
+  }
+  .site-footer-inner {
+    gap: 20px;
+    padding-bottom: 16px;
+  }
+}

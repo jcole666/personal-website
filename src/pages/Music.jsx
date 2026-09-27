@@ -3,6 +3,7 @@ import seedMusicData, { extractAllTags, filterByTag } from '../data/music.js'
 import { useData } from '../context/DataContext.jsx'
 import Turntable, { VinylDisc } from '../components/Turntable.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 /* 小工具 */
 function renderParagraphs(text) {
@@ -313,13 +314,7 @@ function Music() {
         <FeaturedWall albums={albums} onSelect={setFeaturedItem} onShowAll={() => setFullListType('featured')} />
       </div>
 
-      <footer className="music-footer">
-        <div className="music-footer-inner">
-          <div className="music-footer-brand"><span className="music-footer-logo">流前 · 深夜听音室</span><span className="music-footer-tag">让耳朵决定今晚的方向</span></div>
-          <nav className="music-footer-links"><a href="https://github.com/jcole666" target="_blank" rel="noreferrer">GitHub</a><a href="mailto:me@example.com">Email</a></nav>
-        </div>
-        <div className="music-footer-bottom"><span>© 2026 流前 · 用 React + CSS 手工打造</span></div>
-      </footer>
+      <SiteFooter path="/music" />
 
       <MusicModal item={modalItem} onClose={() => setModalItem(null)} />
       <ArtistModal artist={artistItem} onClose={() => setArtistItem(null)} />

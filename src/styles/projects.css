@@ -521,61 +521,7 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(215,106,138,0.4);
 }
-
-/* ===== 页脚 ===== */
-.projects-footer {
-  padding: 28px 32px 24px;
-  border-top: 1px solid rgba(180,160,140,0.2);
-  position: relative;
-  z-index: 1;
-}
-
-.projects-footer-inner {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 18px;
-  border-bottom: 1px solid rgba(180,160,140,0.12);
-}
-
-.projects-footer-brand { display: flex; flex-direction: column; gap: 2px; }
-
-.projects-footer-logo {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 1.3rem;
-  color: #1e2a35;
-  letter-spacing: 0.04em;
-}
-
-.projects-footer-tag {
-  font-size: 0.75rem;
-  color: #a09080;
-  font-family: 'Fira Code', 'Space Mono', monospace;
-}
-
-.projects-footer-links { display: flex; gap: 24px; }
-
-.projects-footer-links a {
-  font-size: 0.85rem;
-  color: #a09080;
-  text-decoration: none;
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  transition: color 0.3s;
-}
-
-.projects-footer-links a:hover { color: #87b846; }
-
-.projects-footer-bottom {
-  max-width: 1000px;
-  margin: 14px auto 0;
-  font-size: 0.72rem;
-  color: rgba(160,144,128,0.4);
-  font-family: 'Fira Code', 'Space Mono', monospace;
-}
+/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
 
 /* 导航栏配色已移到 src/data/navTheme.js 的 '/projects' 一项 */
 

@@ -3,6 +3,7 @@ import seedFood from '../data/food.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import PhotoArt from '../components/PhotoArt.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 /* ====== 工具 ====== */
 function renderParagraphs(text) {
@@ -183,21 +184,7 @@ function Food() {
         ))}
       </div>
 
-      <footer className="food-footer">
-        <div className="food-footer-inner">
-          <div className="food-footer-brand">
-            <span className="food-footer-logo">流前</span>
-            <span className="food-footer-tag">市集</span>
-          </div>
-          <nav className="food-footer-links">
-            <a href="https://github.com/jcole666" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:me@example.com">Email</a>
-          </nav>
-        </div>
-        <div className="food-footer-bottom">
-          <span>© 2026 流前</span>
-        </div>
-      </footer>
+      <SiteFooter path="/food" />
       <EditButton sectionKey="food" label="市集" />
     </main>
   )

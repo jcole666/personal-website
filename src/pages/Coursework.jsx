@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import seedCourseData from '../data/courses.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 
 /* ====== 工具 ====== */
 function Stars({ n }) {
@@ -237,10 +238,11 @@ function Courses() {
           </div>
         )}
 
-        {/* 底部 */}
+        {/* 底部装饰线（这一页的霓虹个性，保留） */}
         <div className="courses-footer-bar" />
-        <div className="courses-footer-text">// END OF LINE //</div>
       </div>
+
+      <SiteFooter path="/coursework" />
 
       {/* 弹窗 */}
       <CourseModal course={modalItem} onClose={() => setModalItem(null)} />
