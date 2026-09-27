@@ -51,6 +51,56 @@
   /* 尺寸 */
   --max-width: 1200px;
   --nav-height: 72px;
+
+  /* ============================================
+     基础层：间距 / 圆角 / 过渡 / 字号
+     这一层是「标尺」—— 公共层（导航栏 / 页脚 / 转场）已经全部改用它们，
+     以后新写样式、尤其加新板块时请从这里取，别再发明新数字。
+
+     各板块已有的视觉值不必强行改成这些：每个展厅有自己的气质是设计意图
+     （动森页字号圆润偏大、赛博朋克页偏小偏紧、坐标纸页圆角偏小）。
+     等改到某一页时，顺手把那一页对齐上来就行。
+
+     断点：CSS 变量不能用在 @media 里（@media (max-width: var(--x)) 是无效的），
+     所以断点只能靠约定，全站只用这三档：
+       平板 900px —— 卡片网格 3 列 → 2 列
+       窄屏 768px —— 主要断点，布局转竖排
+       手机 480px —— 单列
+     （common.css 里原有的 720px 已合并进 768）
+     ============================================ */
+
+  /* 间距步进 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  /* 圆角 */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+
+  /* 过渡时长：只留三档，别再写 0.22s / 0.27s 这种 */
+  --t-fast: 0.2s;
+  --t-base: 0.3s;
+  --t-slow: 0.5s;
+
+  /* 字号层级 */
+  --fs-xs: 0.72rem;
+  --fs-sm: 0.8rem;
+  --fs-md: 0.85rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 2.5rem;
 }
 
 /* ===== 基础重置 ===== */
@@ -296,7 +346,7 @@ body {
 .nav-inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 var(--sp-6);
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -306,7 +356,7 @@ body {
 .nav-logo {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: var(--sp-3);
   font-family: var(--nav-logo-font, var(--font-display));
   font-size: var(--nav-logo-size, 1.5rem);
   letter-spacing: var(--nav-logo-spacing, normal);
@@ -318,16 +368,16 @@ body {
 
 .nav-logo-tag {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.18em;
   color: var(--nav-tag-ink, var(--gold));
 }
 
 .nav-links {
   display: flex;
-  /* 导航项自带 10px 水平内边距（见下面的统一盒子），所以项间距从 24px 收到 6px，
-     视觉间距仍是 26px 左右，和原来的 28px 基本一致，菜单区总宽度也几乎没变 */
-  gap: 6px;
+  /* 导航项自带 12px 水平内边距（见下面的统一盒子），所以项间距收到 --sp-2，
+     视觉间距约 28px，和纯文字链接时代的 28px 一致 */
+  gap: var(--sp-2);
   list-style: none;
   align-items: center;
 }
@@ -348,8 +398,8 @@ body {
   align-items: center;
   justify-content: center;
   height: 36px;
-  padding: 0 12px;
-  font-size: 1rem;
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-base);
   font-weight: 500;
   line-height: 1;
   color: var(--nav-ink, var(--purple-deep));
@@ -357,20 +407,20 @@ body {
   text-decoration: none;
   white-space: nowrap;
   position: relative;
-  transition: color 0.2s ease;
+  transition: color var(--t-fast) ease;
 }
 
 /* 编辑模式下的「后台」入口 */
 .nav-admin-link {
-  margin-left: 14px;
+  margin-left: var(--sp-3);
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: var(--fs-md);
   color: var(--purple);
   text-decoration: none;
-  padding: 6px 14px;
+  padding: var(--sp-2) var(--sp-3);
   border: 1px solid currentColor;
-  border-radius: 999px;
-  transition: background 0.2s ease, color 0.2s ease;
+  border-radius: var(--r-pill);
+  transition: background var(--t-fast) ease, color var(--t-fast) ease;
   white-space: nowrap;
 }
 .nav-admin-link:hover {
@@ -388,7 +438,7 @@ body {
 }
 
 /* 当前页高亮 —— 逻辑全站统一：文字和下划线一律用该页的强调色。
-   下划线左右各内缩 10px，正好对齐文字宽度，不跟着盒子一起撑开。 */
+   下划线左右各内缩一个 --sp-3，正好对齐文字宽度，不跟着盒子一起撑开。 */
 .nav-links > li > a.active {
   color: var(--nav-accent, var(--gold));
 }
@@ -396,8 +446,8 @@ body {
 .nav-links > li > a.active::after {
   content: '';
   position: absolute;
-  left: 12px;
-  right: 12px;
+  left: var(--sp-3);
+  right: var(--sp-3);
   bottom: 0;
   height: 2px;
   background: var(--nav-accent, var(--gold));
@@ -405,12 +455,12 @@ body {
 
 /* 动森按钮：保留自己的边框、底色和投影，只把尺寸交给上面的统一盒子。
    选择器写足三层是为了压过组件自带的 .animal-btn-default 样式。
-   组件自带 2px 边框，所以这里把水平内边距减到 10px，
-   外宽才和文字链接严格相等（10×2 + 2×2 = 12×2）。 */
+   组件自带 2px 边框，所以水平内边距要减掉 2px，
+   外宽才和文字链接严格相等（(12-2)×2 + 2×2 = 12×2）。 */
 .navbar .nav-links .nav-world-btn {
   font-family: var(--nav-logo-font, var(--font-display));
-  padding: 0 10px;
-  border-radius: 999px;
+  padding: 0 calc(var(--sp-3) - 2px);
+  border-radius: var(--r-pill);
   /* 组件自带 letter-spacing: .02em，4 个字会多出约 1px，抹掉它才能和链接等宽 */
   letter-spacing: normal;
 }
@@ -876,11 +926,12 @@ body {
   }
 }
 
-@media (max-width: 720px) {
+/* 原本是 720px，为统一断点档位已并入 768（选择器与其它 768 块不重叠，安全） */
+@media (max-width: 768px) {
   .world-card {
     flex-wrap: wrap;
-    gap: 16px;
-    padding: 24px;
+    gap: var(--sp-4);
+    padding: var(--sp-5);
   }
   .world-num {
     width: auto;
@@ -946,9 +997,10 @@ body {
 }
 
 /* 关幕动画：透明圆从 120vmax 缩到 0，四周 → 中间
-   时长必须与 LoadingTransition.jsx 里的 CURTAIN_MS 一致，否则动画播一半就被切走 */
+   时长由 LoadingTransition.jsx 的 CURTAIN_MS 通过 --curtain-ms 注入 —— 只留一处来源，
+   不再需要"改 JS 常量还要记得同步改 CSS" */
 .transition-curtain--closing {
-  animation: curtain-close 0.8s ease-in-out forwards;
+  animation: curtain-close var(--curtain-ms, 0.8s) ease-in-out forwards;
 }
 
 @keyframes curtain-close {

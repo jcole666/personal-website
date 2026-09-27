@@ -59,9 +59,13 @@ function LoadingTransition() {
 
   return (
     <>
-      {/* 阶段一：关幕动画 — 用 mask 做四周→中心收拢 */}
+      {/* 阶段一：关幕动画 — 用 mask 做四周→中心收拢
+          时长从 CURTAIN_MS 注入 CSS，保证动画和下面的 setTimeout 永远同步 */}
       {step === 'closing' && (
-        <div className="transition-curtain transition-curtain--closing" />
+        <div
+          className="transition-curtain transition-curtain--closing"
+          style={{ '--curtain-ms': `${CURTAIN_MS}ms` }}
+        />
       )}
 
       {/* 阶段二&三：Loading 组件负责黑底+小岛+中心扩散开场 */}

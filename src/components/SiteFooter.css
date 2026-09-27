@@ -11,7 +11,7 @@
   background: var(--ft-bg);
   border-top: 1px solid var(--ft-border);
   color: var(--ft-ink);
-  padding: 32px 24px 24px;
+  padding: var(--sp-6) var(--sp-5) var(--sp-5);
   position: relative;
   z-index: 1;
 }
@@ -22,9 +22,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 32px;
+  gap: var(--sp-6);
   flex-wrap: wrap;
-  padding-bottom: 20px;
+  padding-bottom: var(--sp-5);
   border-bottom: 1px solid var(--ft-divider);
 }
 
@@ -32,7 +32,7 @@
 .site-footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--sp-2);
 }
 
 .site-footer-logo {
@@ -45,7 +45,7 @@
 
 .site-footer-tag {
   font-family: var(--ft-ui-font);
-  font-size: 0.8rem;
+  font-size: var(--fs-sm);
   color: var(--ft-tag-ink);
 }
 
@@ -53,7 +53,7 @@
 .site-footer-nav {
   display: grid;
   grid-template-columns: repeat(4, auto);
-  gap: 8px 22px;
+  gap: var(--sp-2) var(--sp-5);
 }
 
 /* 联系方式：GitHub 与邮箱上下排列，邮箱写全地址方便直接复制 */
@@ -61,17 +61,17 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: var(--sp-2);
   text-align: right;
 }
 
 .site-footer-nav a,
 .site-footer-contact a {
   font-family: var(--ft-ui-font);
-  font-size: 0.85rem;
+  font-size: var(--fs-md);
   color: var(--ft-muted);
   text-decoration: none;
-  transition: color 0.25s ease;
+  transition: color var(--t-base) ease;
 }
 
 .site-footer-nav a:hover,
@@ -82,30 +82,30 @@
 /* 底部行：版权 + 回到顶部 */
 .site-footer-bottom {
   max-width: var(--ft-max);
-  margin: 16px auto 0;
+  margin: var(--sp-4) auto 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: var(--sp-4);
   flex-wrap: wrap;
 }
 
 .site-footer-copy {
   font-family: var(--ft-ui-font);
-  font-size: 0.78rem;
+  font-size: var(--fs-sm);
   color: var(--ft-faint);
 }
 
 .site-footer-top {
   font-family: var(--ft-ui-font);
-  font-size: 0.78rem;
+  font-size: var(--fs-sm);
   color: var(--ft-muted);
   background: none;
   border: 1px solid currentColor;
-  border-radius: 999px;
-  padding: 6px 16px;
+  border-radius: var(--r-pill);
+  padding: var(--sp-2) var(--sp-4);
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color var(--t-fast) ease, transform var(--t-fast) ease;
 }
 
 .site-footer-top:hover {
@@ -124,15 +124,15 @@
 
 @media (max-width: 768px) {
   .site-footer {
-    padding: 28px 18px 20px;
+    padding: var(--sp-5) var(--sp-4);
   }
   .site-footer-inner {
-    gap: 20px;
-    padding-bottom: 16px;
+    gap: var(--sp-5);
+    padding-bottom: var(--sp-4);
   }
   .site-footer-nav {
     grid-template-columns: repeat(2, auto);
-    gap: 8px 28px;
+    gap: var(--sp-2) var(--sp-6);
   }
   .site-footer-contact {
     align-items: flex-start;
