@@ -676,7 +676,7 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--sp-4);
 }
 
 .world-card {
@@ -690,7 +690,7 @@ body {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   box-shadow:
     var(--glass-shadow),
     inset 0 1px 0 var(--glass-highlight),
@@ -698,8 +698,8 @@ body {
     inset 0 -1px 0 rgba(255, 255, 255, 0.2),
     inset 0 0 28px rgba(255, 255, 255, 0.18);
   text-decoration: none;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease,
-    background 0.3s ease;
+  transition: transform var(--t-base) ease, border-color var(--t-base) ease,
+    box-shadow var(--t-base) ease, background var(--t-base) ease;
 }
 
 /* 液态玻璃 · 虹彩边缘（独立元素 + mask 描边，避开 ::before 传送光条 / ::after 噪点） */
@@ -770,8 +770,10 @@ body {
   font-weight: 600;
   line-height: 1;
   color: var(--purple);
-  opacity: 0.14;
-  transition: opacity 0.3s ease, color 0.3s ease;
+  /* 常态要看得见 —— 它是「展厅编号」这个概念的视觉锚点，
+     原来 0.14 淡到要凑近才认得出，等于白做 */
+  opacity: 0.32;
+  transition: opacity var(--t-base) ease, color var(--t-base) ease;
 }
 
 .world-body {
@@ -788,7 +790,7 @@ body {
 .world-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--sp-1);
 }
 
 .world-title {
@@ -817,11 +819,14 @@ body {
 
 .world-latest {
   flex-shrink: 0;
-  width: 220px;
+  /* 原来 220px，减去 24px 内边距只剩 196px，而「个人网站 · 用 React 从零搭建」
+     这类文案要约 211px，被迫换行。中间 flex:1 那块本来就有 240px 空白没被利用，
+     所以把这里加宽到 300px —— 空间重新分配，不是加宽卡片 */
+  width: 300px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding-left: 24px;
+  gap: var(--sp-2);
+  padding-left: var(--sp-5);
   border-left: 1px solid rgba(108, 60, 158, 0.15);
 }
 
@@ -880,7 +885,7 @@ body {
 }
 
 .world-card:hover .world-num {
-  opacity: 0.55;
+  opacity: 0.7;
   color: var(--gold);
 }
 
@@ -894,11 +899,17 @@ body {
   flex-direction: row-reverse;
 }
 
+/* 偶数卡是镜像的，hover 也要跟着镜像向左滑，
+   否则它朝阅读方向的「反方向」移动，看起来是错的 */
+.world-card:nth-child(even):hover {
+  transform: translateX(-8px);
+}
+
 .world-card:nth-child(even) .world-latest {
   border-left: none;
   border-right: 1px solid rgba(108, 60, 158, 0.15);
   padding-left: 0;
-  padding-right: 24px;
+  padding-right: var(--sp-5);
   text-align: right;
 }
 
@@ -913,7 +924,8 @@ body {
   .world-enter {
     transition: none;
   }
-  .world-card:hover {
+  .world-card:hover,
+  .world-card:nth-child(even):hover {
     transform: none;
   }
   .world-card:hover .world-shine::before {
@@ -923,6 +935,14 @@ body {
   .world-card:hover .world-shine,
   .world-card:hover .world-iris {
     opacity: 0;
+  }
+}
+
+/* 900px 档：卡片开始变窄，把「最新」栏收回一档，别挤到正文
+   （放在 768 块之前，因为两者选择器权重相同，靠后的一条会赢） */
+@media (max-width: 900px) {
+  .world-latest {
+    width: 240px;
   }
 }
 
