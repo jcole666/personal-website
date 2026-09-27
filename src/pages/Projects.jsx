@@ -12,27 +12,25 @@ function renderParagraphs(text) {
 
 const statusLabels = { active: '进行中', done: '已完成', abandoned: '搁置' }
 
-/* ====== 项目卡片（GradientCard 风格） ====== */
-const gradientMap = { active: 'green', done: 'purple', abandoned: 'gray' }
-const badgeColorMap = { active: '#10B981', done: '#8B5CF6', abandoned: '#9CA3AF' }
+/* ====== 项目卡片（图纸卡） ======
+   状态色不再让整张卡变色（那样会变成"彩色便利贴"，和纸底打架），
+   而是通过 --status-color 只作用于左侧色条与状态点 */
+const statusColorMap = { active: '#3f8f63', done: '#6b5cc4', abandoned: '#9c949c' }
 
 function ProjectCard({ project, onSelect }) {
-  const gradient = gradientMap[project.status] || 'gray'
-  const badgeColor = badgeColorMap[project.status] || '#9CA3AF'
+  const statusColor = statusColorMap[project.status] || statusColorMap.abandoned
 
   return (
     <div
-      className={`projects-card projects-card--${gradient} ${project.status === 'abandoned' ? 'projects-card--abandoned' : ''}`}
+      className={`projects-card${project.status === 'abandoned' ? ' projects-card--abandoned' : ''}`}
+      style={{ '--status-color': statusColor }}
       onClick={() => onSelect(project)}
     >
-      {/* 装饰背景图形（hover 时缩放 + 旋转） */}
-      <span className="projects-card-graphic" aria-hidden="true" />
-
       {/* 卡片内容 */}
       <div className="projects-card-content">
         {/* 徽章 */}
         <div className="projects-card-badge">
-          <span className="projects-card-badge-dot" style={{ backgroundColor: badgeColor }} />
+          <span className="projects-card-badge-dot" />
           {statusLabels[project.status] || statusLabels.done}
         </div>
 
@@ -71,20 +69,17 @@ function ProjectCard({ project, onSelect }) {
   )
 }
 
-/* ====== 灵感碎片卡片（GradientCard 风格） ====== */
-const ideaGradientMap = { green: 'green', blue: 'purple', pink: 'gray' }
-const ideaBadgeColorMap = { green: '#10B981', blue: '#8B5CF6', pink: '#EC4899' }
+/* ====== 灵感碎片卡片（小张图纸） ====== */
+const ideaColorMap = { green: '#3f8f63', blue: '#6b5cc4', pink: '#c2557e' }
 
 function IdeaCard({ idea }) {
-  const gradient = ideaGradientMap[idea.color] || 'green'
-  const badgeColor = ideaBadgeColorMap[idea.color] || '#10B981'
+  const statusColor = ideaColorMap[idea.color] || ideaColorMap.green
 
   return (
-    <div className={`projects-idea-card projects-card--${gradient}`}>
-      <span className="projects-card-graphic" aria-hidden="true" />
+    <div className="projects-idea-card" style={{ '--status-color': statusColor }}>
       <div className="projects-idea-card-content">
         <div className="projects-card-badge">
-          <span className="projects-card-badge-dot" style={{ backgroundColor: badgeColor }} />
+          <span className="projects-card-badge-dot" />
           灵感
         </div>
         <div className="projects-idea-card-text">{idea.text}</div>
@@ -96,16 +91,20 @@ function IdeaCard({ idea }) {
 /* ====== 弹窗（GradientCard 风格） ====== */
 function ProjectModal({ project, onClose }) {
   if (!project) return null
-  const badgeColor = badgeColorMap[project.status] || '#9CA3AF'
+  const statusColor = statusColorMap[project.status] || statusColorMap.abandoned
 
   return (
     <div className="projects-modal-overlay" onClick={onClose}>
-      <div className="projects-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="projects-modal"
+        style={{ '--status-color': statusColor }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <button className="projects-modal-close" onClick={onClose} aria-label="关闭" />
         <div className="projects-modal-body">
           <div className="projects-modal-head">
             <div className="projects-card-badge">
-              <span className="projects-card-badge-dot" style={{ backgroundColor: badgeColor }} />
+              <span className="projects-card-badge-dot" />
               {statusLabels[project.status] || statusLabels.done}
             </div>
             <h2 className="projects-modal-title">{project.title}</h2>

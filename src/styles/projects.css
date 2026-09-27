@@ -3,21 +3,30 @@
    大字号 / 三色分类 / 灵感碎片卡片
    ============================================ */
 
-/* ===== 全局：旧图纸 ===== */
+/* ===== 全局：工程图纸底 =====
+   全部是静态 background-image 叠加：零额外元素、零模糊、零重绘开销
+     ① 副网格 20px  ② 主网格 100px —— 真实坐标纸就是「主线 + 副线」两级
+     ③ 纸张受光不均 + 边缘暗角 —— 同色系的明暗，不是"污渍"
+
+   以前那两层全不透明的暗紫 / 暗酒红晕染已去掉。它们把底弄成"发霉的旧纸"，
+   还逼得文字分裂成两套颜色体系（暗处用浅字、亮处用深字）—— 那正是"塑料感"的根源，
+   而且极脆：暗块一移位，浅色标题就看不见了（实测对比度只有 1.28）。 */
 .projects-world {
   min-height: calc(100vh - var(--nav-height));
-  /* 新背景：中性灰 + 颗粒噪点 + 酒红/白晕染（复古暗房工作台）
-     去掉 background-attachment:fixed 和 blend-mode，降低滚动时的重绘开销 */
-  background-color: #d7d5d5;
-  background-image: radial-gradient(circle at 66.94% 46.43%, rgba(215, 213, 213, 1) 0%, rgba(215, 213, 213, 0.844) 19.02%, rgba(215, 213, 213, 0.5) 38.05%, rgba(215, 213, 213, 0.156) 57.07%, rgba(215, 213, 213, 0) 76.1%), radial-gradient(circle at 34.69% 66.31%, rgba(49, 5, 39, 1) 0%, rgba(49, 5, 39, 0.844) 11.06%, rgba(49, 5, 39, 0.5) 22.13%, rgba(49, 5, 39, 0.156) 33.19%, rgba(49, 5, 39, 0) 44.25%), radial-gradient(circle at 48.93% 19.32%, rgba(57, 5, 31, 1) 0%, rgba(57, 5, 31, 0.844) 17.36%, rgba(57, 5, 31, 0.5) 34.73%, rgba(57, 5, 31, 0.156) 52.09%, rgba(57, 5, 31, 0) 69.45%), radial-gradient(circle at 80.23% 87.54%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.844) 10.28%, rgba(255, 255, 255, 0.5) 20.55%, rgba(255, 255, 255, 0.156) 30.83%, rgba(255, 255, 255, 0) 41.1%);
-  background-size: auto, auto, auto, auto;
-  color: #1e2a35;
+  background-color: #e5e1db;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(66, 56, 66, 0.042) 0 1px, transparent 1px 20px),
+    repeating-linear-gradient(90deg, rgba(66, 56, 66, 0.042) 0 1px, transparent 1px 20px),
+    repeating-linear-gradient(0deg, rgba(66, 56, 66, 0.08) 0 1px, transparent 1px 100px),
+    repeating-linear-gradient(90deg, rgba(66, 56, 66, 0.08) 0 1px, transparent 1px 100px),
+    radial-gradient(130% 70% at 18% 0%, rgba(255, 253, 249, 0.7), transparent 62%),
+    radial-gradient(120% 80% at 88% 92%, rgba(120, 104, 120, 0.09), transparent 60%),
+    radial-gradient(150% 120% at 50% 50%, transparent 52%, rgba(92, 78, 94, 0.11) 100%);
+  color: #241d28;
   position: relative;
   overflow-x: hidden;
   font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
 }
-
-/* （网格已按需移除） */
 
 
 .projects-inner {
@@ -40,121 +49,130 @@
 
 .projects-hero-title {
   font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 5rem;
+  font-size: 4rem;
   font-weight: 700;
-  color: #f5eef1;
+  /* 深墨。原来是 #f5eef1（近白），靠背景暗块恰好落在标题下面才看得见，
+     实测对底色对比度只有 1.28 —— 暗块一移位标题就消失 */
+  color: #241d28;
   margin: 0 0 8px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   line-height: 1.1;
   display: inline-block;
   position: relative;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
-/* 荧光笔划痕（统一为酒红色调，浅色） */
+/* 标注下划线：像图纸上用红笔划的一道，不是荧光笔 */
 .projects-hero-title::after {
   content: '';
   position: absolute;
-  bottom: 0; left: -4px; right: -4px;
-  height: 8px;
-  background: rgba(232, 163, 182, 0.5);
-  border-radius: 3px;
+  bottom: -2px;
+  left: -4px;
+  right: -4px;
+  height: 5px;
+  background: rgba(184, 85, 115, 0.3);
 }
 
 .projects-hero-sub {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 1rem;
-  color: #d9c3cc;
-  letter-spacing: 0.08em;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: #665e72;
+  letter-spacing: 0.18em;
   margin-top: 14px;
 }
 
 /* ===== 筛选标签 ===== */
 .projects-filter {
   display: flex;
-  gap: 14px;
-  margin-bottom: 36px;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-6);
   flex-wrap: wrap;
 }
 
+/* 筛选：做成"图纸上的勾选框"，方角、细边、等宽字 */
 .projects-filter-btn {
-  padding: 6px 22px;
-  border: 1.5px solid rgba(245, 238, 241, 0.35);
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.06);
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.9rem;
-  color: #e6d3db;
+  padding: 5px 16px;
+  border: 1px solid rgba(58, 46, 58, 0.18);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.42);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #5d5566;
   cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: all 0.2s;
+  letter-spacing: 0.08em;
+  transition: all var(--t-fast) ease;
 }
 
 .projects-filter-btn:hover {
-  border-color: #f5eef1;
-  color: #ffffff;
+  border-color: rgba(58, 46, 58, 0.34);
+  color: #241d28;
 }
 
 .projects-filter-btn--active {
-  background: #d76a8a;
-  border-color: #d76a8a;
-  color: #fff;
-  font-weight: 600;
+  background: #ae4f6b;
+  border-color: #ae4f6b;
+  color: #fdfcfa;
 }
 
 /* ===== 画廊网格 ===== */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: var(--sp-4);
 }
 
-/* ===== 项目卡片（GradientCard 风格） ===== */
+/* ===== 项目卡片 · 图纸卡 =====
+   质感来自三件事，缺一不可：
+     ① 纸面：极淡的竖向渐变（模拟纸张受光），不是纯色填充
+     ② 描边：1px 半透明深色 —— 白色描边是"塑料贴纸"的标志，纸没有白边
+     ③ 投影：四层，近处紧、远处散 —— 单层均匀糊影是廉价感最大的来源
+   圆角收到 8px：16px 是 App 卡片的语言，8px 才是图纸上的一张纸片 */
 .projects-card {
   position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 8px;
+  padding: 22px 22px 18px 26px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 260px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 2px 12px rgba(50, 20, 40, 0.08);
-  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+  min-height: 248px;
+  background-color: #fcfbf8;
+  background-image: linear-gradient(178deg, #fefdfb 0%, #faf8f5 100%);
+  border: 1px solid rgba(58, 46, 58, 0.13);
+  box-shadow:
+    0 1px 1px rgba(52, 34, 50, 0.05),
+    0 2px 4px rgba(52, 34, 50, 0.04),
+    0 8px 16px -6px rgba(52, 34, 50, 0.07),
+    0 22px 36px -16px rgba(52, 34, 50, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition:
+    transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow var(--t-base) ease,
+    border-color var(--t-base) ease;
 }
 
-/* 渐变变体 */
-.projects-card--green  { background: linear-gradient(135deg, #d9f0d9, #cfe8dc); }
-.projects-card--purple { background: linear-gradient(135deg, #e3ddff, #d6d9f2); }
-.projects-card--gray   { background: linear-gradient(135deg, #eceaf0, #e0e0e6); }
-
-.projects-card:hover {
-  transform: scale(1.03) translateY(-4px);
-  box-shadow: 0 12px 32px rgba(50, 20, 40, 0.18), 0 0 0 1px rgba(215,106,138,0.3);
-}
-
-/* 装饰背景图形（模拟原组件的 imageUrl，hover 缩放+旋转） */
-.projects-card-graphic {
+/* 左侧状态色条：上下内缩，不碰圆角，比整条贴边更收敛 */
+.projects-card::before {
+  content: '';
   position: absolute;
-  right: -14%;
-  bottom: -14%;
-  width: 62%;
-  aspect-ratio: 1;
-  border-radius: 26%;
-  pointer-events: none;
-  opacity: 0.55;
-  background:
-    radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95), transparent 62%),
-    radial-gradient(circle at 70% 68%, rgba(255,255,255,0.5), transparent 58%),
-    conic-gradient(from 210deg, rgba(255,255,255,0.35), rgba(255,255,255,0.05), rgba(255,255,255,0.35));
-  filter: blur(1px);
-  transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
-  transform: scale(1) rotate(0deg);
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--status-color, #9c949c);
 }
-.projects-card:hover .projects-card-graphic {
-  transform: scale(1.12) rotate(4deg);
+
+/* hover：克制的上浮 + 投影加深。
+   去掉了原来的 scale(1.03) 与 Q 弹曲线 cubic-bezier(0.34,1.56,0.64,1) ——
+   弹性缩放是"廉价感"的另一个来源 */
+.projects-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(58, 46, 58, 0.22);
+  box-shadow:
+    0 1px 1px rgba(52, 34, 50, 0.05),
+    0 3px 6px rgba(52, 34, 50, 0.05),
+    0 12px 24px -8px rgba(52, 34, 50, 0.11),
+    0 30px 48px -20px rgba(52, 34, 50, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 /* 内容容器 */
@@ -163,138 +181,152 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex-grow: 1;
 }
 
-/* 徽章 */
+/* 状态标签：去掉白胶囊底 —— 那是通用组件语言。
+   改成"极小号 + 大字距 + 小圆点"，是精密仪器的标签语言 */
 .projects-card-badge {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   margin-bottom: 14px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.55);
-  color: #3a3444;
-  font-size: 0.78rem;
-  font-weight: 600;
-  width: fit-content;
-  backdrop-filter: blur(4px);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  /* 中文不能用大字距 —— 拉丁文大字距显得精密，中文大字距只是松散 */
+  letter-spacing: 0.08em;
+  color: #5f5765;
 }
 .projects-card-badge-dot {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   flex-shrink: 0;
+  background: var(--status-color, #9c949c);
 }
 
-/* 标题 */
+/* 标题：1.8rem/700 → 1.2rem/600。
+   大字 + 淡色底 = 海报感 = 塑料感；小字 + 纸面才像"文件卡" */
 .projects-card-title {
   font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #26222d;
-  line-height: 1.15;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #241d28;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
   margin-bottom: 10px;
 }
 
-/* 技术栈 */
+/* 技术栈：等宽 + 中点分隔（React · Vite · Router），比空格平铺更有工程感 */
 .projects-card-tech {
   display: flex;
-  gap: 6px;
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
 .projects-card-tag {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.8rem;
-  color: #4a4454;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #6b6373;
   letter-spacing: 0.03em;
+}
+/* 分隔符加在「非最后一个」的后面，而不是每个的前面 ——
+   否则换行时行首会出现一个孤立的「·」 */
+.projects-card-tag:not(:last-child)::after {
+  content: '·';
+  margin: 0 6px;
+  color: rgba(125, 116, 132, 0.45);
 }
 
 /* 描述 */
 .projects-card-desc {
-  font-size: 0.92rem;
-  color: #55505e;
-  line-height: 1.55;
+  font-size: 0.82rem;
+  color: #5d5566;
+  line-height: 1.62;
   flex-grow: 1;
 }
 
-/* CTA */
+/* CTA：做成卡片底部一行"表尾"，带一条细分隔线 */
 .projects-card-cta {
   margin-top: 16px;
-  display: inline-flex;
+  padding-top: 12px;
+  border-top: 1px solid rgba(58, 46, 58, 0.08);
+  display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #26222d;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: #6f6674;
 }
 .projects-card-cta-arrow {
-  width: 16px;
-  height: 16px;
-  transition: transform 0.25s ease;
+  width: 14px;
+  height: 14px;
+  transition: transform var(--t-fast) ease;
 }
 .projects-card:hover .projects-card-cta-arrow {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
-/* 进度条 */
+/* 进度：2px 细线 + 等宽数字，像图纸上的量度线 */
 .projects-card-progress {
   margin-top: 12px;
 }
 .projects-card-bar {
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(0,0,0,0.06);
+  height: 2px;
+  background: rgba(58, 46, 58, 0.1);
   overflow: hidden;
 }
 .projects-card-fill {
   height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #b85573, #d76a8a);
+  background: #b85573;
   transition: width 1s ease-out;
 }
 .projects-card-pct {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.72rem;
-  color: #7a7284;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: #8a8194;
   text-align: right;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
-/* ===== 废弃卡片 ===== */
+/* ===== 搁置卡片 ===== */
 .projects-card--abandoned {
-  opacity: 0.6;
+  opacity: 0.68;
 }
+/* 一道细斜线划掉 —— 比原来的粗色带克制，但"作废"的语义还在 */
 .projects-card--abandoned::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom right, transparent 44%, #9ca3af 48%, #9ca3af 52%, transparent 56%);
+  background: linear-gradient(
+    to bottom right,
+    transparent 49.5%,
+    rgba(150, 142, 152, 0.55) 49.85%,
+    rgba(150, 142, 152, 0.55) 50.15%,
+    transparent 50.5%
+  );
   pointer-events: none;
-  z-index: 1;
-  opacity: 0.45;
 }
 .projects-card--abandoned:hover {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 .projects-card--abandoned .projects-card-title {
-  opacity: 0.65;
+  color: #6f6674;
 }
 
-/* ===== 灵感碎片 ===== */
+/* ===== 灵感碎片：三张小图纸 ===== */
 .projects-ideas-section {
-  margin: 48px 0 0;
+  margin: var(--sp-7) 0 0;
 }
 
 .projects-ideas-title {
   font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #1e2a35;
+  color: #241d28;
   margin: 0 0 20px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   position: relative;
   display: inline-block;
 }
@@ -302,39 +334,64 @@
 .projects-ideas-title::after {
   content: '';
   position: absolute;
-  bottom: 0; left: -3px; right: -3px;
-  height: 6px;
-  background: rgba(135,184,70,0.35);
-  border-radius: 2px;
+  bottom: -2px;
+  left: -3px;
+  right: -3px;
+  height: 5px;
+  background: rgba(184, 85, 115, 0.3);
 }
 
 .projects-ideas-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: var(--sp-4);
 }
 
-/* 灵感卡片（GradientCard 风格，与项目卡片同语言） */
+/* 灵感卡本身就是一小张坐标纸 —— 数据里每条灵感只有两行字，
+   留白本来会显得"没做完"；铺上网格后，空白变成了质感 */
 .projects-idea-card {
   position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  padding: 20px;
-  min-height: 140px;
+  border-radius: 8px;
+  padding: 18px 18px 18px 22px;
+  min-height: 116px;
   display: flex;
   cursor: default;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 2px 12px rgba(50, 20, 40, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fefdfb;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(66, 56, 66, 0.055) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(90deg, rgba(66, 56, 66, 0.055) 0 1px, transparent 1px 14px);
+  border: 1px solid rgba(58, 46, 58, 0.13);
+  box-shadow:
+    0 1px 1px rgba(52, 34, 50, 0.05),
+    0 4px 10px -4px rgba(52, 34, 50, 0.08),
+    0 14px 24px -14px rgba(52, 34, 50, 0.1);
+  transition:
+    transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow var(--t-base) ease;
 }
 
-.projects-idea-card:nth-child(1) { transform: rotate(-1.5deg); }
-.projects-idea-card:nth-child(2) { transform: rotate(1deg); }
-.projects-idea-card:nth-child(3) { transform: rotate(-0.8deg); }
+.projects-idea-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--status-color, #9c949c);
+}
+
+/* 轻微倾斜：像随手钉在图纸上的便签，但幅度收小（原来 ±1.5deg 太散） */
+.projects-idea-card:nth-child(1) { transform: rotate(-0.7deg); }
+.projects-idea-card:nth-child(2) { transform: rotate(0.5deg); }
+.projects-idea-card:nth-child(3) { transform: rotate(-0.4deg); }
 
 .projects-idea-card:hover {
-  transform: rotate(0deg) translateY(-4px);
-  box-shadow: 0 12px 28px rgba(50, 20, 40, 0.16);
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow:
+    0 1px 1px rgba(52, 34, 50, 0.05),
+    0 6px 14px -6px rgba(52, 34, 50, 0.1),
+    0 20px 32px -18px rgba(52, 34, 50, 0.14);
 }
 
 .projects-idea-card-content {
@@ -342,15 +399,16 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
 }
 
 .projects-idea-card-text {
   font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 1.3rem;
-  color: #26222d;
-  line-height: 1.5;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2a2230;
+  line-height: 1.55;
   white-space: pre-line;
 }
 
@@ -359,26 +417,32 @@
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(30, 25, 20, 0.45);
+  background: rgba(36, 29, 40, 0.42);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: var(--sp-5);
   animation: proj-fade-in 0.2s ease;
   backdrop-filter: blur(6px);
 }
 
+/* 弹窗就是放大的一张图纸卡，材质和卡片保持一致 */
 .projects-modal {
-  background: linear-gradient(160deg, #f7f4fa, #eceaf2);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: #fcfbf8;
+  background-image: linear-gradient(178deg, #fefdfb 0%, #faf8f5 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(58, 46, 58, 0.15);
   max-width: 560px;
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 24px 64px rgba(50, 20, 40, 0.28);
-  animation: proj-modal-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:
+    0 2px 6px rgba(52, 34, 50, 0.08),
+    0 16px 32px -12px rgba(52, 34, 50, 0.18),
+    0 48px 80px -32px rgba(52, 34, 50, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: proj-modal-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes proj-modal-in {
@@ -386,35 +450,41 @@
   100% { clip-path: inset(0 0 0 0); opacity: 1; }
 }
 
+/* 关闭按钮：圆钮 → 细边方钮，和图纸卡的方角语言一致 */
 .projects-modal-close {
   position: absolute;
-  top: 16px; right: 16px;
-  width: 36px; height: 36px;
-  border: none;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(58, 46, 58, 0.16);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
   cursor: pointer;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0;
-  transition: background 0.2s;
+  transition: background var(--t-fast) ease, border-color var(--t-fast) ease;
 }
 
 .projects-modal-close::before,
 .projects-modal-close::after {
   content: '';
   position: absolute;
-  width: 16px; height: 2.5px;
-  background: #3a3444;
-  border-radius: 1px;
+  width: 12px;
+  height: 1.5px;
+  background: #5d5566;
 }
 
 .projects-modal-close::before { transform: rotate(45deg); }
 .projects-modal-close::after { transform: rotate(-45deg); }
 
-.projects-modal-close:hover { background: rgba(215,106,138,0.25); }
+.projects-modal-close:hover {
+  background: rgba(184, 85, 115, 0.1);
+  border-color: rgba(184, 85, 115, 0.4);
+}
 
 .projects-modal-body {
   padding: 36px 38px 40px;
@@ -426,26 +496,29 @@
 
 .projects-modal-title {
   font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  font-size: 2.6rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  color: #26222d;
+  color: #241d28;
   margin: 0 0 14px;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
 }
 
 .projects-modal-tags {
-  display: flex; gap: 8px; flex-wrap: wrap;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
   margin-bottom: 10px;
 }
 
+/* 标签用细边方角，和筛选按钮同一套语言（原来是白底胶囊） */
 .projects-modal-tag {
-  font-family: 'Fira Code', 'Space Mono', monospace;
-  font-size: 0.78rem;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.6);
-  color: #4a4454;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(58, 46, 58, 0.16);
+  color: #5d5566;
   letter-spacing: 0.03em;
 }
 
@@ -493,7 +566,7 @@
   content: '▸';
   position: absolute;
   left: 0;
-  color: #d76a8a;
+  color: #b85573;
   font-size: 0.75rem;
   top: 4px;
 }
