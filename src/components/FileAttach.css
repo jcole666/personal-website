@@ -1,18 +1,54 @@
 /* ============================================
-   FileAttach — 附件列表 + 上传
+   FileAttach — 附件列表 + 上传 + 阅读
 
    默认配色是 Memphis 孟菲斯风（粗黑边 + 硬边偏移阴影，无模糊）。
-   别的页面要用的话，覆盖 .fa 上的这几个变量就行，不用改结构。
+   别的页面要用的话，覆盖 .fa 上的这几个变量就行，不用改结构：
+
+     --fa-ink / --fa-bg / --fa-accent   文字 / 底色 / 强调色
+     --fa-border                        完整 border 值，如 1px solid rgba(...)
+     --fa-shadow / --fa-shadow-lg       hover 前后的阴影，Editorial 风格填 none
+     --fa-radius / --fa-radius-sm       大圆角（条目、阅读区）/ 小圆角（按钮、缩略图）
+     --fa-font                          界面字体
+     --fa-md-*                          阅读区（Markdown 渲染）的排版变量
+
+   注意 --fa-border 是整个 border 值而不是颜色，因为孟菲斯要 3px 粗边、
+   Editorial 只要 1px 发丝线，宽度也得能换。
    ============================================ */
 
 .fa {
   --fa-ink: #000000;
   --fa-bg: #fef9ef;
   --fa-accent: #ff6b6b;
+  /* 「阅读」按钮默认是强调色底，文字色单独给一个变量 ——
+     纯单色风格里强调色就是墨色本身，文字必须翻成底色才看得见 */
+  --fa-accent-ink: var(--fa-ink);
   --fa-border: 3px solid var(--fa-ink);
   --fa-shadow: 3px 3px 0 var(--fa-ink);
   --fa-shadow-lg: 6px 6px 0 var(--fa-ink);
+  --fa-radius: 0;
+  --fa-radius-sm: 0;
   --fa-t: 150ms ease-out;
+  --fa-font: inherit;
+
+  /* 运动方式。孟菲斯是「抬起来 + 硬阴影变长」，Editorial 这类平面风格
+     填 none 就完全没有位移和阴影了 */
+  --fa-hover-lift: translate(-2px, -2px);
+  --fa-press: translate(3px, 3px);
+  --fa-btn-border: 2px solid var(--fa-ink);
+  --fa-btn-shadow: 2px 2px 0 var(--fa-ink);
+  --fa-btn-shadow-hover: 4px 4px 0 var(--fa-ink);
+
+  /* 阅读区排版 */
+  --fa-md-font: var(--fa-font);
+  --fa-md-title-font: var(--fa-font);
+  --fa-md-mono: 'Fira Code', 'Space Mono', ui-monospace, monospace;
+  --fa-md-ink: var(--fa-ink);
+  --fa-md-muted: rgba(0, 0, 0, 0.62);
+  --fa-md-line: rgba(0, 0, 0, 0.16);
+  --fa-md-code-bg: rgba(0, 0, 0, 0.05);
+  --fa-md-bg: var(--fa-bg);
+  --fa-md-pad: 20px 22px;
+  --fa-md-max: 62vh;
 }
 
 /* ===== 列表 ===== */
@@ -32,12 +68,13 @@
   padding: 12px 16px;
   background: var(--fa-bg);
   border: var(--fa-border);
+  border-radius: var(--fa-radius);
   box-shadow: var(--fa-shadow);
   transition: transform var(--fa-t), box-shadow var(--fa-t);
 }
 
 .fa-item:hover {
-  transform: translate(-2px, -2px);
+  transform: var(--fa-hover-lift);
   box-shadow: var(--fa-shadow-lg);
 }
 
@@ -45,6 +82,29 @@
   flex-shrink: 0;
   font-size: 1.5rem;
   line-height: 1;
+}
+
+/* 图片附件：直接给缩略图，比一个「IMG」标签有用得多 */
+.fa-thumb {
+  flex-shrink: 0;
+  display: block;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: var(--fa-radius-sm);
+  background: var(--fa-md-code-bg);
+}
+
+.fa-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--fa-t);
+}
+
+.fa-thumb:hover img {
+  transform: scale(1.08);
 }
 
 .fa-meta {
@@ -86,27 +146,34 @@
   padding: 5px 12px;
   background: var(--fa-bg);
   color: var(--fa-ink);
-  border: 2px solid var(--fa-ink);
-  box-shadow: 2px 2px 0 var(--fa-ink);
+  border: var(--fa-btn-border);
+  border-radius: var(--fa-radius-sm);
+  box-shadow: var(--fa-btn-shadow);
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 900;
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: background var(--fa-t), box-shadow var(--fa-t), transform var(--fa-t);
+  transition: background var(--fa-t), color var(--fa-t), box-shadow var(--fa-t),
+    transform var(--fa-t);
 }
 
 .fa-btn:hover {
   background: var(--fa-accent);
-  box-shadow: 4px 4px 0 var(--fa-ink);
-  transform: translate(-1px, -1px);
+  box-shadow: var(--fa-btn-shadow-hover);
+  transform: var(--fa-hover-lift);
 }
 
 /* 玩具按键：按下去贴地 */
 .fa-btn:active {
-  transform: translate(3px, 3px);
+  transform: var(--fa-press);
   box-shadow: none;
+}
+
+.fa-btn--read {
+  background: var(--fa-accent);
+  color: var(--fa-accent-ink);
 }
 
 .fa-btn--danger:hover {
@@ -140,7 +207,7 @@
 .fa-btn--pick {
   padding: 9px 20px;
   font-size: 0.88rem;
-  box-shadow: 3px 3px 0 var(--fa-ink);
+  box-shadow: var(--fa-btn-shadow-hover);
 }
 
 .fa-btn--pick:disabled {
@@ -155,11 +222,19 @@
   opacity: 0.6;
 }
 
+.fa-hint a {
+  color: inherit;
+}
+
 /* ===== 空态 / 错误 ===== */
 .fa-empty {
   margin: 0;
   padding: 14px 16px;
-  border: 2px dashed var(--fa-ink);
+  /* 复用 --fa-border 的宽度和颜色，只把线型改成虚线，
+     这样孟菲斯是 3px 粗虚线、Editorial 是 1px 发丝虚线 */
+  border: var(--fa-border);
+  border-style: dashed;
+  border-radius: var(--fa-radius);
   font-size: 0.88rem;
   font-weight: 700;
   opacity: 0.6;
@@ -171,7 +246,213 @@
   background: #ff6b6b;
   color: #000000;
   border: 2px solid var(--fa-ink);
+  border-radius: var(--fa-radius);
   font-size: 0.85rem;
+  font-weight: 900;
+}
+
+/* ============================================
+   阅读区：就地展开 Markdown 渲染结果
+   ============================================ */
+.fa-reader {
+  list-style: none;
+  background: var(--fa-md-bg);
+  border: var(--fa-border);
+  border-radius: var(--fa-radius);
+  overflow: hidden;
+}
+
+.fa-reader-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--fa-md-line);
+}
+
+.fa-reader-name {
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--fa-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fa-reader-body {
+  padding: var(--fa-md-pad);
+  max-height: var(--fa-md-max);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.fa-reader-hint {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+/* ===== Markdown 排版 ===== */
+.fa-md {
+  font-family: var(--fa-md-font);
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--fa-md-ink);
+}
+
+.fa-md > :first-child {
+  margin-top: 0;
+}
+
+.fa-md > :last-child {
+  margin-bottom: 0;
+}
+
+.fa-md .md-h {
+  margin: 1.6em 0 0.6em;
+  font-family: var(--fa-md-title-font);
+  font-weight: 900;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.fa-md .md-h1 {
+  font-size: 1.6rem;
+}
+
+.fa-md .md-h2 {
+  font-size: 1.3rem;
+}
+
+.fa-md .md-h3 {
+  font-size: 1.1rem;
+}
+
+.fa-md .md-h4,
+.fa-md .md-h5,
+.fa-md .md-h6 {
+  font-size: 1rem;
+}
+
+.fa-md .md-p {
+  margin: 0 0 1em;
+}
+
+.fa-md .md-a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.fa-md .md-a:hover {
+  opacity: 0.7;
+}
+
+.fa-md .md-code {
+  padding: 0.15em 0.4em;
+  border-radius: var(--fa-radius-sm);
+  background: var(--fa-md-code-bg);
+  font-family: var(--fa-md-mono);
+  font-size: 0.88em;
+}
+
+.fa-md .md-pre {
+  margin: 0 0 1em;
+  padding: 14px 16px;
+  border-radius: var(--fa-radius-sm);
+  background: var(--fa-md-code-bg);
+  overflow-x: auto;
+}
+
+.fa-md .md-pre code {
+  font-family: var(--fa-md-mono);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.fa-md .md-list {
+  margin: 0 0 1em;
+  padding-left: 1.4em;
+}
+
+.fa-md .md-li {
+  margin: 0.3em 0;
+}
+
+/* 无序列表的圆点自己画，不用浏览器的 list marker ——
+   marker 的形状由字体决定，中英文混排时会渲染成空心的小圈，
+   而我们要的是稳定的实心点。 */
+.fa-md ul.md-list {
+  padding-left: 1.35em;
+  list-style: none;
+}
+
+.fa-md ul.md-list > .md-li {
+  position: relative;
+}
+
+.fa-md ul.md-list > .md-li::before {
+  content: '';
+  position: absolute;
+  left: -0.85em;
+  /* 行高 1.85em，圆心落在第一行的垂直中点 */
+  top: calc(0.925em - 2.5px);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.fa-md .md-quote {
+  margin: 0 0 1em;
+  padding: 0.2em 0 0.2em 1em;
+  border-left: 3px solid var(--fa-md-line);
+  color: var(--fa-md-muted);
+}
+
+.fa-md .md-quote > :last-child {
+  margin-bottom: 0;
+}
+
+.fa-md .md-hr {
+  margin: 1.6em 0;
+  border: 0;
+  border-top: 1px solid var(--fa-md-line);
+}
+
+.fa-md .md-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+
+.fa-md .md-table-wrap {
+  margin: 0 0 1em;
+  overflow-x: auto;
+}
+
+.fa-md .md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.fa-md .md-table th,
+.fa-md .md-table td {
+  padding: 8px 12px;
+  border: 1px solid var(--fa-md-line);
+}
+
+.fa-md .md-table th {
+  background: var(--fa-md-code-bg);
   font-weight: 900;
 }
 
@@ -182,22 +463,27 @@
     gap: 10px;
   }
   .fa-meta {
-    flex-basis: calc(100% - 44px);
+    flex-basis: calc(100% - 70px);
   }
   .fa-actions {
     width: 100%;
     justify-content: flex-start;
   }
+  .fa {
+    --fa-md-pad: 16px 14px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fa-item,
-  .fa-btn {
+  .fa-btn,
+  .fa-thumb img {
     transition: none;
   }
   .fa-item:hover,
   .fa-btn:hover,
-  .fa-btn:active {
+  .fa-btn:active,
+  .fa-thumb:hover img {
     transform: none;
   }
 }

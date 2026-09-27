@@ -1354,6 +1354,55 @@ body {
   margin-bottom: 1em;
 }
 
+/* ===== 经历分享 · 照片与资料附件（FileAttach 组件） =====
+   组件默认是孟菲斯风（粗黑边 + 硬阴影），这里覆盖成动森岛屿的
+   米色 + 青绿 + 圆润：细边、大圆角、无阴影、无位移。 */
+.exp-modal-files {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed rgba(121, 79, 39, 0.2);
+}
+
+.exp-modal-files-label {
+  margin: 0 0 14px;
+  font-family: Nunito, 'Microsoft YaHei', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #59442f;
+}
+
+.exp-modal-files .fa {
+  --fa-ink: #794f27;
+  --fa-bg: #fffdf6;
+  --fa-accent: #cdeee7;
+  --fa-border: 1px solid rgba(121, 79, 39, 0.22);
+  --fa-shadow: none;
+  --fa-shadow-lg: none;
+  --fa-radius: 14px;
+  --fa-radius-sm: 10px;
+  --fa-t: 0.2s ease;
+  --fa-font: Nunito, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+
+  --fa-hover-lift: none;
+  --fa-press: none;
+  --fa-btn-border: 2px solid rgba(121, 79, 39, 0.25);
+  --fa-btn-shadow: none;
+  --fa-btn-shadow-hover: none;
+
+  --fa-md-title-font: Nunito, 'Microsoft YaHei', sans-serif;
+  --fa-md-muted: #8a7050;
+  --fa-md-line: rgba(121, 79, 39, 0.22);
+  --fa-md-code-bg: rgba(25, 200, 185, 0.1);
+  --fa-md-bg: #fffdf6;
+  --fa-md-pad: 18px 20px;
+}
+
+/* 动森风偏圆润，字重比孟菲斯的 900 收一档 */
+.exp-modal-files .fa-name,
+.exp-modal-files .fa-btn {
+  font-weight: 700;
+}
+
 @keyframes exp-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }

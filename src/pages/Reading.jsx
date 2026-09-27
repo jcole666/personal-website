@@ -12,12 +12,14 @@ import {
   getTodayQuote,
 } from '../data/reading.js'
 import { useData } from '../context/DataContext.jsx'
+import { useEditMode } from '../context/EditModeContext.jsx'
 import {
   ScribbleDivider,
   ScribbleProgress,
   ScribbleBookmark,
 } from '../components/Scribble.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
+import FileAttach from '../components/FileAttach.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 
 /* ===================================================================
@@ -59,8 +61,10 @@ function renderParagraphs(text) {
    区块 0：书籍详情弹窗
    =================================================================== */
 
-function DetailModal({ book, onClose }) {
+function DetailModal({ book, onClose, onFilesChange }) {
+  const { editMode } = useEditMode()
   if (!book) return null
+  const files = book.files ?? []
 
   return (
     <div className="reading-modal-overlay" onClick={onClose}>
@@ -103,6 +107,19 @@ function DetailModal({ book, onClose }) {
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* 读书笔记附件：md 笔记 / 摘抄导出 / 书摘 PDF，md 可以就地阅读 */}
+          {(files.length > 0 || editMode) && (
+            <div className="reading-modal-files">
+              <h3 className="reading-modal-files-label">读书笔记</h3>
+              <FileAttach
+                files={files}
+                onChange={(next) => onFilesChange(book.id, next)}
+                label="笔记"
+                emptyHint="这本书还没有上传笔记。"
+              />
             </div>
           )}
         </div>
@@ -262,7 +279,7 @@ function CurrentlyReading({ books }) {
 
 const PAGE_SIZE = 15
 
-function FinishedGallery({ books, tagDimensions }) {
+function FinishedGallery({ books, tagDimensions, onFilesChange }) {
   const finishedBooks = useMemo(() => getFinishedBooks(books), [books])
 
   // 类型多选 + 国家单选
@@ -271,7 +288,9 @@ function FinishedGallery({ books, tagDimensions }) {
   const [customTags, setCustomTags] = useState([])
   const [newTagInput, setNewTagInput] = useState('')
   const [showAll, setShowAll] = useState(false)
-  const [selectedBook, setSelectedBook] = useState(null)
+  // 存 id 而不是对象快照 —— 上传附件后 books 会更新，按 id 重查才拿得到最新的 files
+  const [selectedId, setSelectedId] = useState(null)
+  const selectedBook = selectedId ? books.find((b) => b.id === selectedId) : null
 
   const allCustomOptions = useMemo(() => [...new Set(customTags)], [customTags])
 
@@ -393,7 +412,7 @@ function FinishedGallery({ books, tagDimensions }) {
               key={book.id}
               className="reading-gallery-card"
               style={{ '--card-tilt': `${cachedTilt(book.id)}deg` }}
-              onClick={() => setSelectedBook(book)}
+              onClick={() => setSelectedId(book.id)}
             >
               <div className="reading-gallery-cover">
                 {book.coverUrl ? (
@@ -430,7 +449,11 @@ function FinishedGallery({ books, tagDimensions }) {
         </button>
       )}
 
-      <DetailModal book={selectedBook} onClose={() => setSelectedBook(null)} />
+      <DetailModal
+        book={selectedBook}
+        onClose={() => setSelectedId(null)}
+        onFilesChange={onFilesChange}
+      />
     </section>
   )
 }
@@ -579,7 +602,7 @@ function EndMark() {
    =================================================================== */
 
 function Reading() {
-  const { data } = useData()
+  const { data, saveSection } = useData()
   const readingData = data.reading ?? {
     profile: seedProfile,
     books: seedBooks,
@@ -588,13 +611,26 @@ function Reading() {
     notes: seedNotes,
   }
 
+  /** 上传 / 删除某本书的附件后，把整个 reading 文档存回后端 */
+  async function handleBookFiles(bookId, files) {
+    const next = {
+      ...readingData,
+      books: readingData.books.map((b) => (b.id === bookId ? { ...b, files } : b)),
+    }
+    await saveSection('reading', next)
+  }
+
   return (
     <main className="reading-world">
       <div className="reading-inner">
         <QuoteBanner dailyQuotes={readingData.dailyQuotes} />
         <StatsRow profile={readingData.profile} />
         <CurrentlyReading books={readingData.books} />
-        <FinishedGallery books={readingData.books} tagDimensions={readingData.tagDimensions} />
+        <FinishedGallery
+          books={readingData.books}
+          tagDimensions={readingData.tagDimensions}
+          onFilesChange={handleBookFiles}
+        />
         <WantToRead books={readingData.books} />
         <ReflectionsWall notes={readingData.notes} />
         <EndMark />

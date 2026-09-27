@@ -28,7 +28,7 @@ const FIELD_LABELS = {
   bannerMovies: '顶部轮播', featured: '主打', watched: '已看',
   watchlist: '想看', people: '人物', name_zh: '中文名', role: '身份',
   movies: '代表作', note: '备注', cardStyle: '卡片样式', items: '内容',
-  stalls: '摊位', platform: '平台', school: '来源', notesDownload: '笔记下载',
+  stalls: '摊位', platform: '平台', school: '来源', files: '附件',
   fullReview: '完整感想', active: '进行中', done: '已完成', abandoned: '搁置',
   ideas: '灵感碎片', reason: '理由', quotes: '金句', total: '总数',
   stats_total: '总数', tag: '标签', version: '版本', link: '链接',

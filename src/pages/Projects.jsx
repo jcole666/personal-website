@@ -3,6 +3,8 @@ import seedProjectData from '../data/projects.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import FileAttach from '../components/FileAttach.jsx'
+import { useEditMode } from '../context/EditModeContext.jsx'
 
 /**
  * 代码开发 · Editorial 编辑杂志风
@@ -134,8 +136,11 @@ function IdeaCard({ idea, index }) {
 }
 
 /* ====== 弹窗 ====== */
-function ProjectModal({ project, onClose }) {
+function ProjectModal({ project, onClose, onFilesChange }) {
+  const { editMode } = useEditMode()
   if (!project) return null
+
+  const files = project.files ?? []
 
   return (
     <div className="ed-modal-overlay" onClick={onClose}>
@@ -178,6 +183,19 @@ function ProjectModal({ project, onClose }) {
             >
               仓库 ↗
             </a>
+          )}
+
+          {/* 项目文档：设计稿 / 截图 / 说明文档，md 可以就地阅读 */}
+          {(files.length > 0 || editMode) && (
+            <div className="ed-modal-files">
+              <h3 className="ed-label">项目文档</h3>
+              <FileAttach
+                files={files}
+                onChange={(next) => onFilesChange(project.id, next)}
+                label="文档 / 截图"
+                emptyHint="这个项目还没有上传文档或截图。"
+              />
+            </div>
           )}
         </div>
       </div>
@@ -271,10 +289,11 @@ function AllProjectsPanel({ projects, onClose, onSelect }) {
 
 /* ====== 主组件 ====== */
 function Projects() {
-  const { data } = useData()
+  const { data, saveSection } = useData()
   const projectData = data.projects ?? seedProjectData
 
-  const [modalItem, setModalItem] = useState(null)
+  // 存 id 而不是对象快照 —— 上传附件后 projectData 会更新，按 id 重查才拿得到最新的 files
+  const [modalId, setModalId] = useState(null)
   const [showAll, setShowAll] = useState(false)
 
   const allProjects = projectData.active
@@ -282,6 +301,18 @@ function Projects() {
     : [...projectData.done, ...projectData.abandoned]
 
   const preview = allProjects.slice(0, PREVIEW_COUNT)
+  const modalItem = modalId ? allProjects.find((p) => p.id === modalId) : null
+
+  /** 上传 / 删除某个项目的附件后，把整个 projects 文档存回后端。
+      active 是单个对象、done / abandoned 是数组，所以分开打补丁 */
+  async function handleProjectFiles(projectId, files) {
+    const patch = (p) => (p && p.id === projectId ? { ...p, files } : p)
+    const next = { ...projectData }
+    if (next.active) next.active = patch(next.active)
+    next.done = (next.done ?? []).map(patch)
+    next.abandoned = (next.abandoned ?? []).map(patch)
+    await saveSection('projects', next)
+  }
 
   return (
     <main className="ed-world">
@@ -313,7 +344,12 @@ function Projects() {
 
           <div className="ed-list">
             {preview.map((item, i) => (
-              <ProjectRow key={item.id} project={item} index={i} onSelect={setModalItem} />
+              <ProjectRow
+                key={item.id}
+                project={item}
+                index={i}
+                onSelect={(p) => setModalId(p.id)}
+              />
             ))}
           </div>
         </section>
@@ -343,12 +379,16 @@ function Projects() {
           onSelect={(p) => {
             // 先关面板再开详情 —— 不做嵌套弹窗
             setShowAll(false)
-            setModalItem(p)
+            setModalId(p.id)
           }}
         />
       )}
 
-      <ProjectModal project={modalItem} onClose={() => setModalItem(null)} />
+      <ProjectModal
+        project={modalItem}
+        onClose={() => setModalId(null)}
+        onFilesChange={handleProjectFiles}
+      />
       <EditButton sectionKey="projects" label="代码开发" />
     </main>
   )

@@ -13,7 +13,10 @@ dist-ssr
 *.local
 
 # 服务器
+# uploads 是用户上传的附件，data 是运行时落盘的 JSON（首次保存才生成，
+# 缺失时后端会从 src/data/*.js 重新播种）—— 两者都是运行产物，不进版本库
 server/uploads
+server/data
 .env
 
 # Editor directories and files

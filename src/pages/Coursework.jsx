@@ -191,9 +191,8 @@ function CourseModal({ course, onClose, onFilesChange }) {
                 {l.label} ↗
               </a>
             ))}
-            {course.notesDownload && (
-              <span className="mp-modal-file">📥 {course.notesDownload}</span>
-            )}
+            {/* 原来这里有个 `📥 CS61A 学习笔记.pdf` 死标签 —— 只是文件名、
+                点不动、也没有真文件。现在由上面的附件区真正接管了 */}
           </div>
         </div>
       </div>

@@ -1050,3 +1050,55 @@
     font-size: 1.6rem;
   }
 }
+
+/* ============================================
+   读书笔记附件（FileAttach 组件）
+
+   组件默认是孟菲斯风（粗黑边 + 硬阴影 + 玩具按键），这里覆盖成书籍页的
+   暖纸 + 金 + 手写体：细边、小圆角、无阴影、无位移。
+   只需要覆盖变量，组件结构一行不用改。
+   ============================================ */
+
+.reading-modal-files {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(180, 160, 140, 0.25);
+}
+
+.reading-modal-files-label {
+  margin: 0 0 14px;
+  font-family: 'Long Cang', 'Noto Serif SC', cursive;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #4a3520;
+}
+
+.reading-modal-files .fa {
+  --fa-ink: #6b5a42;
+  --fa-bg: #fdfbf5;
+  --fa-accent: #f0e3c4;
+  --fa-border: 1px solid rgba(180, 160, 140, 0.45);
+  --fa-shadow: none;
+  --fa-shadow-lg: none;
+  --fa-radius: 8px;
+  --fa-radius-sm: 4px;
+  --fa-t: 0.2s ease;
+  --fa-font: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+
+  /* 平面风格：不要位移和硬阴影 */
+  --fa-hover-lift: none;
+  --fa-press: none;
+  --fa-btn-border: 1px solid rgba(180, 160, 140, 0.55);
+  --fa-btn-shadow: none;
+  --fa-btn-shadow-hover: none;
+
+  /* 阅读区：标题用手写体，和页面其余标题一致 */
+  --fa-md-title-font: 'Long Cang', 'Noto Serif SC', cursive;
+  /* 次要色（引用块）实测 #8a7a62 只有 4.03，达不到 AA 的 4.5，
+     压深一档到 4.6 左右 */
+  --fa-md-muted: #807058;
+  --fa-md-line: rgba(180, 160, 140, 0.35);
+  --fa-md-code-bg: rgba(200, 162, 75, 0.1);
+  --fa-md-bg: #fdfbf5;
+}

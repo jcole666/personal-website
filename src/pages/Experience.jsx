@@ -12,6 +12,10 @@ import { useData } from '../context/DataContext.jsx'
 import Villagers from '../components/Villagers.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import PhotoArt from '../components/PhotoArt.jsx'
+import FileAttach from '../components/FileAttach.jsx'
+import { useEditMode } from '../context/EditModeContext.jsx'
+
+const IMAGE_RE = /\.(png|jpe?g|gif|webp|svg|avif|bmp)$/i
 import SiteFooter from '../components/SiteFooter.jsx'
 
 // 类型标签颜色映射
@@ -36,8 +40,14 @@ function renderParagraphs(text) {
  * 经历详情弹窗
  * 从页面中间弹出，显示照片 + 完整文字
  */
-function DetailModal({ item, onClose }) {
+function DetailModal({ item, onClose, onFilesChange }) {
+  const { editMode } = useEditMode()
   if (!item) return null
+
+  const files = item.files ?? []
+  // 封面优先用 cover 字段；没设就用第一张图片附件顶上 —— 传了照片立刻生效，
+  // 不用再单独去填一次封面路径
+  const coverSrc = item.cover || files.find((f) => IMAGE_RE.test(f.name))?.url
 
   return (
     <div className="exp-modal-overlay" onClick={onClose}>
@@ -50,7 +60,7 @@ function DetailModal({ item, onClose }) {
         {/* 封面图：有 cover 用真照片，没有就画一张旅行明信片 */}
         <div className="exp-modal-cover">
           <PhotoArt
-            src={item.cover}
+            src={coverSrc}
             alt={item.title}
             id={item.id}
             label={item.type}
@@ -68,6 +78,19 @@ function DetailModal({ item, onClose }) {
           <div className="exp-modal-details">
             {renderParagraphs(item.details)}
           </div>
+
+          {/* 照片与资料：图片直接出缩略图，md / txt 可以就地阅读 */}
+          {(files.length > 0 || editMode) && (
+            <div className="exp-modal-files">
+              <h3 className="exp-modal-files-label">照片与资料</h3>
+              <FileAttach
+                files={files}
+                onChange={(next) => onFilesChange(item.id, next)}
+                label="照片 / 资料"
+                emptyHint="这段经历还没有上传照片或资料。"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -75,11 +98,22 @@ function DetailModal({ item, onClose }) {
 }
 
 function Experience() {
-  const { data } = useData()
+  const { data, saveSection } = useData()
   const { experiences, experienceTypes } = data.experience ?? { experiences: seedExperiences, experienceTypes: seedTypes }
 
   const [activeType, setActiveType] = useState(null) // null = 全部
-  const [selectedItem, setSelectedItem] = useState(null)
+  // 存 id 而不是对象快照 —— 上传附件后 experiences 会更新，按 id 重查才拿得到最新的 files
+  const [selectedId, setSelectedId] = useState(null)
+  const selectedItem = selectedId ? experiences.find((e) => e.id === selectedId) : null
+
+  /** 上传 / 删除某条经历的附件后，把整个 experience 文档存回后端 */
+  async function handleItemFiles(itemId, files) {
+    const next = {
+      ...(data.experience ?? {}),
+      experiences: experiences.map((e) => (e.id === itemId ? { ...e, files } : e)),
+    }
+    await saveSection('experience', next)
+  }
 
   // 根据类型筛选
   const filtered = useMemo(() => {
@@ -139,7 +173,7 @@ function Experience() {
             <article
               key={item.id}
               className="exp-card"
-              onClick={() => setSelectedItem(item)}
+              onClick={() => setSelectedId(item.id)}
             >
               {/* 照片区 */}
               <div className="exp-card-cover">
@@ -182,7 +216,11 @@ function Experience() {
       <Villagers />
 
       {/* 详情弹窗 */}
-      <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      <DetailModal
+        item={selectedItem}
+        onClose={() => setSelectedId(null)}
+        onFilesChange={handleItemFiles}
+      />
       <EditButton sectionKey="experience" label="经历分享" />
     </main>
   )

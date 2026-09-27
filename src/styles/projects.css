@@ -683,3 +683,86 @@
     animation: none;
   }
 }
+
+/* ============================================
+   项目文档附件（FileAttach 组件）
+
+   组件默认是孟菲斯风（粗黑边 + 硬阴影 + 玩具按键），而 Editorial 明令禁止
+   阴影、大圆角、彩色强调色，所以这里阴影和位移一律填 none、圆角填 0；
+   hover 反馈改用「反色」—— 这是 Editorial 交互语言里唯一允许的强对比手法。
+   ============================================ */
+
+.ed-modal-files {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--ed-line);
+}
+
+.ed-modal-files .ed-label {
+  display: block;
+  margin: 0 0 20px;
+}
+
+.ed-modal-files .fa {
+  --fa-ink: var(--ed-ink);
+  --fa-bg: var(--ed-bg);
+  --fa-accent: var(--ed-ink);
+  --fa-accent-ink: var(--ed-bg);
+  --fa-border: 1px solid var(--ed-line);
+  --fa-shadow: none;
+  --fa-shadow-lg: none;
+  --fa-radius: 0;
+  --fa-radius-sm: 0;
+  --fa-t: 0.2s ease;
+  --fa-font: var(--font-body);
+
+  --fa-hover-lift: none;
+  --fa-press: none;
+  --fa-btn-border: 1px solid rgba(28, 28, 28, 0.2);
+  --fa-btn-shadow: none;
+  --fa-btn-shadow-hover: none;
+
+  --fa-md-font: var(--font-body);
+  --fa-md-title-font: var(--font-display);
+  --fa-md-muted: var(--ed-ink-2);
+  --fa-md-line: var(--ed-line);
+  --fa-md-code-bg: rgba(28, 28, 28, 0.04);
+  --fa-md-bg: var(--ed-bg);
+  --fa-md-pad: 28px 32px;
+}
+
+/* 条目 hover：只加深描边。不位移、不加阴影 */
+.ed-modal-files .fa-item:hover {
+  border-color: rgba(28, 28, 28, 0.4);
+}
+
+/* 按钮 hover：反色 */
+.ed-modal-files .fa-btn:hover {
+  background: var(--ed-ink);
+  color: var(--ed-bg);
+  border-color: var(--ed-ink);
+}
+
+/* 「阅读」默认就是反色（黑底纸字），hover 只能靠降低不透明度做反馈 */
+.ed-modal-files .fa-btn--read:hover {
+  opacity: 0.85;
+}
+
+/* 字重收到 400、字距放开 —— 对齐 Editorial 的排版体系。
+   注意中文不能被 0.2em 那种拉丁字距撑散，这里收到 0.06em */
+.ed-modal-files .fa-name {
+  font-weight: 400;
+}
+
+.ed-modal-files .fa-btn,
+.ed-modal-files .fa-sub {
+  font-weight: 400;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}
+
+/* 缩略图：不加圆角、不加边框，就是一张方图 */
+.ed-modal-files .fa-thumb {
+  width: 48px;
+  height: 48px;
+}

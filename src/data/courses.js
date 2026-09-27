@@ -33,7 +33,6 @@ const courseData = {
       links: [
         { label: '课程官网', url: 'https://cs61a.org' },
       ],
-      notesDownload: 'CS61A 学习笔记.pdf',
     },
     {
       id: 'cs61b',
@@ -56,7 +55,6 @@ const courseData = {
       ],
       fullReview: '还在学，暂时没有完整评价。但目前最大的感受是：数据结构的实现比理论课精彩太多了——书上的伪代码只告诉你"怎么做"，61B 的项目让你想"为什么这么做更好"。',
       links: [{ label: '课程官网', url: 'https://sp25.datastructur.es' }],
-      notesDownload: 'CS61B 学习笔记.pdf',
     },
     {
       id: 'la-3b1b',
@@ -78,7 +76,6 @@ const courseData = {
       fullReview:
         '3B1B 的动画让所有公式都有了直觉。课本上的行列式是一堆数字按规则乘加减，3B1B 画出来是一个矩形被压扁成平行四边形的面积比。上完这课再看任何线性代数公式，脑子里自动放动画。',
       links: [{ label: 'YouTube 播放列表', url: 'https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab' }],
-      notesDownload: '线性代数的本质 笔记.pdf',
     },
     {
       id: 'cv-mit',
@@ -100,7 +97,6 @@ const courseData = {
       ],
       fullReview: '',
       links: [],
-      notesDownload: 'MIT·CV 学习笔记.pdf',
     },
     {
       id: 'ml-stanford',
@@ -122,7 +118,6 @@ const courseData = {
       fullReview:
         'CS229 可能是网上能找到的最硬的 ML 课。Andrew Ng 的板书把每个公式一步一步推出来，不是给结论而是走过程。期中推 SVM 对偶问题写满了三张 A4 纸，但推到 w = Σ α_i y_i x_i 那个公式时突然全通了。',
       links: [{ label: '课程官网', url: 'https://cs229.stanford.edu' }],
-      notesDownload: 'CS229 机器学习笔记.pdf',
     },
     {
       id: 'os-tsinghua',
@@ -159,7 +154,6 @@ const courseData = {
       fullReview:
         'fast.ai 的教学哲学和其他课完全相反——不是先推公式再写代码，而是先跑出一个能用的模型，再回过头拆开来看每层做了什么。第一次跑出猫狗分类器的时候真的"哇"了出来。虽然理论上没有 CS229 深，但工程直觉和"先做出东西来"的思维方式特别重要。',
       links: [{ label: '课程官网', url: 'https://course.fast.ai' }],
-      notesDownload: 'fast.ai 学习笔记.pdf',
     },
     {
       id: 'csapp',
@@ -182,7 +176,6 @@ const courseData = {
       fullReview:
         'CS:APP 是大一最有价值的书。九个 lab 里最难忘的是 Bomb Lab——用 GDB 反汇编一个二进制文件，通过逆向工程找出六个"拆弹密码"。第三个炸弹的循环嵌套了四层，花了整整一个下午。但拆完那个炸弹之后，看到任何 C 代码脑子里自动浮现对应的汇编——这个直觉是任何纯看书学不来的。',
       links: [{ label: '课程官网', url: 'https://csapp.cs.cmu.edu' }],
-      notesDownload: 'CSAPP 学习笔记.pdf',
     },
   ],
 }
