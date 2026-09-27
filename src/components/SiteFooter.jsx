@@ -17,7 +17,7 @@ const COPYRIGHT = '© 2026 流前'
  *   底部行（版权 + 回到顶部）
  *
  * 每页的个性由 src/data/footerTheme.js 提供：文案、配色、字体、内容宽度。
- * 站内导航用的是 TransitionLink，点击会走全站的云朵转场，和导航栏行为一致。
+ * 站内导航用的是 TransitionLink，点击会走全站转场（黑幕 + 动森小岛），和导航栏行为一致。
  *
  * 用法：<SiteFooter path="/movies" />
  */

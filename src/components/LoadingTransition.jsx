@@ -2,6 +2,19 @@ import { useState, useEffect, useRef } from 'react'
 import { Loading } from 'animal-island-ui'
 import { useTransition } from '../context/TransitionContext.jsx'
 
+/**
+ * 转场三个阶段的时长（毫秒）—— 想调节快慢改这里就行
+ *
+ * ① 黑幕从四周向中心收拢。必须与 common.css 里 curtain-close 的动画时长一致，
+ *    否则 CSS 动画还没播完就被切到下一阶段。
+ * ② 黑底 + 右下角小岛插画停留。这是纯等待，给太长会很拖。
+ * ③ 圆圈扩散是 <Loading> 组件自带的（时长由它内部公式 hypot/2+50 ÷ 1500 算出，
+ *    改不了），这里只是扩散播完后再多留一点缓冲才收尾。
+ */
+const CURTAIN_MS = 600
+const ISLAND_MS = 350
+const REVEAL_PAD_MS = 150
+
 function LoadingTransition() {
   const { phase, handleCovered, handleRevealed } = useTransition()
   // step 控制阶段：null | 'closing' | 'showing' | 'opening'
@@ -18,16 +31,16 @@ function LoadingTransition() {
 
   useEffect(() => {
     if (phase === 'covering') {
-      // ① 关幕：四周向中间变黑（CSS clip-path 动画，~1.2s）
+      // ① 关幕：黑幕从四周向中间收拢（CSS mask 动画）
       setStep('closing')
       const t1 = setTimeout(() => {
         // ② 黑底 + 小岛插画停留
         setStep('showing')
         const t2 = setTimeout(() => {
           handleCovered() // 切页 → phase 变为 'revealing'
-        }, 700)
+        }, ISLAND_MS)
         return () => clearTimeout(t2)
-      }, 1200)
+      }, CURTAIN_MS)
       return () => clearTimeout(t1)
     }
 
@@ -37,7 +50,7 @@ function LoadingTransition() {
       const timer = setTimeout(() => {
         handleRevealed()
         setStep(null)
-      }, durationRef.current + 300)
+      }, durationRef.current + REVEAL_PAD_MS)
       return () => clearTimeout(timer)
     }
   }, [phase])
