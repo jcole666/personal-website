@@ -66,7 +66,7 @@
 .ed-hero-note {
   max-width: 20rem;
   margin: 0 0 6px;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   line-height: 2;
   /* 中文不用 0.2em —— 那是拉丁文的字距，中文会被撑散 */
   letter-spacing: 0.12em;
@@ -80,7 +80,7 @@
 .ed-label {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -104,6 +104,28 @@
   flex-wrap: wrap;
   border-bottom: 1px solid var(--ed-line);
   padding-bottom: 24px;
+}
+
+/* ============================================
+   入场：滚动进入视口时淡入上浮
+   参考文件用的是同一套（IntersectionObserver + 0.8s cubic-bezier(0.16,1,0.3,1)），
+   延迟由 --reveal-delay 控制，用来做错落感。
+   过渡列表里一并带上 border-color / background，这样 .ed-row 这类元素
+   不用再单独写一条 transition（同一元素上只有最后一条 transition 生效）
+   ============================================ */
+.ed-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.8s var(--ed-ease) var(--reveal-delay, 0ms),
+    transform 0.8s var(--ed-ease) var(--reveal-delay, 0ms),
+    border-color 0.5s var(--ed-ease),
+    background 0.5s var(--ed-ease);
+}
+
+.ed-reveal.is-shown {
+  opacity: 1;
+  transform: none;
 }
 
 /* 下划线动画：从右下角展开、往左下角收起 */
@@ -145,7 +167,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -183,13 +205,19 @@
   padding: 40px 0;
   border-bottom: 1px solid var(--ed-line);
   cursor: pointer;
-  transition: border-color 0.5s var(--ed-ease);
 }
 
 .ed-row:hover,
 .ed-row:focus-visible {
+  /* 极淡的墨色底 + 分隔线加深 —— 该风格里最"重"的反馈也就到这个程度 */
+  background: rgba(28, 28, 28, 0.02);
   border-color: rgba(28, 28, 28, 0.4);
   outline: none;
+}
+
+.ed-row:hover .ed-row-num,
+.ed-row:focus-visible .ed-row-num {
+  color: var(--ed-ink);
 }
 
 .ed-row-main {
@@ -202,7 +230,7 @@
 .ed-row-num {
   flex-shrink: 0;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.1em;
   color: var(--ed-ink-2);
 }
@@ -237,7 +265,7 @@
 
 .ed-row-tech {
   margin: 8px 0 0;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -245,7 +273,7 @@
 
 .ed-row-meta {
   flex-shrink: 0;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -396,7 +424,7 @@
 
 .ed-modal-tech {
   margin: 14px 0 0;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ed-ink-2);
@@ -431,7 +459,7 @@
 .ed-modal-link {
   display: inline-block;
   margin-top: 32px;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ed-ink);
@@ -494,12 +522,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ed-row,
+  /* 入场动画整个关掉，元素直接就位 */
+  .ed-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
   .ed-row-title,
   .ed-filter,
-  .ed-idea,
   .ed-idea-text,
-  .ed-modal,
   .ed-modal-close {
     transition: none;
   }

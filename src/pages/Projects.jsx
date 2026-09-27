@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import seedProjectData from '../data/projects.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
@@ -24,13 +24,65 @@ function renderParagraphs(text) {
 
 const statusLabels = { active: '进行中', done: '已完成', abandoned: '搁置' }
 
+/**
+ * 滚动进入视口时淡入上浮
+ * 参考文件用的是同一套（IntersectionObserver + 0.8s cubic-bezier(0.16,1,0.3,1)）。
+ * 开了「减少动效」的系统设置时直接显示，不做观察。
+ */
+function useReveal() {
+  const ref = useRef(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    // 开了「减少动效」、或环境不支持观察器时，直接显示 —— 免得内容卡在 opacity:0
+    if (
+      typeof IntersectionObserver === 'undefined' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      setShown(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  return [ref, shown]
+}
+
+/** delay 用来做错落感（毫秒） */
+function Reveal({ as: Tag = 'div', delay = 0, className = '', children, ...rest }) {
+  const [ref, shown] = useReveal()
+  return (
+    <Tag
+      ref={ref}
+      className={`ed-reveal${shown ? ' is-shown' : ''}${className ? ` ${className}` : ''}`}
+      style={{ '--reveal-delay': `${delay}ms` }}
+      {...rest}
+    >
+      {children}
+    </Tag>
+  )
+}
+
 /* ====== 项目条目 ====== */
 function ProjectRow({ project, index, onSelect }) {
   const abandoned = project.status === 'abandoned'
 
   return (
-    <div
+    <Reveal
       className={`ed-row${abandoned ? ' ed-row--abandoned' : ''}`}
+      delay={Math.min(index, 4) * 70}
       onClick={() => onSelect(project)}
       role="button"
       tabIndex={0}
@@ -55,16 +107,16 @@ function ProjectRow({ project, index, onSelect }) {
         {statusLabels[project.status] || statusLabels.done}
         {project.progress != null && ` · ${project.progress}%`}
       </span>
-    </div>
+    </Reveal>
   )
 }
 
 /* ====== 灵感碎片 ====== */
-function IdeaCard({ idea }) {
+function IdeaCard({ idea, index }) {
   return (
-    <div className="ed-idea">
+    <Reveal className="ed-idea" delay={index * 90}>
       <p className="ed-idea-text">{idea.text}</p>
-    </div>
+    </Reveal>
   )
 }
 
@@ -148,15 +200,15 @@ function Projects() {
         {/* Hero：巨型衬线标题 + 斜体副行，右侧小号大写说明 */}
         <header className="ed-hero">
           <div className="ed-hero-row">
-            <h1 className="ed-hero-title">
+            <Reveal as="h1" className="ed-hero-title">
               代码开发
               <br />
               <em>写下来的东西。</em>
-            </h1>
-            <p className="ed-hero-note">
+            </Reveal>
+            <Reveal as="p" className="ed-hero-note" delay={140}>
               课余写的项目、踩过的坑，以及那些还没动手的念头。
               每一个都留着当时的思路和取舍。
-            </p>
+            </Reveal>
           </div>
         </header>
 
@@ -194,8 +246,8 @@ function Projects() {
               <span className="ed-label ed-label--muted">还没动手</span>
             </div>
             <div className="ed-grid">
-              {projectData.ideas.map((idea) => (
-                <IdeaCard key={idea.id} idea={idea} />
+              {projectData.ideas.map((idea, i) => (
+                <IdeaCard key={idea.id} idea={idea} index={i} />
               ))}
             </div>
           </section>
