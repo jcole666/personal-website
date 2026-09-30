@@ -113,14 +113,20 @@ export const navThemes = {
     logoSpacing: '0.06em',
   },
   '/music': {
+    // 音乐页是 Neo-Brutalist：白底 + 纯黑粗边 + 直角。
+    // 边框必须是纯黑且加粗 —— 这个风格明令「禁止灰色边框」，
+    // 而且底色不能用半透明（会破坏「诚实、不掩饰」的调子）。
     tag: 'LISTENING ROOM',
-    bg: 'rgba(30, 30, 36, 0.9)',
-    border: 'rgba(107, 101, 96, 0.15)',
-    ink: '#d4d0c8',
-    accent: '#d4a853',
-    tagInk: '#6b6560',
-    logoFont: "'Playfair Display', 'Noto Serif SC', serif",
-    logoSpacing: '0.04em',
+    bg: '#ffffff',
+    border: '#000000',
+    borderWidth: '4px',
+    ink: '#000000',
+    accent: '#ff006e',
+    tagInk: '#000000',
+    logoFont: "'Space Grotesk', 'Noto Sans SC', sans-serif",
+    logoSize: '1.35rem',
+    logoSpacing: '0.02em',
+    blur: 'none',
   },
   '/movies': {
     // 电影页是 Cinematic Video Hero：暗场调色 + 唯一暖金强调。

@@ -127,18 +127,23 @@ export const footerThemes = {
     max: '1080px',
   },
   '/music': {
+    // Neo-Brutalist：纯黑底 + 白字 + 荧光绿强调。
+    // 参考站的页脚骨架就是 bg-black text-white，这里照做。
+    // 对比度（白 on 黑）21:1，荧光绿 #ccff00 on 黑 约 16:1，都远超 AA。
     brand: '流前 · 深夜听音室',
     tag: '让耳朵决定今晚的方向',
-    bg: '#1e1e24',
-    border: 'rgba(107, 101, 96, 0.12)',
-    divider: 'rgba(107, 101, 96, 0.1)',
-    ink: '#d4d0c8',
-    muted: '#948f8c',
-    faint: '#8b8682',
-    accent: '#d4a853',
-    font: "'Playfair Display', 'Noto Serif SC', serif",
-    size: '1.5rem',
-    max: '1024px',
+    bg: '#000000',
+    border: '#ffffff',
+    borderWidth: '4px',
+    divider: 'rgba(255, 255, 255, 0.28)',
+    ink: '#ffffff',
+    muted: '#ffffff',
+    faint: '#ffffff',
+    accent: '#ccff00',
+    font: "'Space Grotesk', 'Noto Sans SC', sans-serif",
+    size: '1.3rem',
+    uiFont: "'Space Mono', 'Consolas', monospace",
+    max: '1080px',
   },
   '/movies': {
     // 同上一套。页脚用抬升面 #141821，比页面的近黑底亮一档 ——

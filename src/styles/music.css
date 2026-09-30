@@ -1,141 +1,127 @@
 /* ============================================
-   音乐页 · 深夜听音室
+   音乐 · Neo-Brutalist 新野兽派
+   参考 参考/neo-brutalist-showcase
+
+   风格骨架（从参考站实际用量提取）：
+     排版   font-black 122 次（标题）/ font-mono 92 次（正文）/
+            uppercase 117 次 / tracking-widest 34 次
+     边框   border-black 113 次 / border-2 52 次 / border-4 42 次 /
+            border-r-4 31 次（列表项的右侧粗边）
+     阴影   硬边，零模糊。默认 6px、hover 10px、active 直接压平（shadow-none 16 次）
+            彩色阴影：粉 rgba(255,0,110,1) / 绿 rgba(204,255,0,1) / 白
+     动效   duration-150 96 次 / ease-out 29 次
+     圆角   整个参考站一个 rounded-* 都没有 —— 全直角
+
+   ⚠️ 指南有一处自相矛盾：
+     [REQUIRED] 和 [COMPARE] 写的是 hover:shadow-none（hover 就压平），
+     但「绝对禁止」明确写着「禁止按钮 hover 时仅用位移替代阴影消失
+     （hover 应增大阴影强调力量，active 才是完全压平）」。
+     按禁止项优先 —— hover 增大阴影 + 左上偏移，active 才压平。
+
+   禁止项：禁圆角 / 禁模糊阴影 / 禁渐变 / 禁灰边框 / 禁 opacity 淡出 /
+          禁 rounded-full（装饰圆除外）
    ============================================ */
 
-/* ----- 全局（稍微提亮）----- */
 .music-world {
+  --nb-black: #000000;
+  --nb-white: #ffffff;
+  --nb-pink: #ff006e;
+  --nb-green: #ccff00;
+  --nb-blue: #00d9ff;
+  --nb-orange: #ff9500;
+  --nb-yellow: #ffff00;
+
+  /* Zero Rounding Easing：统一 150ms ease-out，要生猛的碰撞感，
+     不要弹簧物理 */
+  --nb-t: 150ms ease-out;
+
   min-height: calc(100vh - var(--nav-height));
-  /* 氛围光见 common.css 的「全站氛围光」区块 */
-  background: var(--ambient), #1e1e24;
-  color: #d4d0c8;
-}
-
-.music-world,
-.music-world * {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-}
-
-/* 自定义滚动条 —— 琥珀色，与主题协调 */
-.music-world::-webkit-scrollbar {
-  width: 6px;
-}
-.music-world::-webkit-scrollbar-track {
-  background: transparent;
-}
-.music-world::-webkit-scrollbar-thumb {
-  background: rgba(212, 168, 83, 0.25);
-  border-radius: 3px;
-}
-.music-world::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 168, 83, 0.45);
+  background: var(--nb-white);
+  color: var(--nb-black);
+  font-family: var(--font-mono);
+  position: relative;
+  overflow-x: hidden;
 }
 
 .music-inner {
-  max-width: 1024px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 48px 24px 64px;
+  padding: 48px 28px 88px;
 }
 
 /* ============================================
-   区块 0：黑胶转盘
+   唱片机
+   全部硬边重绘：黑胶是同心圆（装饰圆允许），其余一律直角 + 粗边
    ============================================ */
-
+/* wrapper 的宽高由组件 inline style 给定（width: size, height: size+80） */
 .turntable-wrapper {
   position: relative;
-  margin: 0 auto 24px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nb-green);
+  border: 3px solid var(--nb-black);
+  box-shadow: 8px 8px 0 0 var(--nb-black);
 }
 
+/* 原来的暖色光晕和野兽派不搭，关掉 */
 .turntable-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(
-    circle at center,
-    rgba(212, 168, 83, 0.12) 0%,
-    rgba(212, 168, 83, 0.04) 40%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
-.turntable-wrapper::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 220%;
-  height: 220%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(212, 168, 83, 0.06) 0%,
-    transparent 60%
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
+/* 黑胶盘体。装饰性圆形，允许 border-radius 50%（风格明令的例外） */
 .turntable-record {
   position: relative;
-  z-index: 1;
-  width: 100%;
+  width: 76%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #1a1a1a;
-  box-shadow:
-    0 0 60px rgba(212, 168, 83, 0.08),
-    0 0 0 3px rgba(30, 30, 35, 0.95),
-    0 0 0 6px rgba(20, 20, 25, 0.7),
-    0 0 0 9px rgba(30, 30, 35, 0.3);
+  background: var(--nb-black);
+  border: 3px solid var(--nb-black);
   overflow: hidden;
 }
 
+/* 纹路层的 background 由组件用 repeating-radial-gradient 内联注入，
+   这里只负责把它撑满并裁成圆 */
 .turntable-grooves {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  opacity: 0.6;
-  pointer-events: none;
 }
 
+/* 中心标签 */
 .turntable-label {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 28%;
-  aspect-ratio: 1;
+  inset: 34%;
   border-radius: 50%;
-  background: #d4a853;
+  background: var(--nb-pink);
+  border: 3px solid var(--nb-black);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
+/* 标签只有约 24px 宽，四个字横排塞不下 —— 让它自然竖排，
+   紧凑一点，像唱片中心那张小圆标 */
 .turntable-label-text {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: clamp(0.55rem, 1.2vw, 0.75rem);
-  color: #1a1a1f;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: var(--nb-white);
   text-align: center;
-  line-height: 1.3;
-  letter-spacing: 0.03em;
-  padding: 4px;
+  line-height: 1.15;
+  word-break: break-all;
 }
 
+/* 唱臂：直角几何，不跟唱片一起转 */
 .turntable-tonearm {
   position: absolute;
-  top: 6%;
-  right: -4%;
-  z-index: 2;
-  width: 72px;
-  height: 120px;
-  transform-origin: top right;
-  transform: rotate(18deg);
+  top: 8%;
+  right: 4%;
+  width: 42%;
+  height: 62%;
   pointer-events: none;
 }
 
@@ -143,459 +129,55 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  background: var(--nb-orange);
+  border: 3px solid var(--nb-black);
   border-radius: 50%;
-  background: #3a383e;
-  border: 2px solid #55525a;
 }
 
+/* 唱臂杆绕顶部旋转，末端会向左下甩出去。
+   角度别开太大 —— 26deg 时末端会甩到容器右侧外面，唱头接不上。
+   14deg 时末端落在容器右下角，正好放唱头。 */
 .turntable-tonearm-shaft {
   position: absolute;
-  top: 18px;
-  right: 8px;
-  width: 3px;
-  height: 82px;
-  background: linear-gradient(180deg, #55525a 0%, #3a383e 100%);
-  border-radius: 2px;
+  top: 14px;
+  right: 13px;
+  width: 4px;
+  height: 66%;
+  background: var(--nb-black);
+  transform: rotate(-14deg);
   transform-origin: top center;
-  transform: rotate(4deg);
 }
 
+/* 唱头接在杆的末端（跟着上面算出来的位置走） */
 .turntable-tonearm-head {
   position: absolute;
-  top: 96px;
-  right: 2px;
-  width: 16px;
-  height: 8px;
-  background: #55525a;
-  border-radius: 2px 8px 8px 2px;
+  top: 64%;
+  left: 112%;
+  width: 22px;
+  height: 28px;
+  background: var(--nb-black);
+  border: 2px solid var(--nb-white);
 }
 
-.turntable-title {
-  text-align: center;
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.6rem;
-  color: #d4a853;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  margin-top: 12px;
-}
-
+/* Turntable 组件用 JS 设 `animation: turntable-spin 12s linear infinite`，
+   关键帧必须存在于样式表里，否则唱片不转 */
 @keyframes turntable-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ============================================
-   本期推荐横幅（转盘下方）
+   黑胶唱片（叠在专辑/单曲封面上的那个）
+   尺寸由组件 inline style 给，这里只管外观
    ============================================ */
-
-.latest-pick-banner {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 28px 36px;
-  background: rgba(212, 168, 83, 0.07);
-  border-radius: 10px;
-  border: 1px solid rgba(212, 168, 83, 0.12);
-}
-
-.latest-pick-cover {
-  flex-shrink: 0;
-  width: 96px;
-  height: 96px;
-  border-radius: 8px;
-  background: #353540;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.3;
-  overflow: hidden;
-}
-
-.latest-pick-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.latest-pick-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.latest-pick-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  color: #d4a853;
-  font-family: 'Space Mono', 'Consolas', monospace;
-  margin-bottom: 6px;
-}
-
-.latest-pick-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.55rem;
-  color: #d4d0c8;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.latest-pick-artist {
-  font-size: 0.88rem;
-  color: #6b6560;
-  margin-bottom: 10px;
-}
-
-.latest-pick-reason {
-  font-size: 0.9rem;
-  line-height: 1.7;
-  color: #b5b0a8;
-}
-
-/* ============================================
-   标签筛选栏
-   ============================================ */
-
-.music-filter {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 28px;
-  justify-content: center;
-}
-
-.music-filter-btn {
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 5px 16px;
-  border-radius: 999px;
-  border: 1.5px solid rgba(107, 101, 96, 0.3);
-  background: transparent;
-  color: #6b6560;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-  font-family: inherit;
-}
-
-.music-filter-btn:hover {
-  border-color: #d4a853;
-  color: #d4a853;
-  box-shadow: 0 0 12px rgba(212, 168, 83, 0.15);
-}
-
-.music-filter-btn--active {
-  background: #d4a853;
-  border-color: #d4a853;
-  color: #1e1e24;
-}
-
-/* ============================================
-   区域标题
-   ============================================ */
-
-.music-section-label {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.35rem;
-  color: #d4a853;
-  margin-bottom: 18px;
-  letter-spacing: 0.04em;
-  font-weight: 600;
-}
-
-/* ============================================
-   通用：查看更多按钮
-   ============================================ */
-
-.music-more-btn {
-  display: block;
-  margin: 24px auto 0;
-  padding: 8px 28px;
-  font-size: 0.85rem;
-  color: #6b6560;
-  background: none;
-  border: 1.5px solid rgba(107, 101, 96, 0.25);
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.music-more-btn:hover {
-  color: #d4a853;
-  border-color: #d4a853;
-}
-
-/* ============================================
-   区块 1：单曲 —— 画廊网格（最多10 + 查看更多）
-   ============================================ */
-
-.music-singles-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-}
-
-/* 卡片壳 */
-.music-single-card {
-  cursor: pointer;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #353540;
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.music-single-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 168, 83, 0.08);
-}
-
-/* 封面 + 黑胶滑出容器 */
-.music-single-cover-wrap {
-  position: relative;
-  aspect-ratio: 1;
-  overflow: hidden;
-  background: #3a3a48;
-}
-
-.music-single-cover {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: #3a3a48;
-  color: #aaa;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.4;
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.music-single-cover {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: #353540;
-  color: #999;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.4;
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.music-single-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.music-single-card:hover .music-single-cover {
-  transform: translateX(-35%);
-}
-
-.music-single-card .vinyl-disc {
-  opacity: 0;
-}
-
-.music-single-card:hover .vinyl-disc {
-  opacity: 1;
-}
-
-.music-single-body {
-  padding: 14px 16px 16px;
-}
-
-.music-single-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #d4d0c8;
-  margin: 0 0 2px;
-  line-height: 1.3;
-  letter-spacing: 0.02em;
-}
-
-.music-single-artist {
-  font-size: 0.78rem;
-  color: #6b6560;
-  margin-bottom: 6px;
-}
-
-.music-single-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.music-tag-pill {
-  font-size: 0.65rem;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: rgba(212, 168, 83, 0.08);
-  color: #d4a853;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
-.music-single-reflection {
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: #8a857e;
-  margin-top: 8px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ============================================
-   区块 2：专辑推荐（横条卡，最多10+更多）
-   ============================================ */
-
-.music-albums-row-card {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 16px 20px;
-  background: #353540;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-  margin-bottom: 10px;
-}
-
-.music-albums-row-card:hover {
-  background: #40404e;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-}
-
-.music-albums-row-cover-wrap {
-  position: relative;
-  flex-shrink: 0;
-  width: 64px;
-  height: 64px;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #3a3a48;
-}
-
-.music-albums-row-cover {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #353540;
-  color: #999;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.3;
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.music-albums-row-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.music-albums-row-card:hover .music-albums-row-cover {
-  transform: translateX(-50%);
-}
-
-.music-albums-row-card .vinyl-disc {
-  opacity: 0;
-  width: 52px;
-  height: 52px;
-  top: 6px;
-  right: 6px;
-}
-
-.music-albums-row-card:hover .vinyl-disc {
-  opacity: 1;
-}
-
-.music-albums-row-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.music-albums-row-header {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 2px;
-}
-
-.music-albums-row-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #d4d0c8;
-  letter-spacing: 0.02em;
-}
-
-.music-albums-row-artist {
-  font-size: 0.82rem;
-  color: #6b6560;
-}
-
-.music-albums-row-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.music-albums-row-year {
-  font-size: 0.7rem;
-  color: #6b6560;
-  font-family: 'Space Mono', 'Consolas', monospace;
-}
-
-.music-albums-row-reflection {
-  font-size: 0.78rem;
-  color: #8a857e;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 4px;
-}
-
-/* ============================================
-   Vinyl 碟片（被多处复用）
-   ============================================ */
-
 .vinyl-disc {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
+  position: relative;
   border-radius: 50%;
-  background: #222;
-  box-shadow: 0 0 0 2px rgba(50,50,55,0.9), 0 0 0 4px rgba(30,30,35,0.5);
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s ease;
-  opacity: 0;
+  background: var(--nb-black);
+  border: 2px solid var(--nb-black);
   overflow: hidden;
 }
 
@@ -605,11 +187,8 @@
   border-radius: 50%;
   background: repeating-radial-gradient(
     circle,
-    transparent 0px,
-    transparent 4px,
-    rgba(100, 98, 105, 0.2) 4.3px,
-    rgba(70, 68, 75, 0.3) 4.8px,
-    transparent 5px
+    transparent 0 3px,
+    rgba(255, 255, 255, 0.07) 3px 4px
   );
 }
 
@@ -619,607 +198,914 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: #d4a853;
+  background: var(--nb-pink);
+  border: 2px solid var(--nb-black);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .vinyl-disc-label-text {
-  font-size: 0.45rem;
-  color: #222;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.42rem;
+  font-weight: 900;
+  color: var(--nb-white);
+  white-space: nowrap;
+}
+
+.turntable-title {
+  margin: 26px 0 18px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--nb-black);
   text-align: center;
-  line-height: 1.3;
 }
 
 /* ============================================
-   区块 3：音乐人推荐（圆头像，可点开弹窗）
+   最近推荐横幅
    ============================================ */
+.latest-pick-banner {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 8px 8px 0 0 var(--nb-black);
+  transition: transform var(--nb-t), box-shadow var(--nb-t);
+}
 
+.latest-pick-banner:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 0 var(--nb-pink);
+}
+
+.latest-pick-cover {
+  flex-shrink: 0;
+  width: 150px;
+  aspect-ratio: 1;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-blue);
+  overflow: hidden;
+}
+
+.latest-pick-cover img,
+.latest-pick-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.latest-pick-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.latest-pick-label {
+  align-self: flex-start;
+  padding: 3px 10px;
+  background: var(--nb-black);
+  color: var(--nb-white);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.latest-pick-title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--nb-black);
+}
+
+.latest-pick-artist {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--nb-black);
+}
+
+.latest-pick-reason {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--nb-black);
+}
+
+/* ============================================
+   标签筛选
+   ============================================ */
+.music-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 44px;
+}
+
+.music-tag-pill {
+  padding: 7px 16px;
+  background: var(--nb-white);
+  border: 2px solid var(--nb-black);
+  box-shadow: 3px 3px 0 0 var(--nb-black);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t),
+    background-color 0ms;
+}
+
+.music-tag-pill:hover {
+  background: var(--nb-yellow);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 0 var(--nb-black);
+}
+
+.music-tag-pill:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.music-tag-pill--active {
+  background: var(--nb-pink);
+  color: var(--nb-white);
+}
+
+/* ============================================
+   区块标题
+   ============================================ */
+.music-section-label {
+  margin: 0 0 26px;
+  padding-bottom: 14px;
+  border-bottom: 4px solid var(--nb-black);
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--nb-black);
+}
+
+/* ============================================
+   单曲网格
+   ============================================ */
+.music-singles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 20px;
+}
+
+.music-single-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 6px 6px 0 0 var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t),
+    background-color 0ms;
+}
+
+/* Brutal Snap：背景瞬间硬切，只有位移和阴影走 150ms 过渡 */
+.music-single-card:hover {
+  background: var(--nb-green);
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0 0 var(--nb-pink);
+}
+
+.music-single-card:active {
+  transform: translate(6px, 6px);
+  box-shadow: none;
+}
+
+/* 封面 + 叠在右下角的黑胶。
+   黑胶比封面大、故意被裁掉一部分 —— 像唱片从封套里抽出来半截，
+   这是音乐页的招牌细节，别删。 */
+.music-single-cover-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 76px;
+  height: 76px;
+  border: 2px solid var(--nb-black);
+  background: var(--nb-blue);
+  overflow: hidden;
+}
+
+.music-single-cover,
+.music-single-cover-wrap > svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.music-single-cover-wrap .vinyl-disc {
+  position: absolute;
+  right: -16px;
+  bottom: -16px;
+  z-index: 2;
+}
+
+.music-single-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-single-title {
+  margin: 0 0 4px;
+  font-family: var(--font-body);
+  font-size: 1.06rem;
+  font-weight: 900;
+  line-height: 1.3;
+  color: var(--nb-black);
+}
+
+.music-single-artist {
+  margin: 0 0 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nb-black);
+}
+
+.music-single-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.music-single-reflection {
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--nb-black);
+}
+
+/* ============================================
+   专辑行
+   ============================================ */
+.music-albums-row-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.music-albums-row-card {
+  display: flex;
+  gap: 22px;
+  padding: 20px;
+  margin-bottom: 18px;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 6px 6px 0 0 var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t),
+    background-color 0ms;
+}
+
+.music-albums-row-card:hover {
+  background: var(--nb-yellow);
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0 0 var(--nb-black);
+}
+
+.music-albums-row-card:active {
+  transform: translate(6px, 6px);
+  box-shadow: none;
+}
+
+.music-albums-row-cover-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 108px;
+  height: 108px;
+  border: 2px solid var(--nb-black);
+  background: var(--nb-orange);
+  overflow: hidden;
+}
+
+.music-albums-row-cover,
+.music-albums-row-cover-wrap > svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.music-albums-row-cover-wrap .vinyl-disc {
+  position: absolute;
+  right: -18px;
+  bottom: -18px;
+  z-index: 2;
+}
+
+.music-albums-row-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-albums-row-title {
+  margin: 0 0 5px;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--nb-black);
+}
+
+.music-albums-row-artist {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nb-black);
+}
+
+.music-albums-row-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.music-albums-row-year {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--nb-black);
+}
+
+.music-albums-row-reflection {
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--nb-black);
+}
+
+/* ============================================
+   音乐人
+   ============================================ */
 .music-artists-section {
   margin-bottom: 56px;
 }
 
 .music-artists-list {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
 }
 
 .music-artist-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
+  padding: 16px;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 5px 5px 0 0 var(--nb-black);
   cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t),
+    background-color 0ms;
 }
 
+.music-artist-item:hover {
+  background: var(--nb-blue);
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 0 var(--nb-black);
+}
+
+.music-artist-item:active {
+  transform: translate(5px, 5px);
+  box-shadow: none;
+}
+
+/* 头像是有意为之的装饰圆，允许 */
 .music-artist-avatar {
-  width: 96px;
-  height: 96px;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: #3a3a48;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #aaa;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.4;
-  transition: box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  border: 3px solid var(--nb-black);
+  background: var(--nb-pink);
+  overflow: hidden;
 }
 
-.music-artist-avatar img {
+.music-artist-avatar img,
+.music-artist-avatar svg {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-}
-
-.music-artist-item:hover .music-artist-avatar {
-  box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.5), 0 0 24px rgba(212, 168, 83, 0.2);
-  transform: scale(1.06);
 }
 
 .music-artist-name {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 0.92rem;
-  color: #d4d0c8;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  transition: color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.music-artist-item:hover .music-artist-name {
-  color: #d4a853;
+  margin: 0 0 3px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--nb-black);
 }
 
 .music-artist-note {
-  font-size: 0.72rem;
-  color: #6b6560;
-  text-align: center;
+  font-size: 0.74rem;
   line-height: 1.5;
-  max-width: 140px;
+  color: var(--nb-black);
 }
 
 /* ============================================
-   区块 4：深度聆听（折叠+小卡片）
+   深度聆听
    ============================================ */
-
 .music-featured-section {
-  margin-bottom: 48px;
+  margin-bottom: 56px;
 }
 
 .music-featured-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .music-featured-item {
-  padding: 20px 24px;
-  background: #353540;
-  border-radius: 8px;
-  border-left: 3px solid #d4a853;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: var(--nb-black);
+  color: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 6px 6px 0 0 var(--nb-pink);
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--nb-t), box-shadow var(--nb-t);
 }
 
 .music-featured-item:hover {
-  background: #40404e;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0 0 var(--nb-green);
+}
+
+.music-featured-item:active {
+  transform: translate(6px, 6px);
+  box-shadow: none;
+}
+
+.music-featured-album {
+  flex-shrink: 0;
+  width: 92px;
+  aspect-ratio: 1;
+  border: 2px solid var(--nb-white);
+  overflow: hidden;
+}
+
+.music-featured-album img,
+.music-featured-album svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .music-featured-header {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 8px;
 }
 
-.music-featured-album {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.1rem;
-  color: #d4d0c8;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
-.music-featured-artist {
-  font-size: 0.82rem;
-  color: #6b6560;
-}
-
 .music-featured-text {
-  font-size: 0.84rem;
-  line-height: 1.7;
-  color: #8a857e;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--nb-white);
 }
 
 /* ============================================
-   详情弹窗（单曲/专辑）
+   查看更多 / 空态
    ============================================ */
+.music-more-btn {
+  display: block;
+  margin: 28px auto 0;
+  padding: 12px 30px;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 5px 5px 0 0 var(--nb-black);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t),
+    background-color 0ms;
+}
 
-.music-modal-overlay {
+.music-more-btn:hover {
+  background: var(--nb-pink);
+  color: var(--nb-white);
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 0 var(--nb-black);
+}
+
+.music-more-btn:active {
+  transform: translate(5px, 5px);
+  box-shadow: none;
+}
+
+.music-empty {
+  padding: 40px 20px;
+  border: 3px dashed var(--nb-black);
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--nb-black);
+}
+
+/* ============================================
+   弹窗（单曲 / 专辑 / 音乐人 / 全部列表）
+   统一走同一套硬边语言
+   ============================================ */
+.music-modal-overlay,
+.artist-modal-overlay,
+.full-list-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(8, 8, 10, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  animation: music-fade-in 0.2s ease;
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.music-modal,
+.artist-modal,
+.full-list-panel {
+  position: relative;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--nb-white);
+  border: 4px solid var(--nb-black);
+  box-shadow: 12px 12px 0 0 var(--nb-black);
 }
 
 .music-modal {
-  background: #353540;
-  border-radius: 12px;
-  max-width: 540px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 168, 83, 0.04);
-  animation: music-scale-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  max-width: 640px;
 }
 
-.music-modal-close {
+.artist-modal {
+  max-width: 560px;
+}
+
+.full-list-panel {
+  max-width: 1000px;
+  padding: 32px 28px 28px;
+}
+
+/* 关闭按钮：直角方块，hover 硬切 */
+.music-modal-close,
+.artist-modal-close,
+.full-list-close {
   position: absolute;
-  top: 12px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0, 0, 0, 0.5);
-  color: #d4d0c8;
-  font-size: 1rem;
-  cursor: pointer;
-  z-index: 2;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s ease, color 0.3s ease;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 4px 4px 0 0 var(--nb-black);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t),
+    background-color 0ms;
 }
 
-.music-modal-close:hover {
-  background: rgba(212, 168, 83, 0.25);
-  color: #d4a853;
+.music-modal-close:hover,
+.artist-modal-close:hover,
+.full-list-close:hover {
+  background: var(--nb-pink);
+  color: var(--nb-white);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--nb-black);
+}
+
+.music-modal-close:active,
+.artist-modal-close:active,
+.full-list-close:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 .music-modal-cover {
-  aspect-ratio: 1;
-  background: #3a3a48;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+  aspect-ratio: 16 / 9;
+  border-bottom: 4px solid var(--nb-black);
+  background: var(--nb-blue);
   overflow: hidden;
-  border-radius: 12px 12px 0 0;
-  color: #6b6560;
-  font-size: 0.85rem;
 }
 
-.music-modal-cover img {
+.music-modal-cover img,
+.music-modal-cover svg {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 .music-modal-body {
-  padding: 22px 28px 32px;
+  padding: 28px 28px 32px;
 }
 
 .music-modal-meta {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
 .music-modal-tag {
-  font-size: 0.7rem;
-  padding: 3px 12px;
-  border-radius: 999px;
-  background: rgba(212, 168, 83, 0.1);
-  color: #d4a853;
-  font-weight: 600;
-}
-
-.music-modal-year {
-  font-size: 0.75rem;
-  color: #6b6560;
-  font-family: 'Space Mono', 'Consolas', monospace;
+  padding: 3px 10px;
+  background: var(--nb-black);
+  color: var(--nb-white);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .music-modal-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.6rem;
-  color: #d4d0c8;
-  margin: 0 0 2px;
-  letter-spacing: 0.03em;
-  font-weight: 600;
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--nb-black);
 }
 
-.music-modal-artist {
-  font-size: 0.9rem;
-  color: #6b6560;
-  margin-bottom: 16px;
-}
-
+.music-modal-artist,
 .music-modal-album {
-  font-size: 0.82rem;
-  color: #6b6560;
-  margin-bottom: 16px;
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nb-black);
 }
 
-.music-modal-album span {
-  color: #d4a853;
+.music-modal-year {
+  margin: 0 0 20px;
+  padding-bottom: 18px;
+  border-bottom: 3px solid var(--nb-black);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--nb-black);
 }
 
 .music-modal-reflection {
-  font-size: 0.9rem;
-  line-height: 1.85;
-  color: #b5b0a8;
-  margin-bottom: 20px;
+  font-size: 0.94rem;
+  line-height: 1.9;
+  color: var(--nb-black);
 }
 
 .music-modal-reflection p {
-  margin-bottom: 0.8em;
+  margin: 0 0 1em;
 }
 
+/* 歌词区：黑底白字，和正文拉开 */
 .music-modal-lyric {
-  padding: 18px 22px;
-  background: rgba(212, 168, 83, 0.04);
-  border-radius: 6px;
-  border-left: 2px solid rgba(212, 168, 83, 0.25);
+  margin-top: 24px;
+  padding: 20px 22px;
+  background: var(--nb-black);
+  border: 3px solid var(--nb-black);
+  box-shadow: 6px 6px 0 0 var(--nb-yellow);
 }
 
 .music-modal-lyric-quote {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-style: italic;
-  font-size: 1.05rem;
-  color: #d4a853;
+  margin: 0 0 10px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 900;
   line-height: 1.6;
-  margin-bottom: 6px;
+  color: var(--nb-white);
 }
 
 .music-modal-lyric-note {
-  font-size: 0.78rem;
-  color: #6b6560;
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.75;
+  color: var(--nb-white);
 }
 
-/* ============================================
-   音乐人弹窗
-   ============================================ */
-
-.artist-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9000;
-  background: rgba(8, 8, 10, 0.7);
+/* 音乐人弹窗 */
+.artist-modal-profile {
   display: flex;
+  gap: 22px;
   align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: music-fade-in 0.2s ease;
-  backdrop-filter: blur(4px);
-}
-
-.artist-modal {
-  background: #353540;
-  border-radius: 12px;
-  max-width: 520px;
-  width: 100%;
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-  animation: music-scale-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-  text-align: center;
-  padding: 40px 32px 32px;
-}
-
-.artist-modal-close {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0, 0, 0, 0.5);
-  color: #d4d0c8;
-  font-size: 1rem;
-  cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.artist-modal-close:hover {
-  background: rgba(212, 168, 83, 0.25);
-  color: #d4a853;
+  padding: 28px 28px 22px;
+  border-bottom: 4px solid var(--nb-black);
+  background: var(--nb-green);
 }
 
 .artist-modal-avatar {
-  width: 100px;
-  height: 100px;
+  flex-shrink: 0;
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
-  background: #3a3a42;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b6560;
-  font-size: 0.8rem;
+  border: 3px solid var(--nb-black);
   overflow: hidden;
-  box-shadow: 0 0 0 4px rgba(212, 168, 83, 0.15);
+  background: var(--nb-pink);
 }
 
-.artist-modal-avatar img {
+.artist-modal-avatar img,
+.artist-modal-avatar svg {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 .artist-modal-name {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.6rem;
-  color: #d4d0c8;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  margin-bottom: 8px;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--nb-black);
 }
 
 .artist-modal-tags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
-.artist-modal-profile {
-  text-align: left;
-  font-size: 0.9rem;
-  line-height: 1.85;
-  color: #b5b0a8;
-  border-top: 1px solid rgba(107, 101, 96, 0.15);
-  padding-top: 20px;
-}
-
-.artist-modal-profile p {
-  margin-bottom: 0.8em;
-}
-
-/* ════════════════════════════════════════════
-   "查看更多"完整列表弹窗
-   ════════════════════════════════════════════ */
-
-.full-list-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9100;
-  background: rgba(8, 8, 10, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: music-fade-in 0.2s ease;
-  backdrop-filter: blur(4px);
-}
-
-.full-list-panel {
-  background: #2a2b35;
-  border-radius: 12px;
-  max-width: 960px;
-  width: 100%;
-  max-height: 82vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  animation: music-scale-in 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
+/* 全部列表弹窗 */
 .full-list-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  padding: 20px 28px 14px;
-  border-bottom: 1px solid rgba(107, 101, 96, 0.12);
-  flex-shrink: 0;
+  gap: 16px;
+  margin-bottom: 26px;
+  padding-bottom: 16px;
+  border-bottom: 4px solid var(--nb-black);
 }
 
 .full-list-head-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.3rem;
-  color: #d4d0c8;
-  letter-spacing: 0.03em;
-  font-weight: 600;
-}
-
-.full-list-close {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.06);
-  color: #d4d0c8;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s, color 0.3s;
-}
-
-.full-list-close:hover {
-  background: rgba(212, 168, 83, 0.25);
-  color: #d4a853;
-}
-
-.full-list-body {
-  padding: 20px 28px 28px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.full-list-body--grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-}
-
-.full-list-body--row {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.full-list-body--circle .music-artists-list {
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.full-list-body--card {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--nb-black);
 }
 
 /* ============================================
-   空状态
+   响应式：全站三档 900 / 768 / 480
+   按风格的「移动端数值 ≈ 桌面端 50%」缩放
    ============================================ */
-
-.music-empty {
-  text-align: center;
-  padding: 48px 24px;
-  color: #6b6560;
-  font-size: 0.9rem;
-}
-/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
-
-/* 导航栏配色已移到 src/data/navTheme.js 的 '/music' 一项 */
-
-/* ============================================
-   动画
-   ============================================ */
-
-@keyframes music-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes music-scale-in {
-  from { opacity: 0; transform: scale(0.93); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* ============================================
-   响应式
-   ============================================ */
-
 @media (max-width: 900px) {
-  .music-singles-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+  .music-inner {
+    padding: 40px 22px 72px;
   }
 
-  .music-featured-list {
-    grid-template-columns: 1fr;
+  .music-singles-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
   }
 
   .music-artists-list {
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  }
+
+  /* 阴影从 8px 收到 4px */
+  .latest-pick-banner,
+  .turntable-wrapper {
+    box-shadow: 4px 4px 0 0 var(--nb-black);
   }
 }
 
 @media (max-width: 768px) {
   .music-inner {
-    padding: 32px 16px 40px;
-  }
-
-  .music-singles-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    padding: 32px 18px 60px;
   }
 
   .latest-pick-banner {
     flex-direction: column;
-    text-align: center;
-    padding: 16px 20px;
-  }
-
-  .music-albums-row-card {
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 14px;
-  }
-
-  .music-albums-row-reflection {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-  }
-
-  .music-featured-item {
+    gap: 18px;
     padding: 18px;
   }
 
-  .music-modal,
-  .artist-modal {
-    max-width: 100%;
-    border-radius: 10px;
+  .latest-pick-cover {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .latest-pick-title {
+    font-size: 1.4rem;
+  }
+
+  .music-section-label {
+    font-size: 1.2rem;
+  }
+
+  .music-albums-row-card,
+  .music-featured-item {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .music-albums-row-cover-wrap,
+  .music-featured-album {
+    width: 100%;
+    max-width: 160px;
+  }
+
+  .music-modal-title {
+    font-size: 1.6rem;
+  }
+
+  .artist-modal-profile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 22px 20px 18px;
+  }
+
+  .music-modal-body {
+    padding: 22px 20px 26px;
+  }
+
+  .full-list-panel {
+    padding: 24px 18px 22px;
   }
 }
 
 @media (max-width: 480px) {
-  .music-singles-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
+  .music-singles-grid,
   .music-artists-list {
-    gap: 14px;
+    grid-template-columns: 1fr;
   }
 
-  .music-artist-avatar {
-    width: 72px;
-    height: 72px;
+  .music-single-card {
+    flex-direction: row;
+  }
+}
+
+/* ============================================
+   减少动效
+   黑胶的无限旋转必须停 —— 它是最容易引起不适的那类持续运动
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .vinyl-disc {
+    animation: none;
+  }
+
+  .music-world *,
+  .music-world *::before,
+  .music-world *::after {
+    transition-duration: 0.01ms !important;
+  }
+
+  .latest-pick-banner:hover,
+  .music-single-card:hover,
+  .music-albums-row-card:hover,
+  .music-artist-item:hover,
+  .music-featured-item:hover,
+  .music-tag-pill:hover,
+  .music-more-btn:hover,
+  .music-modal-close:hover,
+  .artist-modal-close:hover,
+  .full-list-close:hover {
+    transform: none;
   }
 }

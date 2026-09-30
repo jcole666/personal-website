@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import seedMusicData, { extractAllTags, filterByTag } from '../data/music.js'
 import { useData } from '../context/DataContext.jsx'
 import Turntable, { VinylDisc } from '../components/Turntable.jsx'
+import PhotoArt from '../components/PhotoArt.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 
@@ -23,7 +24,7 @@ function MusicModal({ item, onClose }) {
       <div className="music-modal" onClick={(e) => e.stopPropagation()}>
         <button className="music-modal-close" onClick={onClose}>✕</button>
         <div className="music-modal-cover">
-          {item.coverUrl ? <img src={item.coverUrl} alt={item.title} /> : <><span style={{ fontWeight: 600 }}>{item.title}</span><span style={{ fontSize: '0.7rem' }}>{item.artist}</span></>}
+          <PhotoArt src={item.coverUrl} alt={item.title} id={item.id} theme="poster" />
         </div>
         <div className="music-modal-body">
           <div className="music-modal-meta">
@@ -53,7 +54,7 @@ function ArtistModal({ artist, onClose }) {
     <div className="artist-modal-overlay" onClick={onClose}>
       <div className="artist-modal" onClick={(e) => e.stopPropagation()}>
         <button className="artist-modal-close" onClick={onClose}>✕</button>
-        <div className="artist-modal-avatar">{artist.avatarUrl ? <img src={artist.avatarUrl} alt={artist.name} /> : <span>{artist.name.slice(0, 2)}</span>}</div>
+        <div className="artist-modal-avatar"><PhotoArt src={artist.avatarUrl} alt={artist.name} id={artist.id} theme="poster" /></div>
         <h2 className="artist-modal-name">{artist.name}</h2>
         <div className="artist-modal-tags">{artist.tags?.map((t) => <TagPill key={t} tag={t} />)}</div>
         {artist.profile && <div className="artist-modal-profile">{renderParagraphs(artist.profile)}</div>}
@@ -96,7 +97,7 @@ function FullListModal({ title, items, renderAs, onItemClick, onClose }) {
           {renderAs === 'grid' && items.map((item) => (
             <div key={item.id} className="music-single-card" onClick={() => onItemClick(item)}>
               <div className="music-single-cover-wrap">
-                <div className="music-single-cover">{item.coverUrl ? <img src={item.coverUrl} alt={item.title} /> : <><span style={{ fontWeight: 600 }}>{item.title}</span><span style={{ fontSize: '0.65rem' }}>{item.artist}</span></>}</div>
+                <div className="music-single-cover"><PhotoArt src={item.coverUrl} alt={item.title} id={item.id} theme="poster" /></div>
                 <VinylDisc size={100} />
               </div>
               <div className="music-single-body">
@@ -110,7 +111,7 @@ function FullListModal({ title, items, renderAs, onItemClick, onClose }) {
           {renderAs === 'row' && items.map((item) => (
             <div key={item.id} className="music-albums-row-card" onClick={() => onItemClick(item)}>
               <div className="music-albums-row-cover-wrap">
-                <div className="music-albums-row-cover">{item.coverUrl ? <img src={item.coverUrl} alt={item.title} /> : <span>{item.title?.slice(0, 3)}</span>}</div>
+                <div className="music-albums-row-cover"><PhotoArt src={item.coverUrl} alt={item.title} id={item.id} theme="poster" /></div>
                 <VinylDisc size={52} />
               </div>
               <div className="music-albums-row-info">
@@ -124,7 +125,7 @@ function FullListModal({ title, items, renderAs, onItemClick, onClose }) {
             <div className="music-artists-list">
               {items.map((a) => (
                 <div key={a.id} className="music-artist-item" onClick={() => a.profile && onItemClick(a)}>
-                  <div className="music-artist-avatar">{a.avatarUrl ? <img src={a.avatarUrl} alt={a.name} /> : <span>{a.name.slice(0, 2)}</span>}</div>
+                  <div className="music-artist-avatar"><PhotoArt src={a.avatarUrl} alt={a.name} id={a.id} theme="poster" /></div>
                   <span className="music-artist-name">{a.name}</span>
                   <p className="music-artist-note">{a.note}</p>
                 </div>
@@ -152,7 +153,7 @@ function LatestPickBanner({ pick }) {
   if (!pick) return null
   return (
     <div className="latest-pick-banner">
-      <div className="latest-pick-cover">{pick.coverUrl ? <img src={pick.coverUrl} alt={pick.title} /> : <span>{pick.title?.slice(0, 3)}</span>}</div>
+      <div className="latest-pick-cover"><PhotoArt src={pick.coverUrl} alt={pick.title} id={pick.id} theme="poster" /></div>
       <div className="latest-pick-info">
         <p className="latest-pick-label">LATEST PICK</p>
         <h3 className="latest-pick-title">{pick.title}</h3>
@@ -172,7 +173,7 @@ function SingleCard({ single, onClick }) {
   return (
     <div className="music-single-card" onClick={onClick}>
       <div className="music-single-cover-wrap">
-        <div className="music-single-cover">{single.coverUrl ? <img src={single.coverUrl} alt={single.title} /> : <><span style={{ fontWeight: 600 }}>{single.title}</span><span style={{ fontSize: '0.65rem' }}>{single.artist}</span></>}</div>
+        <div className="music-single-cover"><PhotoArt src={single.coverUrl} alt={single.title} id={single.id} theme="poster" /></div>
         <VinylDisc size={100} />
       </div>
       <div className="music-single-body">
@@ -200,7 +201,7 @@ function AlbumRow({ album, onClick }) {
   return (
     <div className="music-albums-row-card" onClick={onClick}>
       <div className="music-albums-row-cover-wrap">
-        <div className="music-albums-row-cover">{album.coverUrl ? <img src={album.coverUrl} alt={album.title} /> : <span>{album.title.slice(0, 3)}</span>}</div>
+        <div className="music-albums-row-cover"><PhotoArt src={album.coverUrl} alt={album.title} id={album.id} theme="poster" /></div>
         <VinylDisc size={52} />
       </div>
       <div className="music-albums-row-info">
@@ -231,7 +232,7 @@ function ArtistsList({ artists, onSelect, onShowAll }) {
       <div className="music-artists-list">
         {visible.map((a) => (
           <div key={a.id} className="music-artist-item" onClick={() => a.profile && onSelect(a)}>
-            <div className="music-artist-avatar">{a.avatarUrl ? <img src={a.avatarUrl} alt={a.name} /> : <span>{a.name.slice(0, 2)}</span>}</div>
+            <div className="music-artist-avatar"><PhotoArt src={a.avatarUrl} alt={a.name} id={a.id} theme="poster" /></div>
             <span className="music-artist-name">{a.name}</span>
             <p className="music-artist-note">{a.note}</p>
           </div>
@@ -248,7 +249,7 @@ function FeaturedWall({ albums, onSelect, onShowAll }) {
   const visible = featured.slice(0, FEATURED_PAGE)
   return (
     <section className="music-featured-section">
-      <h2 className="music-section-label">🎙 深度聆听</h2>
+      <h2 className="music-section-label">深度聆听</h2>
       <div className="music-featured-list">
         {visible.map((a) => (
           <div key={a.id} className="music-featured-item" onClick={() => onSelect(a)}>
@@ -297,17 +298,17 @@ function Music() {
         <div style={{ marginTop: 36 }}><TagFilter tags={allTags} activeTag={activeTag} onSelect={setActiveTag} /></div>
 
         <section style={{ marginBottom: 56 }}>
-          <h2 className="music-section-label">🎵 最近所听</h2>
+          <h2 className="music-section-label">最近所听</h2>
           <SinglesGrid singles={singles} onSelect={setModalItem} onShowAll={() => setFullListType('singles')} />
         </section>
 
         <section style={{ marginBottom: 56 }}>
-          <h2 className="music-section-label">📀 专辑推荐</h2>
+          <h2 className="music-section-label">专辑推荐</h2>
           <AlbumsList albums={albums} onSelect={setModalItem} onShowAll={() => setFullListType('albums')} />
         </section>
 
         <section className="music-artists-section">
-          <h2 className="music-section-label">👤 音乐人</h2>
+          <h2 className="music-section-label">音乐人</h2>
           <ArtistsList artists={artists} onSelect={setArtistItem} onShowAll={() => setFullListType('artists')} />
         </section>
 
@@ -320,10 +321,10 @@ function Music() {
       <ArtistModal artist={artistItem} onClose={() => setArtistItem(null)} />
       <FeaturedModal item={featuredItem} onClose={() => setFeaturedItem(null)} />
 
-      {fullListType === 'singles' && <FullListModal title="🎵 全部单曲" items={singles} renderAs="grid" onItemClick={(item) => { setFullListType(null); setModalItem(item) }} onClose={() => setFullListType(null)} />}
-      {fullListType === 'albums' && <FullListModal title="📀 全部专辑" items={albums} renderAs="row" onItemClick={(item) => { setFullListType(null); setModalItem(item) }} onClose={() => setFullListType(null)} />}
-      {fullListType === 'artists' && <FullListModal title="👤 全部音乐人" items={artists} renderAs="circle" onItemClick={(artist) => { setFullListType(null); setArtistItem(artist) }} onClose={() => setFullListType(null)} />}
-      {fullListType === 'featured' && <FullListModal title="🎙 全部深度聆听" items={albums.filter((a) => a.featured && a.featuredText)} renderAs="card" onItemClick={(item) => { setFullListType(null); setFeaturedItem(item) }} onClose={() => setFullListType(null)} />}
+      {fullListType === 'singles' && <FullListModal title="全部单曲" items={singles} renderAs="grid" onItemClick={(item) => { setFullListType(null); setModalItem(item) }} onClose={() => setFullListType(null)} />}
+      {fullListType === 'albums' && <FullListModal title="全部专辑" items={albums} renderAs="row" onItemClick={(item) => { setFullListType(null); setModalItem(item) }} onClose={() => setFullListType(null)} />}
+      {fullListType === 'artists' && <FullListModal title="全部音乐人" items={artists} renderAs="circle" onItemClick={(artist) => { setFullListType(null); setArtistItem(artist) }} onClose={() => setFullListType(null)} />}
+      {fullListType === 'featured' && <FullListModal title="全部深度聆听" items={albums.filter((a) => a.featured && a.featuredText)} renderAs="card" onItemClick={(item) => { setFullListType(null); setFeaturedItem(item) }} onClose={() => setFullListType(null)} />}
 
       <EditButton sectionKey="music" label="音乐" />
     </main>
