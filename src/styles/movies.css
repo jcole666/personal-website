@@ -307,7 +307,11 @@
 }
 
 .signboard-inner {
-  background: #3c4060;
+  /* 原来是硬编码的蓝紫 #3c4060 —— 我批量调色时漏了这个值，
+     结果整块木牌在近黑底上泛着明显的紫，和页面调子打架。
+     改成中性抬升面：比外层木框 #141821 亮一档，保住木牌的层次，
+     但不再往蓝紫偏。 */
+  background: #1e2430;
   border-radius: 3px;
   padding: 28px 32px;
 }
@@ -341,7 +345,9 @@
   font-weight: 700;
   text-align: center;
   overflow: hidden;
-  background: linear-gradient(135deg, #5c6e90, #6b5588);
+  /* 无海报时的占位。原来也是蓝紫渐变，和页面唯一暖金的调子不搭 ——
+     改成冷黑过渡到暗金，低调但有暖意，和那支 #E4C063 呼应 */
+  background: linear-gradient(135deg, #262b38, #33291b);
 }
 
 .signboard-poster img {
