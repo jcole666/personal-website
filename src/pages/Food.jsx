@@ -11,6 +11,33 @@ function renderParagraphs(text) {
   return text.trim().split('\n\n').map((para, i) => <p key={i}>{para.trim()}</p>)
 }
 
+/**
+ * 田园装饰：一小枝手绘叶子。
+ * 用 SVG 线稿而不是 emoji —— emoji 是彩色位图，颜色改不动，
+ * 而且和这套柔和大地色系放在一起会显得突兀。SVG 能直接吃 currentColor。
+ */
+function Sprig({ className = '' }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 40 44"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M20 42V6" />
+      <path d="M20 32c-6-2-10-6-11-13 7 1 11 5 11 13Z" />
+      <path d="M20 23c6-2 10-6 11-13-7 1-11 5-11 13Z" />
+      <path d="M20 15c-5-2-8-5-9-10 6 1 9 4 9 10Z" />
+      <path d="M20 9c5-2 8-4 9-8-6 1-9 3-9 8Z" />
+    </svg>
+  )
+}
+
 function StarsText({ rating }) {
   if (!rating) return null
   const filled = Math.floor(rating)
@@ -157,6 +184,10 @@ function Food() {
       <div className="food-inner">
         {/* 头部 */}
         <div className="food-hero">
+          <div className="food-hero-sprigs" aria-hidden="true">
+            <Sprig className="food-hero-sprig" />
+            <Sprig className="food-hero-sprig food-hero-sprig--flip" />
+          </div>
           <h1 className="food-hero-title">市集</h1>
           <div className="food-hero-line" />
           <p className="food-hero-sub">从学校后街到城市角落，记录吃过的每一口好味道。</p>

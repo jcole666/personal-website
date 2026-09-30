@@ -176,19 +176,21 @@ export const footerThemes = {
     max: '1100px',
   },
   '/food': {
+    // Cottagecore：亚麻色底 + 大地棕文字 + 花粉分隔线。
+    // 对比度实测（底色 #f5f0e8）：ink 6.17 / muted 5.00 / faint 5.00 / accent 5.46
     brand: '流前',
     tag: '市集',
-    bg: '#f5efe5',
-    border: 'rgba(0, 0, 0, 0.05)',
-    divider: 'rgba(0, 0, 0, 0.05)',
-    ink: '#2d2418',
-    muted: '#6f6252',
-    faint: '#6f6252',
-    accent: '#c47a5e',
-    font: "'Playfair Display', 'Noto Serif SC', serif",
+    bg: '#f5f0e8',
+    border: 'rgba(212, 160, 160, 0.45)',
+    divider: 'rgba(212, 160, 160, 0.3)',
+    ink: '#6b5540',
+    muted: '#7a6349',
+    faint: '#7a6349',
+    accent: '#3f6b3f',
+    font: "'Fraunces', 'Noto Serif SC', Georgia, serif",
     size: '1.3rem',
     spacing: '0.03em',
-    max: '960px',
+    max: '1040px',
   },
 }
 

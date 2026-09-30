@@ -150,13 +150,16 @@ export const navThemes = {
     blur: 'blur(10px)',
   },
   '/food': {
+    // 市集页是 Cottagecore 田园核：奶油亚麻底 + 大地棕 + 花粉边。
+    // 这一页禁止直角和硬边框，所以边框色用花粉而不是深色发丝线。
+    // ink 用压深版 #6b5540（6.50）—— 原色 #8b7355 在奶油底上只有 4.17
     tag: 'FOOD MARKET',
     bg: 'rgba(250, 246, 240, 0.94)',
-    border: 'rgba(0, 0, 0, 0.05)',
-    ink: '#2d2418',
-    accent: '#c47a5e',
-    tagInk: '#8c7b68',
-    logoFont: "'Playfair Display', 'Noto Serif SC', serif",
+    border: 'rgba(212, 160, 160, 0.45)',
+    ink: '#6b5540',
+    accent: '#3f6b3f',
+    tagInk: '#7a6349',
+    logoFont: "'Fraunces', 'Noto Serif SC', Georgia, serif",
     logoSize: '1.4rem',
     logoSpacing: '0.03em',
   },

@@ -1,125 +1,206 @@
 /* ============================================
-   市集 · 食物日记
-   温暖克制 / 大图大字 / 留白呼吸
+   市集 · Cottagecore 田园核风
+   参考 参考/cottagecore-showcase
+
+   风格骨架（从参考站实际用量提取）：
+     配色   大地棕 #8b7355（正文主色）/ 草绿 #5a8f5a（28次）/
+            奶油 #faf6f0（28次）/ 花粉 #d4a0a0（边框）/ 雏菊黄 #f5d75f
+     排版   font-serif 164 次（几乎全衬线）+ italic 43 次
+     圆角   rounded-full 29 次（按钮）/ rounded-3xl 20 次（卡片）
+     阴影   0 4px 20px rgba(139,115,85,.05) —— 极柔，几乎只是一层晕
+     动效   duration-500 49 次 / duration-700 18 次
+
+   ⚠️ 两处必须偏离参考站的做法：
+     1. 参考站大量用 text-[#8b7355]/45 这种低透明度做「淡」，
+        合成后对比度只有 1.75，基本看不见。这里一律改用实色压深。
+     2. #8b7355 本身在奶油底上只有 4.17，达不到 AA 的 4.5 ——
+        正文改用压深版 #6b5540(6.50)，#8b7355 只留给大字号和装饰。
+
+   禁止项（照抄风格指南）：禁圆角 none / 禁深色底 / 禁 font-mono /
+   禁 uppercase / 禁霓虹高饱和 / 禁直角硬边 / 禁科技工业元素
    ============================================ */
 
-/* ----- 全局 ----- */
 .food-world {
+  --cc-cream: #faf6f0;
+  --cc-linen: #f5f0e8;
+  --cc-ink: #6b5540;
+  --cc-ink-soft: #7a6349;
+  --cc-brown: #8b7355;
+  --cc-green: #3f6b3f;
+  --cc-green-bright: #5a8f5a;
+  --cc-pink: #d4a0a0;
+  --cc-yellow: #f5d75f;
+  --cc-line: rgba(212, 160, 160, 0.45);
+  --cc-line-soft: rgba(212, 160, 160, 0.28);
+  --cc-shadow-sm: 0 4px 16px rgba(139, 115, 85, 0.08);
+  --cc-shadow-md: 0 4px 20px rgba(139, 115, 85, 0.05);
+  --cc-shadow-lg: 0 8px 28px rgba(139, 115, 85, 0.12);
+
+  /* Gentle & Breezy：节奏要舒缓，不能快 */
+  --cc-ease: 500ms ease-in-out;
+  --cc-ease-slow: 700ms ease-in-out;
+
   min-height: calc(100vh - var(--nav-height));
-  /* 氛围光见 common.css 的「全站氛围光」区块 */
-  background: var(--ambient), #fcfaf7;
-  color: #2d2418;
+  color: var(--cc-ink);
+  font-family: var(--font-display);
   position: relative;
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  overflow-x: hidden;
+
+  /* 亚麻质感：两向交叉的极细线 */
+  background-color: var(--cc-cream);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(139, 115, 85, 0.022) 0 1px,
+      transparent 1px 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(139, 115, 85, 0.022) 0 1px,
+      transparent 1px 4px
+    );
 }
 
 .food-inner {
-  max-width: 960px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 0 24px 80px;
-  position: relative;
-  z-index: 1;
+  padding: 56px 40px 88px;
 }
 
-/* 滚动条 */
-.food-world ::-webkit-scrollbar { width: 6px; }
-.food-world ::-webkit-scrollbar-track { background: transparent; }
-.food-world ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 3px; }
-
 /* ============================================
-   页面头部 — 大字标题
+   Hero：两侧手绘叶子 + 衬线大标题
    ============================================ */
-
 .food-hero {
-  padding: 48px 0 40px;
+  position: relative;
   text-align: center;
+  margin-bottom: 40px;
+}
+
+.food-hero-sprigs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 12px;
+  color: var(--cc-green-bright);
+}
+
+.food-hero-sprig {
+  width: 26px;
+  height: 30px;
+  transform-origin: bottom center;
+  /* Botanical Sway：极克制的摆动，不能变成抖动 */
+  animation: cc-sway 5s ease-in-out infinite;
+}
+
+.food-hero-sprig--flip {
+  transform: scaleX(-1);
+  animation-delay: 1.2s;
+}
+
+@keyframes cc-sway {
+  0%,
+  100% {
+    rotate: -3deg;
+  }
+  50% {
+    rotate: 3deg;
+  }
 }
 
 .food-hero-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: clamp(2.2rem, 3.5vw, 3rem);
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
   font-weight: 600;
-  color: #2d2418;
-  margin: 0 0 12px;
-  letter-spacing: 0.02em;
   line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--cc-ink);
 }
 
 .food-hero-line {
-  width: 32px;
+  width: 72px;
   height: 2px;
-  background: #c47a5e;
-  margin: 0 auto 14px;
+  margin: 0 auto 18px;
+  background: var(--cc-pink);
+  border-radius: 999px;
 }
 
 .food-hero-sub {
-  font-size: 0.88rem;
-  color: #8c7b68;
-  font-weight: 400;
-  max-width: 420px;
-  margin: 0 auto;
-  line-height: 1.7;
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--cc-ink-soft);
 }
 
 /* ============================================
-   快速导航栏
+   快速导航：胶囊标签
    ============================================ */
-
 .food-quick-nav {
   display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin-bottom: 48px;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 48px;
+  padding: 16px 18px;
+  background: var(--cc-linen);
+  border: 1px solid var(--cc-line-soft);
+  border-radius: 24px;
+  box-shadow: var(--cc-shadow-md);
 }
 
 .food-quick-nav-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
+  gap: 7px;
+  padding: 8px 16px;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
   border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.06);
-  color: #2d2418;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  color: var(--cc-ink);
   text-decoration: none;
-  font-size: 0.82rem;
-  font-weight: 500;
-  transition: all 0.3s;
-  white-space: nowrap;
+  transition: transform var(--cc-ease), box-shadow var(--cc-ease),
+    border-color var(--cc-ease), background-color var(--cc-ease);
 }
 
 .food-quick-nav-item:hover {
-  border-color: var(--nav-color, #c47a5e);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  transform: translateY(-1px);
+  background: #ffffff;
+  border-color: var(--cc-pink);
+  box-shadow: var(--cc-shadow-sm);
+  /* Handmade Imperfection：轻微旋转 + 小幅放大，不要机械地直上直下 */
+  transform: translateY(-3px) rotate(-0.8deg) scale(1.03);
+}
+
+.food-quick-nav-item:active {
+  transform: scale(0.97);
 }
 
 .food-quick-nav-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 /* ============================================
-   摊位分类区
+   摊位
    ============================================ */
-
 .food-stall {
-  margin-bottom: 48px;
+  margin-bottom: 64px;
 }
 
-/* 摊位头部 — 简洁的色点 + 文字 */
 .food-stall-head {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 22px;
-  padding-bottom: 12px;
-  padding-top: 16px;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  scroll-margin-top: 80px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--cc-line);
+  scroll-margin-top: 90px;
 }
 
 .food-stall-dot {
@@ -129,409 +210,419 @@
   flex-shrink: 0;
 }
 
-.food-stall-name {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #2d2418;
-  letter-spacing: 0.03em;
+.food-stall-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  /* emoji 是彩色位图，降一点饱和度让它融进柔和的大地色系 */
+  filter: saturate(0.8);
 }
 
-.food-stall-icon {
-  font-size: 1.3rem;
-  line-height: 1;
+.food-stall-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--cc-ink);
 }
 
 .food-stall-desc {
   margin-left: auto;
-  font-size: 0.78rem;
-  color: #b0a090;
-  font-family: 'Space Mono', monospace;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.84rem;
+  color: var(--cc-ink-soft);
 }
-
-/* ============================================
-   卡片网格
-   ============================================ */
 
 .food-stall-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 22px;
 }
 
 /* ============================================
-   卡片 — 统一的现代卡片风格
-   大图 + 干净文字区
+   食物卡片
    ============================================ */
-
 .food-card {
-  background: #ffffff;
-  border-radius: 10px;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 24px;
   overflow: hidden;
+  box-shadow: var(--cc-shadow-md);
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-  display: flex;
-  flex-direction: column;
+  transition: transform var(--cc-ease), box-shadow var(--cc-ease),
+    border-color var(--cc-ease);
 }
 
 .food-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  border-color: var(--cc-pink);
+  box-shadow: var(--cc-shadow-lg);
+  /* Handmade Imperfection：不超过 1deg 的微旋 + 小幅放大 */
+  transform: translateY(-4px) rotate(-0.7deg) scale(1.02);
 }
 
-/* 照片区 — 大比例 */
+.food-card:active {
+  transform: scale(0.97);
+}
+
 .food-card-photo {
-  aspect-ratio: 5 / 7;
-  background: #f5ede0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
   position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--cc-linen);
 }
 
-.food-card-photo img {
+.food-card-photo img,
+.food-card-photo svg {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
 }
 
-.food-card:hover .food-card-photo img {
-  transform: scale(1.04);
-}
-
-/* 照片左上角的摊位色标签 */
 .food-card-badge {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 2px 10px;
-  border-radius: 6px;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  top: 12px;
+  left: 12px;
+  padding: 4px 13px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
   color: #ffffff;
-  z-index: 1;
+  box-shadow: var(--cc-shadow-sm);
 }
 
-/* 信息区 */
 .food-card-info {
-  padding: 12px 16px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
+  padding: 16px 18px 18px;
 }
 
 .food-card-name {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.05rem;
+  margin-bottom: 4px;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
   font-weight: 600;
-  color: #2d2418;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
+  line-height: 1.45;
+  color: var(--cc-ink);
 }
 
 .food-card-shop {
-  font-size: 0.72rem;
-  color: #8c7b68;
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--cc-ink-soft);
 }
 
 .food-card-meta-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  gap: 10px;
+  padding-top: 11px;
+  border-top: 1px dashed var(--cc-line-soft);
 }
 
 .food-card-rating {
-  font-size: 0.7rem;
-  color: #c47a5e;
-  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: var(--cc-yellow);
+  /* 雏菊黄在奶油底上太浅，加一层描边让它立得住 */
+  text-shadow: 0 0 1px rgba(139, 115, 85, 0.9), 0 1px 2px rgba(139, 115, 85, 0.25);
 }
 
 .food-card-price {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #2d2418;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--cc-green);
 }
 
-/* ============================================
-   查看更多按钮 — 简洁文字链接
-   ============================================ */
-
+/* 查看全部 */
 .food-more-btn {
   display: block;
-  margin: 32px auto 0;
-  padding: 12px 36px;
+  margin: 26px auto 0;
+  padding: 11px 30px;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
   border-radius: 999px;
-  border: 1.5px solid rgba(0,0,0,0.1);
-  background: transparent;
-  color: #2d2418;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: var(--cc-ink);
   cursor: pointer;
-  font-family: inherit;
-  transition: all 0.3s;
-  letter-spacing: 0.02em;
+  box-shadow: var(--cc-shadow-md);
+  transition: transform var(--cc-ease), box-shadow var(--cc-ease),
+    background-color var(--cc-ease), border-color var(--cc-ease);
 }
 
 .food-more-btn:hover {
-  border-color: rgba(0,0,0,0.2);
-  background: rgba(0,0,0,0.02);
+  background: var(--cc-green-bright);
+  border-color: var(--cc-green-bright);
+  color: #ffffff;
+  box-shadow: var(--cc-shadow-lg);
+  transform: translateY(-3px) rotate(-0.6deg) scale(1.03);
+}
+
+.food-more-btn:active {
+  transform: scale(0.97);
 }
 
 /* ============================================
    详情弹窗
    ============================================ */
-
 .food-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(20, 14, 6, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  animation: food-fade-in 0.2s ease;
-  backdrop-filter: blur(6px);
+  padding: 28px;
+  background: rgba(107, 85, 64, 0.42);
 }
 
 .food-modal {
-  background: #ffffff;
-  border-radius: 16px;
-  max-width: 540px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
   position: relative;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
-  animation: food-float-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 100%;
+  max-width: 600px;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 28px;
+  box-shadow: var(--cc-shadow-lg);
 }
 
-.food-modal-close {
+.food-modal-close,
+.food-full-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255,255,255,0.9);
-  color: #2d2418;
-  font-size: 1rem;
-  cursor: pointer;
-  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 50%;
+  color: var(--cc-ink);
+  font-size: 0.86rem;
+  cursor: pointer;
+  box-shadow: var(--cc-shadow-sm);
+  transition: transform var(--cc-ease), background-color var(--cc-ease),
+    color var(--cc-ease);
 }
 
-.food-modal-close:hover {
-  background: rgba(255,255,255,1);
+.food-modal-close:hover,
+.food-full-close:hover {
+  background: var(--cc-pink);
+  color: #ffffff;
+  transform: rotate(-90deg) scale(1.06);
 }
 
 .food-modal-photo {
-  aspect-ratio: 5 / 7;
-  background: #f5ede0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #b0a090;
-  font-size: 0.9rem;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 16px 16px 0 0;
+  background: var(--cc-linen);
+  border-bottom: 1px solid var(--cc-line-soft);
 }
 
-.food-modal-photo img {
+.food-modal-photo img,
+.food-modal-photo svg {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 .food-modal-body {
-  padding: 28px 32px 36px;
+  padding: 28px 30px 32px;
 }
 
 .food-modal-tags {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 14px;
 }
 
 .food-modal-tag {
-  font-size: 0.7rem;
   padding: 4px 14px;
+  background: var(--cc-linen);
+  border: 1px solid var(--cc-line);
   border-radius: 999px;
-  background: #f0e8d8;
-  color: #8c7b68;
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  color: var(--cc-green);
 }
 
 .food-modal-name {
-  font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
-  font-size: 2.2rem;
-  color: #2d2418;
   margin: 0 0 8px;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--cc-ink);
 }
 
 .food-modal-shop {
-  font-size: 1rem;
-  color: #8c7b68;
-  margin-bottom: 4px;
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--cc-ink-soft);
 }
 
-.food-modal-date {
-  font-size: 0.75rem;
-  color: #b0a090;
-  font-family: 'Space Mono', monospace;
-  margin-bottom: 6px;
-}
-
-.food-modal-price {
-  display: inline-block;
-  font-family: 'Space Mono', monospace;
-  font-weight: 700;
-  color: #2d2418;
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-}
-
-.food-modal-rating {
-  font-size: 0.82rem;
-  color: #c47a5e;
-  margin-bottom: 18px;
-  letter-spacing: 0.04em;
+.food-modal-meta-row {
+  margin: 0 0 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed var(--cc-line);
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  color: var(--cc-ink-soft);
 }
 
 .food-modal-review {
-  font-size: 0.9rem;
-  line-height: 1.9;
-  color: #4a3a2a;
-  border-top: 1px solid rgba(0,0,0,0.06);
-  padding-top: 18px;
+  font-family: var(--font-display);
+  font-size: 0.96rem;
+  line-height: 2;
+  color: var(--cc-ink);
 }
 
-.food-modal-review p { margin-bottom: 0.7em; }
+.food-modal-review p {
+  margin: 0 0 1em;
+}
+
+.food-modal-review p:last-child {
+  margin-bottom: 0;
+}
 
 /* ============================================
    全部显示弹窗
    ============================================ */
-
 .food-full-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(20, 14, 6, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  animation: food-fade-in 0.2s ease;
-  backdrop-filter: blur(6px);
+  padding: 28px;
+  background: rgba(107, 85, 64, 0.42);
 }
 
 .food-full-panel {
-  background: #faf6f0;
-  border-radius: 16px;
-  max-width: 900px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
-  padding: 36px 32px 40px;
   position: relative;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
-  animation: food-float-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 100%;
+  max-width: 980px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 36px 34px 34px;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 28px;
+  box-shadow: var(--cc-shadow-lg);
 }
-
-.food-full-close {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255,255,255,0.9);
-  color: #2d2418;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.food-full-close:hover { background: #ffffff; }
 
 .food-full-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  margin: 0 0 26px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--cc-line);
+  font-family: var(--font-display);
   font-size: 1.6rem;
-  color: #2d2418;
-  margin-bottom: 28px;
-  text-align: center;
-  letter-spacing: 0.03em;
   font-weight: 600;
+  color: var(--cc-ink);
 }
 
 .food-full-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
-
-/* 导航栏配色已移到 src/data/navTheme.js 的 '/food' 一项 */
-
-/* ============================================
-   动画
-   ============================================ */
-
-@keyframes food-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes food-float-up {
-  from { opacity: 0; transform: translateY(32px); }
-  to   { opacity: 1; transform: translateY(0); }
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 22px;
 }
 
 /* ============================================
-   响应式
+   响应式：全站三档 900 / 768 / 480
    ============================================ */
-
 @media (max-width: 900px) {
-  .food-stall-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
-  .food-full-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .food-inner {
+    padding: 48px 28px 76px;
+  }
+
+  .food-stall-grid,
+  .food-full-grid {
+    grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+    gap: 18px;
+  }
 }
 
 @media (max-width: 768px) {
-  .food-hero { padding: 40px 0 36px; }
-  .food-hero-title { font-size: 2.2rem; }
-  .food-inner { padding: 0 16px 60px; }
-  .food-stall { margin-bottom: 52px; }
-  .food-stall-head { margin-bottom: 20px; }
+  .food-inner {
+    padding: 40px 20px 64px;
+  }
 
-  .food-modal { max-width: 100%; border-radius: 12px; }
-  .food-modal-body { padding: 20px 22px 28px; }
+  .food-quick-nav {
+    padding: 12px 12px;
+    border-radius: 20px;
+  }
 
-  .food-full-panel { padding: 28px 20px 32px; }
+  .food-stall-head {
+    flex-wrap: wrap;
+  }
+
+  .food-stall-desc {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .food-stall-grid,
+  .food-full-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+  }
+
+  .food-modal-body {
+    padding: 24px 20px 26px;
+  }
+
+  .food-modal-name {
+    font-size: 1.55rem;
+  }
+
+  .food-full-panel {
+    padding: 28px 20px 26px;
+  }
 }
 
 @media (max-width: 480px) {
-  .food-stall-grid { grid-template-columns: 1fr; gap: 16px; }
-  .food-full-grid { grid-template-columns: 1fr; }
+  .food-stall-grid,
+  .food-full-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .food-hero-sprigs {
+    gap: 14px;
+  }
+}
+
+/* Gentle & Breezy 的例外：系统开了「减少动效」就全部停掉 */
+@media (prefers-reduced-motion: reduce) {
+  .food-hero-sprig {
+    animation: none;
+  }
+
+  .food-card,
+  .food-quick-nav-item,
+  .food-more-btn,
+  .food-modal-close,
+  .food-full-close {
+    transition: none;
+  }
+
+  .food-card:hover,
+  .food-quick-nav-item:hover,
+  .food-more-btn:hover,
+  .food-modal-close:hover,
+  .food-full-close:hover {
+    transform: none;
+  }
 }
