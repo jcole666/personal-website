@@ -26,12 +26,37 @@ import SiteFooter from '../components/SiteFooter.jsx'
    小工具
    =================================================================== */
 
+/**
+ * 便签的轻微歪斜 —— 只有便签用。
+ * 书架上的书是排列整齐的（Antique Stillness：旧纸张平铺，不歪斜），
+ * 但随手贴上去的便签本来就该是歪的，这个歪斜是静态的、不参与任何 hover 过渡。
+ * 按 key 缓存，避免每次渲染都换一个角度。
+ */
 const tiltCache = new Map()
 function cachedTilt(key) {
   if (!tiltCache.has(key)) {
     tiltCache.set(key, (Math.random() - 0.5) * 2.4)
   }
   return tiltCache.get(key)
+}
+
+/**
+ * 复古四角装饰
+ *
+ * 参考站的招牌细节：四角各一个内缩 8px 的 L 形角标，常态很淡（opacity .3），
+ * 鼠标凑近才慢慢显现到全不透明 —— 模拟「读者凑近才看清的旧书细节」。
+ * 用 4 个 span 而不是伪元素，因为 ::before/::after 只有两个，
+ * 而且分开写才能让四角各自做透明度过渡。
+ */
+function Corners() {
+  return (
+    <>
+      <span className="rv-corner rv-corner--tl" aria-hidden="true" />
+      <span className="rv-corner rv-corner--tr" aria-hidden="true" />
+      <span className="rv-corner rv-corner--bl" aria-hidden="true" />
+      <span className="rv-corner rv-corner--br" aria-hidden="true" />
+    </>
+  )
 }
 
 function Stars({ rating }) {
@@ -141,13 +166,14 @@ function QuoteBanner({ dailyQuotes }) {
   return (
     <>
       <section className="reading-quote-banner">
+        <Corners />
         <div className="reading-quote-label">
           <span className="reading-quote-tag">DAILY · 每日金句</span>
           <button
             className="reading-quote-history-btn"
             onClick={() => setShowHistory(true)}
           >
-            📅 历史记录
+            历史记录
           </button>
         </div>
         <blockquote className="reading-quote-text">
@@ -166,7 +192,7 @@ function QuoteBanner({ dailyQuotes }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="reading-quote-history-head">
-              <h3 className="reading-quote-history-title">📅 历史金句</h3>
+              <h3 className="reading-quote-history-title">历史金句</h3>
               <button
                 className="reading-quote-history-close"
                 onClick={() => setShowHistory(false)}
@@ -225,7 +251,7 @@ function CurrentlyReading({ books }) {
   if (readingBooks.length === 0) {
     return (
       <section className="reading-current">
-        <h2 className="reading-section-label">📖 正在读……</h2>
+        <h2 className="reading-section-label">正在读</h2>
         <p className="reading-empty">暂时没有在读的书～</p>
       </section>
     )
@@ -235,9 +261,10 @@ function CurrentlyReading({ books }) {
 
   return (
     <section className="reading-current">
-      <h2 className="reading-section-label">📖 正在读……</h2>
+      <h2 className="reading-section-label">正在读</h2>
 
       <div className="reading-current-card">
+        <Corners />
         <div className="reading-current-cover">
           {book.coverUrl ? (
             <img src={book.coverUrl} alt={book.title} />
@@ -253,7 +280,7 @@ function CurrentlyReading({ books }) {
           <h3 className="reading-current-title">{book.title}</h3>
           <p className="reading-current-author">{book.author}</p>
           <p className="reading-current-progress-label">阅读进度</p>
-          <ScribbleProgress progress={0.35} color="#b0a090" />
+          <ScribbleProgress progress={0.35} color="#8b4513" />
 
           {book.highlights.length > 0 && (
             <div className="reading-current-highlights">
@@ -333,7 +360,7 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
 
   return (
     <section className="reading-finished-section">
-      <h2 className="reading-section-label">📚 已读</h2>
+      <h2 className="reading-section-label">已读</h2>
 
       {/* 多维筛选栏 */}
       <div className="reading-filter-dimensions">
@@ -411,9 +438,9 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
             <article
               key={book.id}
               className="reading-gallery-card"
-              style={{ '--card-tilt': `${cachedTilt(book.id)}deg` }}
               onClick={() => setSelectedId(book.id)}
             >
+              <Corners />
               <div className="reading-gallery-cover">
                 {book.coverUrl ? (
                   <img src={book.coverUrl} alt={book.title} />
@@ -468,10 +495,11 @@ function WantToRead({ books }) {
 
   return (
     <section className="reading-want-section">
-      <h2 className="reading-section-label">📝 想读……</h2>
+      <h2 className="reading-section-label">想读</h2>
       <div className="reading-want-grid">
         {wantBooks.map((book) => (
           <div key={book.id} className="reading-want-card">
+            <Corners />
             <div className="reading-want-cover">
               {book.coverUrl ? (
                 <img src={book.coverUrl} alt={book.title} />
@@ -508,7 +536,7 @@ function ReflectionsWall({ notes }) {
   return (
     <>
       <section className="reading-reflections-wall">
-        <h2 className="reading-section-label">💭 随想便签</h2>
+        <h2 className="reading-section-label">随想便签</h2>
 
         <div className="reading-reflections-flow">
           {visibleNotes.map((note) => (
@@ -550,7 +578,7 @@ function ReflectionsWall({ notes }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="reading-notes-head">
-              <h2 className="reading-notes-head-title">💭 随想便签</h2>
+              <h2 className="reading-notes-head-title">随想便签</h2>
               <button
                 className="reading-quote-history-close"
                 onClick={() => setShowAll(false)}
@@ -591,8 +619,8 @@ function ReflectionsWall({ notes }) {
 function EndMark() {
   return (
     <div className="reading-end-mark">
-      <ScribbleDivider color="#d4c8b0" />
-      <ScribbleBookmark color="#b0a090" />
+      <ScribbleDivider color="#a0632a" />
+      <ScribbleBookmark color="#8b4513" />
     </div>
   )
 }

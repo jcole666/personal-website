@@ -1,117 +1,223 @@
 /* ============================================
-   游戏 · 流前游戏 画廊版
-   海拉鲁图片背景 + 双标签筛选 + 卡片网格 + 弹窗
+   游戏 · Vaporwave 霓虹复古（蒸汽波）
+   参考 参考/vaporwave-showcase
+
+   风格骨架（从参考站实际用量提取）：
+     配色   霓虹粉 #ff71ce(54次) / 紫 #b967ff(30) / 青 #01cdfe(29) / 绿 #05ffa1(18)
+            深紫底 #1a0533 + 面板 rgba(43,0,87,.4~.6)
+     发光   文字 0 0 10px 粉, 0 0 20px 粉, 0 0 40px 青（粉青双色重影，不是单色）
+            元素 0 0 30px 粉@.5, 0 0 60px 青@.2 + inset 内发光
+     背景   粉横线 + 青竖线的双色网格；透视地面 perspective(200px) rotateX(40deg)
+     排版   font-black + uppercase + tracking-widest（67次）/ tracking-[0.3~0.4em]
+            text-xs 用了 108 次 —— 大量小号大字距标签
+     动效   duration-500(38次) / duration-300(35次) / hover:-translate-y-2(14次)
+            + 自定义 vaporGlitch / vaporFloat / scanlines / neonFlicker
+
+   ⚠️ 指南里有两处自相矛盾，按「Style Rules 的必须遵守」为准：
+     1. 最后的通用自检清单写着「没有渐变文字（background-clip: text）」，
+        但「必须遵守」和核心视觉原则都明确要求主标题用渐变文字 —— 后者才是这个风格的身份
+     2. 通用清单还写着「没有单侧粗边框」「没有 tiny uppercase tracked eyebrow」，
+        但参考站通篇都是 tracking-widest 小标签。以 Style Rules 为准
+
+   ⚠️ 渐变文字不能用 text-shadow（字被裁成透明后阴影会露在下面），
+      必须用 filter: drop-shadow() 才能做出双色重影
    ============================================ */
 
-/* ===== 全局 ===== */
 .games-world {
+  --vw-pink: #ff71ce;
+  --vw-cyan: #01cdfe;
+  --vw-purple: #b967ff;
+  --vw-green: #05ffa1;
+  --vw-yellow: #fffb96;
+  /* Cyberpunk 2077 夜之城的标志黄。比蒸汽波的淡黄 #fffb96 亮得多、也更硬，
+     用来做"锐利感"的支点 —— 蒸汽波偏柔和梦幻，2077 偏工业硬朗 */
+  --cp-yellow: #fcee0a;
+  --cp-magenta: #ff003c;
+  --vw-deep: #1a0533;
+  --vw-deeper: #12021f;
+  /* 卡片底从 0.55 提到 0.82 —— 落日圆盘和网格会透过半透明底干扰正文，
+     可读性优先于通透感 */
+  --vw-panel: rgba(26, 5, 51, 0.82);
+  --vw-ink: #e8c8f8;
+  --vw-ink-soft: #c9a8e8;
+  --vw-line: rgba(255, 113, 206, 0.28);
+
+  /* Floating Slowness：交互不能快，要像数字废墟里慢慢漂浮 */
+  --vw-fast: 300ms ease-out;
+  --vw-base: 500ms ease-out;
+  --vw-slow: 700ms ease-in-out;
+
   min-height: calc(100vh - var(--nav-height));
-  background: #4a6840;
-  color: #3d3022;
+  color: var(--vw-ink);
+  font-family: var(--font-body);
   position: relative;
   overflow-x: hidden;
-  font-family: 'Noto Serif SC', 'Noto Sans SC', 'Microsoft YaHei', serif;
+  background: var(--vw-deep);
 }
 
-/* ===== 海拉鲁图片背景 ===== */
-.games-backdrop {
+/* ============================================
+   背景三层：深紫渐变底 / 双色网格 / 落日 + 透视地面 + 扫描线
+   ============================================ */
+.vw-bg {
   position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 100vh;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background-image: url('/images/games-bg.png');
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(180deg, #2a0845 0%, #1a0533 42%, #12021f 100%);
 }
 
-/* 底部轻微暗化 */
-.games-backdrop::after {
+/* 双色网格 —— 粉横线 + 青竖线，这是参考站的招牌 */
+.vw-bg::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-    rgba(0,0,0,0) 0%,
-    rgba(0,0,0,0) 40%,
-    rgba(30,20,10,0.35) 100%
+  background-image:
+    linear-gradient(rgba(255, 113, 206, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(1, 205, 254, 0.15) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+
+/* 落日圆盘：渐变 + 横条纹遮罩（蒸汽波最标志性的图形）
+   ⚠️ 位置必须避开 hero 标题 —— 第一版放在 top:6%，正好压在渐变标题上，
+   条纹把字切得一条一条的，完全读不了。现在下移到标题区之下，
+   并用 max() 保证小视口下也至少离顶部 340px。 */
+.vw-sun {
+  position: absolute;
+  top: max(340px, 38vh);
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  margin-left: -160px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fffb96 0%, #ff71ce 48%, #b967ff 100%);
+  -webkit-mask-image: repeating-linear-gradient(
+    180deg,
+    #000 0 11px,
+    transparent 11px 16px
+  );
+  mask-image: repeating-linear-gradient(180deg, #000 0 11px, transparent 11px 16px);
+  /* 0.7 时横条纹会透过卡片把正文切碎（卡片是半透明的）。
+     降到 0.42 让它退回背景层，只做氛围不做干扰 */
+  opacity: 0.42;
+  filter: drop-shadow(0 0 40px rgba(255, 113, 206, 0.5));
+}
+
+/* 透视网格地面：rotateX 之后网格自然收敛到地平线，再让它慢慢向前滚 */
+.vw-floor {
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  bottom: -6%;
+  height: 44vh;
+  background-image:
+    linear-gradient(rgba(1, 205, 254, 0.34) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 113, 206, 0.34) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform: perspective(300px) rotateX(58deg);
+  transform-origin: bottom center;
+  opacity: 0.55;
+  animation: vw-floor-run 3.6s linear infinite;
+}
+
+@keyframes vw-floor-run {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 56px;
+  }
+}
+
+/* VHS 扫描线 */
+.vw-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.028) 0 1px,
+    transparent 1px 3px
   );
 }
 
-/* ===== 动态云层 ===== */
-.games-cloud-layer {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(22px);
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-.games-cloud-layer-1 {
-  top: 12%; left: -10%;
-  width: 300px; height: 90px;
-  background: rgba(255,225,185,0.5);
-  animation: cloud-drift 40s linear infinite;
-}
-
-.games-cloud-layer-2 {
-  top: 20%; left: 50%;
-  width: 240px; height: 70px;
-  background: rgba(255,210,170,0.4);
-  animation: cloud-drift 50s linear infinite reverse;
-}
-
-@keyframes cloud-drift {
-  0%   { transform: translateX(-320px); }
-  100% { transform: translateX(calc(100vw + 320px)); }
-}
-
-/* ===== 内容区 ===== */
+/* ============================================
+   内容区
+   ============================================ */
 .games-inner {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 40px 28px 80px;
+  padding: 56px 28px 88px;
   position: relative;
   z-index: 2;
 }
 
-/* ===== 标题 ===== */
+/* ============================================
+   标题
+   ============================================ */
 .games-hero {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 40px;
 }
 
+/* 日文装饰 —— 蒸汽波必备元素 */
+.vw-kana {
+  margin: 0 0 14px;
+  font-family: 'Yu Gothic', 'Meiryo', 'Hiragino Kaku Gothic ProN', 'Noto Sans SC', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.52em;
+  text-indent: 0.52em;
+  color: var(--vw-cyan);
+  text-shadow:
+    0 0 8px rgba(1, 205, 254, 0.9),
+    0 0 18px rgba(1, 205, 254, 0.5);
+}
+
+/* 主标题：粉→紫→青渐变文字。
+   注意这里**不能**用 text-shadow —— 字被 background-clip 裁成透明后，
+   阴影会画在透明字形下面、直接透出来。要双色重影只能用 filter: drop-shadow() */
 .games-hero-title {
-  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
-  font-size: 3.5rem;
-  color: #3d3022;
-  margin: 0 0 6px;
-  letter-spacing: 0.06em;
-  text-shadow: 0 2px 10px rgba(255,240,200,0.6);
+  margin: 0 0 16px;
+  font-family: var(--font-body);
+  font-size: clamp(2.6rem, 7vw, 4.4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  background: linear-gradient(90deg, #ff71ce 0%, #b967ff 50%, #01cdfe 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter:
+    drop-shadow(0 0 16px rgba(255, 113, 206, 0.55))
+    drop-shadow(0 0 34px rgba(1, 205, 254, 0.4));
 }
 
 .games-hero-sub {
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.9rem;
-  color: #5a4a30;
-  text-shadow: 0 1px 6px rgba(255,240,200,0.7);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  color: var(--vw-ink-soft);
 }
 
-/* ===== 筛选标签 ===== */
+/* ============================================
+   筛选
+   ============================================ */
 .games-filters {
-  margin-bottom: 32px;
-  background: rgba(245,240,226,0.5);
-  border-radius: 8px;
-  padding: 14px 18px;
-  backdrop-filter: blur(6px);
+  margin-bottom: 36px;
+  padding: 18px 20px;
+  background: rgba(43, 0, 87, 0.4);
+  border: 1px solid rgba(185, 103, 255, 0.3);
+  border-radius: 14px;
+  box-shadow: inset 0 0 24px rgba(185, 103, 255, 0.1);
 }
 
 .games-filter-row {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .games-filter-row:last-child {
@@ -119,352 +225,514 @@
 }
 
 .games-filter-btn {
-  padding: 6px 18px;
-  border: 1.5px solid rgba(61,48,34,0.2);
-  border-radius: 999px;
-  background: rgba(255,255,255,0.4);
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.85rem;
-  color: #5a4a30;
+  padding: 7px 18px;
+  border-radius: 12px;
+  background: rgba(26, 5, 51, 0.6);
+  border: 1px solid rgba(185, 103, 255, 0.5);
+  color: var(--vw-ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
-  letter-spacing: 0.03em;
-  transition: all 0.25s;
+  transition: color var(--vw-fast), border-color var(--vw-fast),
+    box-shadow var(--vw-base), transform var(--vw-base);
 }
 
 .games-filter-btn:hover {
-  border-color: #4aa8e0;
-  color: #3a8ab0;
+  color: var(--vw-cyan);
+  border-color: rgba(1, 205, 254, 0.85);
+  box-shadow: 0 0 18px rgba(1, 205, 254, 0.45);
+  transform: translateY(-2px);
 }
 
 .games-filter-btn--active {
-  background: #4aa8e0;
-  border-color: #4aa8e0;
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 2px 10px rgba(74,168,224,0.35);
+  background: linear-gradient(90deg, #ff71ce, #b967ff);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(255, 113, 206, 0.65);
 }
 
-.games-filter-btn--genre.games-filter-btn--active {
-  background: #c8a050;
-  border-color: #c8a050;
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(200,160,80,0.35);
+.games-filter-btn--active:hover {
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 0 32px rgba(255, 113, 206, 0.85);
 }
 
-/* ===== 画廊网格 ===== */
+/* ============================================
+   卡片网格
+   ============================================ */
 .games-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: 20px;
 }
 
-/* ===== 游戏卡片 ===== */
 .games-card {
-  background: rgba(245,240,226,0.92);
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
   display: flex;
-  border: 1px solid rgba(61,48,34,0.08);
-  box-shadow: 0 3px 14px rgba(40,30,20,0.12);
-  backdrop-filter: blur(4px);
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--vw-panel);
+  border: 1px solid var(--vw-line);
+  box-shadow:
+    0 0 16px rgba(255, 113, 206, 0.22),
+    inset 0 0 20px rgba(255, 113, 206, 0.06);
+  cursor: pointer;
+  transition: transform var(--vw-base), box-shadow var(--vw-base),
+    border-color var(--vw-base);
 }
 
+/* Aesthetic Warp：hover 轻轻浮起 + 微旋，发光同时铺开粉青两色 */
 .games-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 26px rgba(40,30,20,0.2);
+  transform: translateY(-8px) rotate(0.6deg);
+  border-color: var(--cp-yellow);
+  box-shadow:
+    0 0 30px rgba(255, 113, 206, 0.5),
+    0 0 60px rgba(252, 238, 10, 0.28),
+    inset 0 0 24px rgba(1, 205, 254, 0.1);
 }
 
+/* 右上角的黄色切角标 —— 夜之城 UI 里到处都是这个小三角，
+   hover 才亮起来，配合扫光一起构成"选中"的反馈 */
+.games-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 4;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(45deg, transparent 50%, var(--cp-yellow) 50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--vw-base);
+}
+
+.games-card:hover::after {
+  opacity: 1;
+}
+
+/* 高光扫光 */
+.vw-sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: transform var(--vw-slow);
+}
+
+.games-card:hover .vw-sweep {
+  transform: translateX(100%);
+}
+
+/* 左侧状态色条：整条霓虹发光 */
 .games-card-stripe {
-  width: 5px;
   flex-shrink: 0;
+  width: 3px;
 }
 
 .games-card-body {
-  padding: 18px 18px 16px;
   flex: 1;
   min-width: 0;
+  padding: 18px 18px 16px;
 }
 
 .games-card-top {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
+/* Cyberpunk 2077 的斜切标签：两端各切一个 8px 角，变成平行四边形。
+   用 clip-path 而不是 skewX —— skew 会把里面的文字一起斜掉 */
 .games-card-status {
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.72rem;
-  padding: 2px 10px;
-  border-radius: 999px;
-  border: 1px solid;
-  font-weight: 600;
+  padding: 4px 13px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .games-card-platform {
-  font-size: 0.68rem;
-  color: #9c9080;
-  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--vw-ink-soft);
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .games-card-title {
-  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
-  font-size: 1.5rem;
-  color: #3d3022;
-  margin: 0 0 2px;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
+  margin: 0 0 4px;
+  font-family: var(--font-body);
+  font-size: 1.28rem;
+  font-weight: 900;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--vw-ink);
+  transition: color var(--vw-base), text-shadow var(--vw-base);
+}
+
+.games-card:hover .games-card-title {
+  color: var(--vw-pink);
+  text-shadow: 0 0 12px rgba(255, 113, 206, 0.75);
 }
 
 .games-card-subtitle {
-  font-size: 0.66rem;
-  color: #9c9080;
-  font-style: italic;
-  margin-bottom: 4px;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--vw-purple);
+  opacity: 0.9;
 }
 
 .games-card-rating {
-  color: #c4504a;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  color: var(--cp-yellow);
+  text-shadow: 0 0 10px rgba(252, 238, 10, 0.7);
 }
 
 .games-card-feeling {
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.78rem;
-  color: #6b5030;
-  line-height: 1.45;
-  margin-bottom: 10px;
-  border-left: 3px solid #c8a050;
-  padding-left: 8px;
-  opacity: 0.85;
+  margin-bottom: 14px;
+  font-size: 0.84rem;
+  line-height: 1.75;
+  color: var(--vw-ink-soft);
 }
 
 .games-card-tags {
   display: flex;
-  gap: 5px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .games-card-tag {
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.66rem;
-  color: #9c9080;
-  padding: 1px 8px;
-  border: 1px solid rgba(156,144,128,0.25);
+  padding: 3px 10px;
+  border: 1px solid rgba(1, 205, 254, 0.4);
   border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vw-cyan);
 }
 
 .games-card-tag--genre {
-  background: rgba(200,160,80,0.15);
-  color: #8a7030;
-  border-color: rgba(200,160,80,0.3);
-  font-weight: 600;
+  border-color: rgba(5, 255, 161, 0.45);
+  color: var(--vw-green);
 }
 
-/* ===== 查看更多 ===== */
+/* 查看更多 */
 .games-more-wrap {
+  margin-top: 36px;
   text-align: center;
-  margin-top: 28px;
 }
 
 .games-more-btn {
-  padding: 10px 44px;
-  border: 1.5px solid rgba(74,168,224,0.4);
-  border-radius: 999px;
-  background: rgba(245,240,226,0.5);
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.9rem;
-  color: #4aa8e0;
+  padding: 12px 36px;
+  border-radius: 12px;
+  background: rgba(26, 5, 51, 0.7);
+  border: 1px solid rgba(255, 113, 206, 0.6);
+  color: var(--vw-pink);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: all 0.3s;
-  backdrop-filter: blur(4px);
+  transition: color var(--vw-fast), box-shadow var(--vw-base),
+    transform var(--vw-base), border-color var(--vw-fast);
 }
 
 .games-more-btn:hover {
-  border-color: #4aa8e0;
-  background: rgba(74,168,224,0.15);
-  box-shadow: 0 2px 14px rgba(74,168,224,0.25);
+  color: var(--vw-cyan);
+  border-color: rgba(1, 205, 254, 0.85);
+  box-shadow:
+    0 0 24px rgba(1, 205, 254, 0.5),
+    0 0 48px rgba(255, 113, 206, 0.25);
+  transform: translateY(-3px);
 }
 
-/* ===== 弹窗 ===== */
+/* ============================================
+   详情弹窗
+   ============================================ */
 .games-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(40,30,20,0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  animation: games-fade-in 0.2s ease;
-  backdrop-filter: blur(5px);
+  padding: 28px;
+  background: rgba(18, 2, 31, 0.82);
+  backdrop-filter: blur(6px);
 }
 
 .games-modal {
-  background: #f5f0e2;
-  border-radius: 3px 7px 5px 4px / 6px 4px 7px 2px;
-  max-width: 580px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
   position: relative;
-  box-shadow: 0 10px 48px rgba(40,30,20,0.25);
-  animation: games-modal-in 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-
-@keyframes games-modal-in {
-  0% { transform: scale(0.15); opacity: 0; }
-  70% { transform: scale(1.03); }
-  100% { transform: scale(1); opacity: 1; }
+  width: 100%;
+  max-width: 640px;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: #1a0533;
+  border: 1px solid rgba(255, 113, 206, 0.55);
+  border-radius: 16px;
+  box-shadow:
+    0 0 60px rgba(255, 113, 206, 0.35),
+    0 0 120px rgba(1, 205, 254, 0.2),
+    inset 0 0 40px rgba(185, 103, 255, 0.08);
 }
 
 .games-modal-close {
   position: absolute;
-  top: 14px; right: 14px;
-  width: 32px; height: 32px;
-  border: none; background: transparent;
-  cursor: pointer; z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(26, 5, 51, 0.9);
+  border: 1px solid rgba(255, 113, 206, 0.6);
+  cursor: pointer;
+  transition: box-shadow var(--vw-base), border-color var(--vw-fast);
 }
 
 .games-modal-close::before,
 .games-modal-close::after {
   content: '';
   position: absolute;
-  width: 18px; height: 2px;
-  background: #3d3022;
-  border-radius: 1px;
+  top: 50%;
+  left: 50%;
+  width: 15px;
+  height: 2px;
+  background: var(--vw-pink);
 }
 
-.games-modal-close::before { transform: rotate(45deg); }
-.games-modal-close::after { transform: rotate(-45deg); }
+.games-modal-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.games-modal-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.games-modal-close:hover {
+  border-color: rgba(1, 205, 254, 0.85);
+  box-shadow: 0 0 20px rgba(1, 205, 254, 0.55);
+}
 
 .games-modal-body {
-  padding: 28px 30px 34px;
+  padding: 36px 34px 34px;
 }
 
 .games-modal-top {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
 }
 
 .games-modal-status {
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.75rem;
-  padding: 2px 12px;
-  border-radius: 999px;
-  background: rgba(74,168,224,0.12);
-  color: #3a8ab0;
-  font-weight: 600;
+  padding: 4px 14px;
+  border: 1px solid rgba(5, 255, 161, 0.5);
+  border-radius: 0;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vw-green);
 }
 
 .games-modal-genre {
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.7rem;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: rgba(200,160,80,0.15);
-  color: #8a7030;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vw-cyan);
 }
 
 .games-modal-title {
-  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
-  font-size: 2.4rem;
-  color: #3d3022;
-  margin: 0 0 2px;
-  letter-spacing: 0.04em;
+  margin: 0 0 6px;
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--vw-ink);
+  text-shadow: 0 0 20px rgba(255, 113, 206, 0.45);
 }
 
 .games-modal-subtitle {
-  font-size: 0.75rem; color: #9c9080; font-style: italic;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--vw-purple);
 }
 
 .games-modal-meta {
-  display: flex; gap: 14px; flex-wrap: wrap;
-  font-family: 'Ma Shan Zheng', cursive;
-  font-size: 0.82rem; color: #9c9080;
-  margin-bottom: 8px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--vw-ink-soft);
 }
 
 .games-modal-rating {
-  color: #c4504a;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
-  margin-bottom: 8px;
   display: block;
+  margin-bottom: 18px;
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  color: var(--cp-yellow);
+  text-shadow: 0 0 12px rgba(252, 238, 10, 0.7);
 }
 
 .games-modal-sep {
-  height: 1px; border: none;
-  background: repeating-linear-gradient(90deg, #c0b8a0 0px, #c0b8a0 4px, transparent 4px, transparent 10px);
-  margin: 14px 0;
+  height: 1px;
+  margin: 22px 0;
+  border: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 113, 206, 0.7),
+    rgba(1, 205, 254, 0.7),
+    transparent
+  );
 }
 
 .games-modal-review {
-  font-size: 0.88rem; color: #3d3022;
-  line-height: 1.75; margin-bottom: 14px;
+  font-size: 0.94rem;
+  line-height: 1.9;
+  color: var(--vw-ink);
 }
 
-.games-modal-review p { margin-bottom: 0.7em; }
+.games-modal-review p {
+  margin: 0 0 1em;
+}
+
+.games-modal-review p:last-child {
+  margin-bottom: 0;
+}
 
 .games-modal-moments-title {
-  font-family: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
-  font-size: 0.95rem; color: #c4504a;
-  margin-bottom: 6px;
+  margin: 26px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--vw-pink);
 }
 
 .games-modal-moment {
-  font-size: 0.8rem; color: #3d3022;
-  padding: 2px 0 2px 16px;
-  position: relative;
-  line-height: 1.5;
-  margin-bottom: 2px;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background: rgba(43, 0, 87, 0.5);
+  border-left: 2px solid var(--vw-cyan);
+  border-radius: 0 10px 10px 0;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--vw-ink-soft);
 }
 
-.games-modal-moment::before {
-  content: '✦';
-  position: absolute; left: 0;
-  color: #c8a050; font-size: 0.5rem; top: 5px;
-}
-/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
-
-/* 导航栏配色已移到 src/data/navTheme.js 的 '/games' 一项 */
-
-/* ===== 滚动条 ===== */
-.games-world ::-webkit-scrollbar { width: 5px; }
-.games-world ::-webkit-scrollbar-track { background: transparent; }
-.games-world ::-webkit-scrollbar-thumb { background: rgba(156,144,128,0.2); border-radius: 3px; }
-
-/* ===== 响应式 ===== */
+/* ============================================
+   响应式：全站三档 900 / 768 / 480
+   ============================================ */
 @media (max-width: 900px) {
-  .games-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .vw-sun {
+    width: 240px;
+    height: 240px;
+    margin-left: -120px;
+  }
 }
 
 @media (max-width: 768px) {
-  .games-inner { padding: 28px 18px 60px; }
-  .games-hero-title { font-size: 2.5rem; }
-  .games-card-title { font-size: 1.3rem; }
-  .games-modal { max-width: 100%; }
-  .games-modal-body { padding: 22px 22px 28px; }
-  .games-modal-title { font-size: 1.8rem; }
+  .games-inner {
+    padding: 40px 20px 68px;
+  }
+
+  .games-filters {
+    padding: 14px 14px;
+  }
+
+  .games-modal-body {
+    padding: 30px 22px 26px;
+  }
+
+  .games-modal-title {
+    font-size: 1.6rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .games-grid { grid-template-columns: 1fr; gap: 12px; }
-  .games-hero-title { font-size: 2rem; }
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vw-bg::before {
+    background-size: 30px 30px;
+  }
+
+  .vw-sun {
+    width: 180px;
+    height: 180px;
+    margin-left: -90px;
+  }
 }
 
-/* ===== 动画 ===== */
-@keyframes games-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+/* Floating Slowness 的例外：系统开了「减少动效」时，
+   透视地面的无限滚动和 hover 位移都要停掉 */
+@media (prefers-reduced-motion: reduce) {
+  .vw-floor {
+    animation: none;
+  }
+
+  .games-card,
+  .games-filter-btn,
+  .games-more-btn,
+  .vw-sweep {
+    transition: none;
+  }
+
+  .games-card:hover,
+  .games-filter-btn:hover,
+  .games-more-btn:hover {
+    transform: none;
+  }
+
+  .games-card:hover .vw-sweep {
+    transform: translateX(-100%);
+  }
 }

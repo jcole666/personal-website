@@ -95,14 +95,22 @@ export const navThemes = {
     logoFont: "Nunito, 'Noto Sans SC', sans-serif",
   },
   '/reading': {
+    // 书籍页是 Retro Vintage 复古怀旧风：羊皮纸底 + 鞍棕墨 + 粗边。
+    // 导航栏跟着换同一套，底边加粗到 2px（该风格要求 border-2 起步，禁止细边框）。
+    // logo 从 Long Cang 手写体换成 Playfair 衬线 —— 这个风格要的是
+    // 「老式印刷」而不是「手写」，参考站全站 font-serif，没有一处手写体。
     tag: 'READING NOTES',
-    bg: 'rgba(250, 247, 242, 0.88)',
-    border: 'rgba(180, 160, 140, 0.25)',
-    ink: '#5c4b32',
-    accent: '#c8a24b',
-    tagInk: '#b0a090',
-    logoFont: "'Long Cang', 'Noto Serif SC', cursive",
-    logoSize: '1.7rem',
+    bg: 'rgba(245, 230, 211, 0.94)',
+    border: '#8b4513',
+    borderWidth: '2px',
+    ink: '#8b4513',
+    // 强调色用深红而不是铁锈红 #c94c4c —— 后者在这个底色上只有 3.18，
+    // 而且风格明确要求 hover 只能「加深」现有色调，不能换成更亮的色
+    accent: '#8b2c2c',
+    tagInk: '#8b2c2c',
+    logoFont: "'Playfair Display', 'Noto Serif SC', serif",
+    logoSize: '1.45rem',
+    logoSpacing: '0.06em',
   },
   '/music': {
     tag: 'LISTENING ROOM',
@@ -125,18 +133,21 @@ export const navThemes = {
     logoSpacing: '0.04em',
   },
   '/games': {
+    // 游戏页是 Vaporwave 霓虹复古：深紫底 + 粉青双色霓虹。
+    // logoGlow 用双色重影（粉 + 青）—— 这个风格明令「禁止仅用单色 glow」。
+    // 字体换掉手写体：蒸汽波禁止「过于正式的字体」，Orbitron 这种科技无衬线才对味。
     tag: 'ADVENTURE LOG',
-    bg: 'rgba(230, 200, 150, 0.15)',
-    border: 'rgba(74, 168, 224, 0.12)',
-    ink: '#3d3022',
-    accent: '#4aa8e0',
-    tagInk: '#4aa8e0',
-    logoFont: "'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive",
-    logoSize: '1.4rem',
-    logoSpacing: '0.04em',
-    logoGlow: '0 1px 6px rgba(255, 240, 200, 0.9)',
-    menuShadow: '0 1px 6px rgba(255, 240, 200, 0.9)',
-    blur: 'blur(4px)',
+    bg: 'rgba(26, 5, 51, 0.92)',
+    border: 'rgba(255, 113, 206, 0.4)',
+    ink: '#e8c8f8',
+    accent: '#01cdfe',
+    tagInk: '#ff71ce',
+    logoFont: "'Orbitron', 'Fira Code', sans-serif",
+    logoSize: '1.3rem',
+    logoSpacing: '0.08em',
+    logoGlow: '0 0 10px rgba(255, 113, 206, 0.75), 0 0 22px rgba(1, 205, 254, 0.45)',
+    menuShadow: '0 0 10px rgba(255, 113, 206, 0.35)',
+    blur: 'blur(10px)',
   },
   '/food': {
     tag: 'FOOD MARKET',

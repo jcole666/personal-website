@@ -106,18 +106,25 @@ export const footerThemes = {
     max: '960px',
   },
   '/reading': {
+    // Retro Vintage：页脚用比页面略深的羊皮纸，视觉上「压在下面」。
+    // 对比度实测（底色 #e8d5c0）：ink 7.95 / muted 6.08 / faint 4.96，都过 AA。
+    // 注意 muted 比 faint 深 —— 这个底色上棕色系的可用范围很窄，
+    // 再浅一档（#a0632a）就只有 3.4 了，所以「次要」和「更次要」只能靠这两档分。
     brand: '流前 · 读书笔记',
     tag: '好记性不如烂笔头',
-    bg: '#faf7f2',
-    border: 'rgba(180, 160, 140, 0.2)',
-    divider: 'rgba(180, 160, 140, 0.15)',
-    ink: '#5c4b32',
-    muted: '#7a6240',
-    faint: '#7a6240',
-    accent: '#c8a24b',
-    font: "'Long Cang', 'Noto Serif SC', cursive",
-    size: '1.6rem',
-    max: '960px',
+    bg: '#e8d5c0',
+    border: '#8b4513',
+    borderWidth: '2px',
+    divider: 'rgba(139, 69, 19, 0.3)',
+    ink: '#5c2e0a',
+    muted: '#7a4a1e',
+    faint: '#8b4513',
+    accent: '#8b2c2c',
+    font: "'Playfair Display', 'Noto Serif SC', serif",
+    size: '1.5rem',
+    spacing: '0.06em',
+    uiFont: "'Playfair Display', 'Noto Serif SC', serif",
+    max: '1080px',
   },
   '/music': {
     brand: '流前 · 深夜听音室',
@@ -149,21 +156,24 @@ export const footerThemes = {
     max: '1080px',
   },
   '/games': {
+    // Vaporwave：深紫底 + 霓虹文字。原来这里是半透明奶油底压在照片上，
+    // 照片去掉了，改成与页面同调的实色深紫。
+    // 对比度实测（底色 #1a0533）：ink 12.6 / muted 9.2 / faint 5.8，都很宽裕 ——
+    // 深底上的浅色天然好过浅底上的深色。
     brand: '流前游戏',
     tag: 'PLAYTHROUGH LOG · SINCE 2023',
-    // 这一页背景是照片。原来只有 0.18 的不透明度，合成出来的底色是中间调的绿色，
-    // 任何文字颜色都到不了 4.5:1，所以提到 0.9（保留一点点照片透出来）
-    bg: 'rgba(245, 240, 226, 0.9)',
-    border: 'rgba(0, 0, 0, 0.06)',
-    divider: 'rgba(0, 0, 0, 0.08)',
-    ink: '#3d3022',
-    muted: '#645c52',
-    faint: '#665e54',
-    accent: '#2a7ab0',
-    font: "'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive",
-    size: '1.1rem',
-    spacing: '0.04em',
-    max: '1000px',
+    bg: '#1a0533',
+    border: 'rgba(255, 113, 206, 0.35)',
+    divider: 'rgba(185, 103, 255, 0.3)',
+    ink: '#e8c8f8',
+    muted: '#c9a8e8',
+    faint: '#b967ff',
+    accent: '#01cdfe',
+    font: "'Orbitron', 'Fira Code', sans-serif",
+    size: '1.25rem',
+    spacing: '0.08em',
+    uiFont: "'Fira Code', 'Space Mono', monospace",
+    max: '1100px',
   },
   '/food': {
     brand: '流前',

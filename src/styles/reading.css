@@ -1,288 +1,419 @@
 /* ============================================
-   读书页 · 手绘笔记风
-   纸张底色 + Long Cang 手写体 + Rough.js 线条
+   书籍 · Retro Vintage 复古怀旧风
+   参考 参考/retro-vintage-showcase
+
+   ⚠️ 这一版的硬约束（照抄风格指南的禁止项，别加回来）：
+     禁止 现代渐变 / 霓虹高饱和色 / 扁平极简 / 大圆角 / 玻璃态
+     禁止 任何 scale 或 translate-y 动画（Antique Stillness —— 旧纸张平铺，不会浮起弹跳）
+     禁止 duration-150 或更快的过渡（Slow Passage —— 氧化是地质过程）
+     禁止 hover 时引入新的饱和颜色（只能加深现有的复古色调）
+     禁止 font-sans（整页衬线）
+
+   三条交互规则：
+     Ink & Oxidation   hover 时纸面泛黄（--rv-paper-warm）、墨迹加深（--rv-ink-deep）
+     Slow Passage      全部过渡 0.7s ease-in-out
+     Corner Reveal     四角角花 opacity .3 → 1，凑近才显现
+
+   关于纸张纹理：指南禁止的是「现代渐变」（紫到蓝那种装饰渐变），
+   而「背景添加纸张纹理或做旧效果」是必须项。所以这里用极低对比度的
+   重复线性渐变做纸张纤维 + 一层暗角，不是装饰性渐变。
    ============================================ */
 
 .reading-world {
-  min-height: calc(100vh - var(--nav-height));
-  background-color: #faf7f2;
-  /* 氛围光见 common.css 的「全站氛围光」区块 */
-  background-image:
-    var(--ambient),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(180, 160, 140, 0.018) 2px,
-      rgba(180, 160, 140, 0.018) 4px
-    );
-}
+  --rv-ink: #8b4513;
+  --rv-ink-deep: #5c2e0a;
+  /* ⚠️ 这三档次要色必须是实色，不能用 rgba(...,0.x) 做「淡」——
+     半透明文字和羊皮纸底合成后会掉到 2.4 左右，几乎看不见。
+     实测（底色 #f5e6d3）：ink 5.79 / soft 6.08 / faint 4.87。
+     棕色系在这个底上的可用范围本来就窄，所以层次主要靠
+     字号、字距、大小写来做，不要指望靠颜色深浅拉开。 */
+  --rv-ink-soft: #7a4a1e;
+  --rv-ink-faint: #8f5620;
+  --rv-paper: #f5e6d3;
+  --rv-paper-warm: #eedbc2;
+  --rv-paper-deep: #e8d5c0;
+  /* 铁锈红分成两支：装饰线可以用原色，文字必须用压深版 ——
+     #c94c4c 在羊皮纸上只有 3.71，达不到小字号的 4.5 */
+  --rv-rust: #c94c4c;
+  --rv-rust-text: #a83838;
+  --rv-rust-deep: #8b2c2c;
+  --rv-forest: #2e4a3f;
+  --rv-forest-deep: #1a2d26;
+  --rv-line: rgba(139, 69, 19, 0.3);
+  --rv-line-soft: rgba(139, 69, 19, 0.18);
 
-.reading-world,
-.reading-world * {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  /* Slow Passage：全站统一的长过渡 */
+  --rv-slow: 0.7s ease-in-out;
+
+  --rv-serif: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
+  --rv-serif-cn: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+
+  min-height: calc(100vh - var(--nav-height));
+  color: var(--rv-ink);
+  font-family: var(--rv-serif-cn);
+  position: relative;
+  overflow-x: hidden;
+
+  /* 羊皮纸底：极细的斜向纤维 + 一圈暗角 */
+  background-color: var(--rv-paper);
+  /* 纸张纤维：一层极淡的斜向细纹。
+     之前还叠了从顶部出发的径向暗角，但这个页面有 4600px 高，
+     径向渐变会一路铺到底，让整页下半截发暗发黄 —— 去掉。
+     纹理本身就是「做旧」，不需要再叠暗角。 */
+  background-image: repeating-linear-gradient(
+    96deg,
+    transparent 0 3px,
+    rgba(139, 69, 19, 0.016) 3px 4px
+  );
 }
 
 .reading-inner {
-  max-width: 960px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 56px 24px 64px;
-}
-
-.scribble-divider {
-  margin: 0 auto;
+  padding: 0 48px 96px;
 }
 
 /* ============================================
-   区块 1：每日金句横幅（无边框，更宽更洒脱）
+   四角装饰（参考站的招牌细节）
+   常态 opacity .3，鼠标凑近才慢慢显现到 1
    ============================================ */
+.rv-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--rv-ink);
+  opacity: 0.3;
+  pointer-events: none;
+  transition: opacity var(--rv-slow);
+  z-index: 2;
+}
 
+.rv-corner--tl {
+  top: 8px;
+  left: 8px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.rv-corner--tr {
+  top: 8px;
+  right: 8px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.rv-corner--bl {
+  bottom: 8px;
+  left: 8px;
+  border-right: none;
+  border-top: none;
+}
+
+.rv-corner--br {
+  bottom: 8px;
+  right: 8px;
+  border-left: none;
+  border-top: none;
+}
+
+.reading-quote-banner:hover .rv-corner,
+.reading-current-card:hover .rv-corner,
+.reading-gallery-card:hover .rv-corner,
+.reading-gallery-card:focus-visible .rv-corner,
+.reading-want-card:hover .rv-corner {
+  opacity: 1;
+}
+
+/* ============================================
+   通用：区块标签
+   老式排版 —— 衬线 + 大写 + 大字距
+   ============================================ */
+.reading-section-label {
+  margin: 0 0 28px;
+  font-family: var(--rv-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: var(--rv-ink);
+  text-transform: uppercase;
+  /* 双线分隔 —— 老式印刷的经典手法 */
+  padding-bottom: 14px;
+  border-bottom: 4px double var(--rv-line);
+}
+
+/* ============================================
+   区块 1：每日金句横幅
+   ============================================ */
 .reading-quote-banner {
   position: relative;
-  max-width: 100%;
-  margin: 0 0 40px;
-  padding: 32px 0 28px;
-  background: transparent;
-  border: none;
+  margin: 56px 0 72px;
+  padding: 44px 40px 38px;
+  background: var(--rv-paper);
+  border: 2px solid var(--rv-ink);
   border-radius: 0;
-  overflow: visible;
+  transition: background-color var(--rv-slow), border-color var(--rv-slow);
+}
+
+.reading-quote-banner:hover {
+  background: var(--rv-paper-warm);
 }
 
 .reading-quote-label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
 .reading-quote-tag {
-  font-size: 0.68rem;
-  letter-spacing: 0.2em;
-  color: #b0a090;
-  font-family: 'Space Mono', 'Consolas', monospace;
+  font-family: var(--rv-serif);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--rv-rust-text);
 }
 
 .reading-quote-history-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: #b0a090;
-  background: none;
-  border: none;
+  padding: 7px 16px;
+  background: transparent;
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  font-family: var(--rv-serif);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rv-ink);
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: color 0.2s, background 0.2s;
-  font-family: inherit;
+  transition: background-color var(--rv-slow), color var(--rv-slow);
 }
 
 .reading-quote-history-btn:hover {
-  color: #7a6240;
-  background: rgba(180, 160, 140, 0.08);
+  background: var(--rv-ink);
+  color: var(--rv-paper);
 }
 
 .reading-quote-text {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 2.8rem;
-  line-height: 1.6;
-  color: #3a2a15;
-  letter-spacing: 0.04em;
-  margin: 0 0 10px;
-  word-break: break-word;
-  overflow: visible;
-  text-indent: 2em;
-  max-width: 100%;
+  margin: 0 0 18px;
+  font-family: var(--rv-serif-cn);
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  color: var(--rv-ink);
+  transition: color var(--rv-slow);
+}
+
+.reading-quote-banner:hover .reading-quote-text {
+  color: var(--rv-ink-deep);
 }
 
 .reading-quote-source {
   display: block;
-  text-align: right;
-  font-size: 0.9rem;
-  color: #b0a090;
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.1rem;
+  font-family: var(--rv-serif);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
-/* ── 历史记录弹窗 ── */
+/* 历史金句弹窗 */
 .reading-quote-history-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  animation: reading-fade-in 0.2s ease;
+  padding: 32px;
+  background: rgba(92, 46, 10, 0.5);
 }
 
 .reading-quote-history-panel {
-  background: #faf7f2;
-  border-radius: 8px;
-  max-width: 520px;
   width: 100%;
-  max-height: 70vh;
+  max-width: 620px;
+  max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  animation: reading-scale-in 0.25s ease;
+  padding: 32px 36px;
+  background: var(--rv-paper);
+  border: 4px double var(--rv-ink);
+  border-radius: 0;
 }
 
 .reading-quote-history-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px 16px;
-  position: sticky;
-  top: 0;
-  background: #faf7f2;
-  border-bottom: 1px solid rgba(180, 160, 140, 0.12);
-  z-index: 1;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--rv-line);
 }
 
 .reading-quote-history-title {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.4rem;
-  color: #4a3520;
-  letter-spacing: 0.03em;
+  margin: 0;
+  font-family: var(--rv-serif);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rv-ink);
 }
 
 .reading-quote-history-close {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0, 0, 0, 0.06);
-  color: #8a7a62;
-  font-size: 1rem;
+  flex-shrink: 0;
+  background: transparent;
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  color: var(--rv-ink);
+  font-size: 0.85rem;
+  line-height: 1;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
+  transition: background-color var(--rv-slow), color var(--rv-slow);
 }
 
 .reading-quote-history-close:hover {
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--rv-ink);
+  color: var(--rv-paper);
 }
 
 .reading-quote-history-list {
-  padding: 12px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
 .reading-quote-history-item {
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(180, 160, 140, 0.08);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rv-line-soft);
 }
 
 .reading-quote-history-item:last-child {
+  padding-bottom: 0;
   border-bottom: none;
 }
 
 .reading-quote-history-date {
-  font-size: 0.68rem;
-  color: #c4b5a0;
-  font-family: 'Space Mono', 'Consolas', monospace;
-  margin-bottom: 4px;
+  margin: 0 0 8px;
+  font-family: var(--rv-serif);
+  font-size: 0.66rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--rv-rust-text);
 }
 
 .reading-quote-history-text {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.3rem;
-  line-height: 1.6;
-  color: #4a3520;
-  letter-spacing: 0.03em;
-  margin-bottom: 2px;
+  margin: 0 0 8px;
+  font-family: var(--rv-serif-cn);
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--rv-ink);
 }
 
 .reading-quote-history-source {
-  display: block;
-  font-size: 0.85rem;
-  color: #b0a090;
-  text-align: right;
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
+  font-family: var(--rv-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--rv-ink-faint);
 }
 
 /* ============================================
-   区块 2：统计数字
+   区块 2：统计
    ============================================ */
-
 .reading-stats {
   display: flex;
   justify-content: center;
-  gap: 48px;
-  margin-bottom: 40px;
+  gap: 0;
+  margin: 0 0 80px;
+  padding: 28px 0;
+  border-top: 2px solid var(--rv-line);
+  border-bottom: 2px solid var(--rv-line);
 }
 
 .reading-stat-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
+  /* 竖线分隔，最后一项不要 */
+  border-right: 1px solid var(--rv-line);
+}
+
+.reading-stat-item:last-child {
+  border-right: none;
 }
 
 .reading-stat-num {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 3rem;
-  line-height: 1.1;
-  color: #7a6240;
-  letter-spacing: 0.03em;
+  font-family: var(--rv-serif);
+  font-size: 2.4rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--rv-ink);
 }
 
 .reading-stat-label {
-  font-size: 0.72rem;
-  color: #b0a090;
-  letter-spacing: 0.08em;
+  font-family: var(--rv-serif);
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
 /* ============================================
-   区块 3：在读（当前书）
+   区块 3：在读
    ============================================ */
-
 .reading-current {
-  margin-bottom: 56px;
-}
-
-.reading-section-label {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.3rem;
-  color: #b0a090;
-  margin-bottom: 16px;
-  letter-spacing: 0.04em;
+  margin-bottom: 88px;
 }
 
 .reading-current-card {
+  position: relative;
   display: flex;
   gap: 36px;
-  align-items: flex-start;
-  background: #f5f1e8;
-  border-radius: 6px;
   padding: 36px;
+  background: var(--rv-paper);
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  transition: background-color var(--rv-slow), border-color var(--rv-slow);
+}
+
+.reading-current-card:hover {
+  background: var(--rv-paper-warm);
+  border-color: var(--rv-ink-deep);
 }
 
 .reading-current-cover {
   flex-shrink: 0;
-  width: 140px;
-  height: 196px;
-  background: linear-gradient(135deg, #e8dfd2 0%, #dfd4c3 100%);
-  border-radius: 3px;
+  width: 148px;
+  height: 212px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  color: #c4b5a0;
-  font-size: 0.75rem;
+  gap: 8px;
+  padding: 16px;
   text-align: center;
-  line-height: 1.5;
-  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.06);
+  /* 在读的这本是主角，用最正的鞍棕书脊 + 烫金感的浅色书名 */
+  background: #8b4513;
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  color: #f5e6d3;
+  font-family: var(--rv-serif-cn);
+  font-size: 1rem;
+  line-height: 1.4;
+  overflow: hidden;
 }
 
 .reading-current-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 3px;
+  /* 做旧滤镜 —— 风格必须项 */
+  filter: sepia(0.35) brightness(0.94) contrast(0.96);
 }
 
 .reading-current-info {
@@ -291,423 +422,406 @@
 }
 
 .reading-current-title {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 2rem;
-  line-height: 1.2;
-  color: #4a3520;
-  margin: 0 0 4px;
-  letter-spacing: 0.03em;
+  margin: 0 0 6px;
+  font-family: var(--rv-serif-cn);
+  font-size: 1.9rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--rv-ink);
+  transition: color var(--rv-slow);
+}
+
+.reading-current-card:hover .reading-current-title {
+  color: var(--rv-ink-deep);
 }
 
 .reading-current-author {
-  font-size: 0.9rem;
-  color: #b0a090;
-  margin-bottom: 20px;
+  margin: 0 0 22px;
+  font-family: var(--rv-serif);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
 .reading-current-progress-label {
-  font-size: 0.72rem;
-  color: #b0a090;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
+  margin: 0 0 8px;
+  font-family: var(--rv-serif);
+  font-size: 0.64rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
 .reading-current-highlights {
-  margin-top: 24px;
+  margin-top: 26px;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
 .reading-current-highlight {
-  padding-left: 16px;
-  border-left: 3px solid #e0d6c4;
+  padding-left: 18px;
+  border-left: 3px solid var(--rv-rust);
 }
 
 .reading-current-highlight-text {
-  font-size: 0.9rem;
-  line-height: 1.7;
-  color: #6b5a42;
-  font-style: italic;
-  margin-bottom: 4px;
+  margin: 0 0 6px;
+  font-family: var(--rv-serif-cn);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--rv-ink);
 }
 
 .reading-current-highlight-note {
-  font-size: 0.78rem;
-  color: #b0a090;
+  margin: 0;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--rv-ink-soft);
 }
 
 /* ============================================
-   区块 4：已读 —— 多维筛选 + 画廊 + 详情弹窗
+   区块 4：已读 —— 筛选栏 + 画廊
    ============================================ */
-
 .reading-finished-section {
-  margin-bottom: 56px;
+  margin-bottom: 88px;
 }
 
-/* ── 多维筛选栏 ── */
 .reading-filter-dimensions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 36px;
+  padding: 24px 26px;
+  border: 2px solid var(--rv-line);
+  border-radius: 0;
 }
 
 .reading-filter-dim {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 .reading-filter-dim-label {
-  font-size: 0.7rem;
-  color: #c4b5a0;
-  letter-spacing: 0.08em;
-  font-family: 'Space Mono', 'Consolas', monospace;
-  white-space: nowrap;
+  min-width: 68px;
+  font-family: var(--rv-serif);
+  font-size: 0.64rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
+/* 筛选项：小方章，选中就翻成实底 */
 .reading-filter-btn {
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 4px 14px;
-  border-radius: 999px;
-  border: 1.5px solid rgba(180, 160, 140, 0.25);
+  padding: 6px 15px;
   background: transparent;
-  color: #b0a090;
+  border: 2px solid var(--rv-line);
+  border-radius: 0;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--rv-ink-soft);
   cursor: pointer;
-  transition: all 0.25s ease;
-  font-family: inherit;
+  transition: background-color var(--rv-slow), color var(--rv-slow),
+    border-color var(--rv-slow);
 }
 
 .reading-filter-btn:hover {
-  border-color: #c8a24b;
-  color: #c8a24b;
+  background: var(--rv-paper-warm);
+  border-color: var(--rv-ink);
+  color: var(--rv-ink-deep);
 }
 
 .reading-filter-btn--active {
-  background: #c8a24b;
-  border-color: #c8a24b;
-  color: #fff;
+  background: var(--rv-ink);
+  border-color: var(--rv-ink);
+  color: var(--rv-paper);
 }
 
-/* ── 画廊网格 ── */
+.reading-filter-btn--active:hover {
+  background: var(--rv-ink-deep);
+  border-color: var(--rv-ink-deep);
+  color: var(--rv-paper);
+}
+
+.reading-filter-input {
+  width: 118px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 2px solid var(--rv-line);
+  border-radius: 0;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.82rem;
+  color: var(--rv-ink);
+  transition: border-color var(--rv-slow), background-color var(--rv-slow);
+}
+
+.reading-filter-input::placeholder {
+  color: var(--rv-ink-faint);
+  font-style: italic;
+}
+
+.reading-filter-input:focus {
+  outline: none;
+  background: var(--rv-paper-warm);
+  border-color: var(--rv-ink);
+}
+
+/* 画廊：整齐排列，不做倾斜 —— 旧纸张平铺 */
 .reading-gallery {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  /* 24px 太大，列宽只有 168px 左右时会显得空旷。18px 更紧凑 */
+  gap: 18px;
+}
+
+/* 作者名 —— JSX 里写的是 0.68rem，在小卡里几乎看不见。
+   单独给个稳妥的最小字号，仍比书名小一档 */
+.reading-gallery-cover > span:last-child {
+  font-size: 0.85rem;
 }
 
 .reading-gallery-card {
-  background: #fffef9;
-  border-radius: 10px;
-  border: 1.5px solid rgba(180, 160, 140, 0.12);
-  overflow: hidden;
+  position: relative;
+  padding: 14px;
+  background: var(--rv-paper);
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  transform: rotate(var(--card-tilt, 0deg));
+  transition: background-color var(--rv-slow), border-color var(--rv-slow);
 }
 
 .reading-gallery-card:hover {
-  transform: rotate(0deg) translateY(-5px);
-  box-shadow: 0 10px 28px rgba(120, 80, 40, 0.12);
+  background: var(--rv-paper-warm);
+  border-color: var(--rv-ink-deep);
 }
 
 .reading-gallery-cover {
-  aspect-ratio: 3 / 4;
-  background: #f5f0e8;
+  aspect-ratio: 3 / 4.4;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  overflow: hidden;
-  color: #c4b5a0;
-  font-size: 0.8rem;
+  /* 两端对齐：书名靠顶、作者靠底 —— 让书脊色块铺满整个封面，
+     而不是像之前那样在中间贴一块色 */
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 14px;
   text-align: center;
-  line-height: 1.5;
+  background: var(--rv-spine, var(--rv-paper-deep));
+  color: var(--rv-spine-ink, var(--rv-ink));
+  /* 不加边框 —— 书脊色本身已经把封面和卡片区分开了，
+     加边框只会让书封看起来被装了个框 */
+  border: none;
+  border-radius: 0;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.98rem;
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+/* 书脊色卡 —— 复古布面精装书的六种颜色。
+   数据里 17 本书一张封面图都没有，不按序上色的话整墙就是十几个
+   一模一样的米色方块（单调得难看）。书名统一用浅色，
+   在这六种底上的对比度实测 6.3 ~ 7.9。 */
+.reading-gallery-card:nth-child(6n + 1) .reading-gallery-cover {
+  --rv-spine: #8b4513;
+  --rv-spine-ink: #f5e6d3;
+}
+.reading-gallery-card:nth-child(6n + 2) .reading-gallery-cover {
+  --rv-spine: #8b2c2c;
+  --rv-spine-ink: #f5e6d3;
+}
+.reading-gallery-card:nth-child(6n + 3) .reading-gallery-cover {
+  --rv-spine: #2e4a3f;
+  --rv-spine-ink: #f5e6d3;
+}
+.reading-gallery-card:nth-child(6n + 4) .reading-gallery-cover {
+  --rv-spine: #5c2e0a;
+  --rv-spine-ink: #f5e6d3;
+}
+.reading-gallery-card:nth-child(6n + 5) .reading-gallery-cover {
+  --rv-spine: #6b4e0a;
+  --rv-spine-ink: #f5e6d3;
+}
+.reading-gallery-card:nth-child(6n + 6) .reading-gallery-cover {
+  --rv-spine: #1a2d26;
+  --rv-spine-ink: #f5e6d3;
+}
+
+/* 有真封面图的时候就不需要书脊色了，padding 也去掉让图铺满。
+   选择器写两层是为了压过上面 nth-child 的权重（(0,2,0) vs (0,3,0)），
+   否则有图时书脊色仍然会盖上来 */
+.reading-gallery-card .reading-gallery-cover:has(img) {
+  padding: 0;
+  background: var(--rv-paper-deep);
+  color: var(--rv-ink);
 }
 
 .reading-gallery-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: sepia(0.35) brightness(0.94) contrast(0.96);
+  transition: filter var(--rv-slow);
+}
+
+.reading-gallery-card:hover .reading-gallery-cover img {
+  filter: sepia(0.15) brightness(0.99) contrast(1);
 }
 
 .reading-gallery-body {
-  padding: 14px 16px 16px;
+  padding: 16px 4px 4px;
 }
 
 .reading-gallery-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #59442f;
-  margin: 0 0 3px;
-  line-height: 1.3;
+  margin: 0 0 5px;
+  font-family: var(--rv-serif-cn);
+  font-size: 1.02rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--rv-ink);
+  transition: color var(--rv-slow);
+}
+
+.reading-gallery-card:hover .reading-gallery-title {
+  color: var(--rv-ink-deep);
 }
 
 .reading-gallery-author {
-  font-size: 0.78rem;
-  color: #b0a090;
-  margin-bottom: 8px;
+  margin: 0 0 12px;
+  font-family: var(--rv-serif);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
 .reading-gallery-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rv-line-soft);
 }
 
 .reading-gallery-date {
-  font-size: 0.7rem;
-  color: #c4b5a0;
-  font-family: 'Space Mono', 'Consolas', monospace;
+  font-family: var(--rv-serif);
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
-/* ── 查看更多按钮 ── */
-.reading-more-btn {
-  display: block;
-  margin: 28px auto 0;
-  padding: 8px 28px;
-  font-size: 0.85rem;
-  color: #b0a090;
-  background: none;
-  border: 1.5px solid rgba(180, 160, 140, 0.3);
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.25s ease;
-}
-
-.reading-more-btn:hover {
-  color: #7a6240;
-  border-color: #b0a090;
-}
-
-.reading-empty {
-  text-align: center;
-  padding: 48px 24px;
-  color: #c4b5a0;
-  font-size: 0.9rem;
-}
-
-/* ── 详情弹窗（画廊卡片点开）── */
-.reading-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9000;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: reading-fade-in 0.2s ease;
-}
-
-.reading-modal {
-  background: #fffef9;
-  border-radius: 12px;
-  max-width: 560px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-  animation: reading-scale-in 0.25s ease;
-}
-
-.reading-modal-close {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0, 0, 0, 0.4);
-  color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.reading-modal-close:hover {
-  background: rgba(0, 0, 0, 0.65);
-}
-
-.reading-modal-cover {
-  aspect-ratio: 16 / 9;
-  background: #f5f0e8;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  overflow: hidden;
-  border-radius: 12px 12px 0 0;
-  color: #c4b5a0;
-  font-size: 0.85rem;
-}
-
-.reading-modal-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.reading-modal-body {
-  padding: 22px 28px 32px;
-}
-
-.reading-modal-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.reading-modal-genre {
-  font-size: 0.75rem;
-  padding: 3px 12px;
-  border-radius: 999px;
-  background: rgba(200, 162, 75, 0.1);
-  color: #c8a24b;
-  font-weight: 600;
-}
-
-.reading-modal-date {
-  font-size: 0.78rem;
-  color: #b0a090;
-  font-family: 'Space Mono', 'Consolas', monospace;
-}
-
-.reading-modal-title {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 2rem;
-  line-height: 1.2;
-  color: #4a3520;
-  margin: 0 0 4px;
-  letter-spacing: 0.03em;
-}
-
-.reading-modal-author {
-  font-size: 0.9rem;
-  color: #b0a090;
-  margin-bottom: 16px;
-}
-
-.reading-modal-reflection {
-  font-size: 0.92rem;
-  line-height: 1.85;
-  color: #6b5a42;
-  margin-bottom: 20px;
-}
-
-.reading-modal-reflection p {
-  margin-bottom: 0.8em;
-}
-
-.reading-modal-highlights {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(180, 160, 140, 0.15);
-}
-
-.reading-modal-highlight-text {
-  font-size: 0.88rem;
-  line-height: 1.7;
-  color: #5c4b32;
-  font-style: italic;
-}
-
-.reading-modal-highlight-note {
-  font-size: 0.76rem;
-  color: #b0a090;
-  margin-top: 2px;
-}
-
-/* ════════════════════════════════════════════
-   星级
-   ════════════════════════════════════════════ */
-
+/* 星星 */
 .reading-stars {
   display: flex;
-  gap: 1px;
+  gap: 2px;
 }
 
 .reading-star {
-  font-size: 0.82rem;
-  color: #d4c8b0;
+  font-size: 0.72rem;
+  color: var(--rv-line);
+  transition: color var(--rv-slow);
 }
 
 .reading-star--filled {
-  color: #c8a24b;
+  color: var(--rv-rust-text);
 }
 
 .reading-star--half {
-  position: relative;
-  color: #d4c8b0;
+  color: var(--rv-rust-text);
+  opacity: 0.55;
 }
 
-.reading-star--half::before {
-  content: '★';
-  position: absolute;
-  left: 0;
-  color: #c8a24b;
-  overflow: hidden;
-  width: 50%;
+/* 空态 */
+.reading-empty {
+  padding: 44px 24px;
+  text-align: center;
+  border: 2px dashed var(--rv-line);
+  border-radius: 0;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.95rem;
+  color: var(--rv-ink-soft);
+}
+
+/* 查看更多 */
+.reading-more-btn {
+  display: block;
+  margin: 32px auto 0;
+  padding: 12px 34px;
+  background: transparent;
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  font-family: var(--rv-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--rv-ink);
+  cursor: pointer;
+  transition: background-color var(--rv-slow), color var(--rv-slow);
+}
+
+.reading-more-btn:hover {
+  background: var(--rv-ink);
+  color: var(--rv-paper);
 }
 
 /* ============================================
-   区块 5：想读清单
+   区块 5：想读
    ============================================ */
-
 .reading-want-section {
-  margin-bottom: 56px;
+  margin-bottom: 88px;
 }
 
 .reading-want-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: 22px;
 }
 
 .reading-want-card {
+  position: relative;
   display: flex;
-  gap: 20px;
-  background: #f5f1e8;
-  border-radius: 6px;
-  padding: 22px;
+  gap: 18px;
+  padding: 20px;
+  background: var(--rv-paper);
+  border: 2px solid var(--rv-line);
+  border-radius: 0;
+  transition: background-color var(--rv-slow), border-color var(--rv-slow);
+}
+
+.reading-want-card:hover {
+  background: var(--rv-paper-warm);
+  border-color: var(--rv-ink);
 }
 
 .reading-want-cover {
   flex-shrink: 0;
-  width: 80px;
-  height: 112px;
-  background: linear-gradient(135deg, #e8dfd2 0%, #dfd4c3 100%);
-  border-radius: 3px;
+  width: 76px;
+  height: 108px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c4b5a0;
-  font-size: 0.65rem;
+  padding: 10px;
   text-align: center;
-  line-height: 1.4;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.04);
+  background: var(--rv-paper-deep);
+  border: 1px solid var(--rv-line);
+  border-radius: 0;
+  color: var(--rv-ink);
+  font-family: var(--rv-serif-cn);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  overflow: hidden;
 }
 
 .reading-want-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 3px;
+  filter: sepia(0.4) brightness(0.93) contrast(0.95);
 }
 
 .reading-want-info {
@@ -716,389 +830,646 @@
 }
 
 .reading-want-title {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.25rem;
-  color: #4a3520;
-  margin-bottom: 2px;
-  letter-spacing: 0.03em;
+  margin: 0 0 4px;
+  font-family: var(--rv-serif-cn);
+  font-size: 1.04rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--rv-ink);
+  transition: color var(--rv-slow);
+}
+
+.reading-want-card:hover .reading-want-title {
+  color: var(--rv-ink-deep);
 }
 
 .reading-want-author {
-  font-size: 0.78rem;
-  color: #b0a090;
-  margin-bottom: 10px;
+  margin: 0 0 10px;
+  font-family: var(--rv-serif);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
 }
 
 .reading-want-reason {
-  font-size: 0.84rem;
-  line-height: 1.65;
-  color: #8a7a62;
+  margin: 0;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--rv-ink-soft);
 }
 
 /* ============================================
-   区块 6：感想便签墙（独立记录，自定义标题）
+   区块 6：随想便签墙
    ============================================ */
-
 .reading-reflections-wall {
-  margin-bottom: 48px;
+  margin-bottom: 88px;
 }
 
 .reading-reflections-flow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: 24px;
+  padding: 8px 0;
 }
 
-/* 便签卡片 */
 .reading-sticky-note {
-  background: var(--note-bg, #f5f1e8);
-  padding: 22px 24px 18px;
-  border-radius: 4px;
-  flex: 0 1 auto;
-  max-width: 360px;
-  min-width: 170px;
   position: relative;
+  padding: 24px 22px;
+  background: var(--rv-paper-warm);
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  /* 便签本来就该是歪的。静态倾斜，不参与任何 hover 过渡 */
   transform: rotate(var(--note-tilt, 0deg));
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  cursor: default;
+  transition: background-color var(--rv-slow), border-color var(--rv-slow);
 }
 
 .reading-sticky-note:hover {
-  transform: rotate(0deg) translateY(-3px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  background: var(--rv-paper-deep);
+  border-color: var(--rv-ink-deep);
 }
 
-/* 便签顶部图钉 */
-.reading-sticky-note::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #c8a24b;
-  opacity: 0.5;
+/* 便签按序循环三种做旧纸色。
+   数据里的 note.color 只有 #f5f1e8 / #f2eee5 两个近乎白色的值，
+   全贴上去是一整片同色，所以按序上色、并统一到羊皮纸的暖色系里 */
+.reading-sticky-note:nth-child(3n + 1) {
+  background: #eedbc2;
+}
+.reading-sticky-note:nth-child(3n + 2) {
+  background: #e8d5c0;
+}
+.reading-sticky-note:nth-child(3n) {
+  background: #e3d0bb;
+}
+
+.reading-note-full:nth-child(3n + 1) {
+  background: #eedbc2;
+}
+.reading-note-full:nth-child(3n + 2) {
+  background: #e8d5c0;
+}
+.reading-note-full:nth-child(3n) {
+  background: #e3d0bb;
 }
 
 .reading-note-date {
   display: block;
-  font-size: 0.65rem;
-  color: #c4b5a0;
-  font-family: 'Space Mono', 'Consolas', monospace;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  font-family: var(--rv-serif);
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--rv-rust-text);
 }
 
 .reading-note-title {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.3rem;
-  color: #4a3520;
-  margin: 0 0 8px;
-  line-height: 1.2;
-  letter-spacing: 0.03em;
+  margin: 0 0 12px;
+  font-family: var(--rv-serif-cn);
+  font-size: 1.16rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--rv-ink);
+  transition: color var(--rv-slow);
+}
+
+.reading-sticky-note:hover .reading-note-title {
+  color: var(--rv-ink-deep);
 }
 
 .reading-note-text {
-  font-size: 0.84rem;
-  line-height: 1.7;
-  color: #6b5a42;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: var(--rv-ink-soft);
 }
 
-/* 查看更多便签按钮 — 底部纯文字，无边框 */
+.reading-note-text p {
+  margin: 0 0 0.85em;
+}
+
+.reading-note-text p:last-child {
+  margin-bottom: 0;
+}
+
 .reading-reflections-more {
   display: block;
-  width: 100%;
-  margin-top: 14px;
-  background: none;
-  border: none;
-  padding: 8px 0;
+  margin: 32px auto 0;
+  padding: 12px 34px;
+  background: transparent;
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  font-family: var(--rv-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--rv-ink);
   cursor: pointer;
-  color: #b0a090;
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.15rem;
-  text-align: center;
-  letter-spacing: 0.04em;
-  transition: color 0.25s ease;
+  transition: background-color var(--rv-slow), color var(--rv-slow);
 }
 
 .reading-reflections-more:hover {
-  color: #7a6240;
-  background: none;
+  background: var(--rv-ink);
+  color: var(--rv-paper);
 }
 
-/* ════════════════════════════════════════════
-   感想便签大弹窗（两栏布局）
-   ════════════════════════════════════════════ */
-
+/* 便签大弹窗 */
 .reading-notes-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  animation: reading-fade-in 0.2s ease;
+  padding: 32px;
+  background: rgba(92, 46, 10, 0.5);
 }
 
 .reading-notes-panel {
-  background: #faf7f2;
-  border-radius: 12px;
-  max-width: 860px;
   width: 100%;
-  max-height: 82vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-  animation: reading-scale-in 0.25s ease;
+  max-width: 1000px;
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: 36px 40px;
+  background: var(--rv-paper);
+  border: 4px double var(--rv-ink);
+  border-radius: 0;
 }
 
 .reading-notes-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 28px 16px;
-  border-bottom: 1px solid rgba(180, 160, 140, 0.12);
-  flex-shrink: 0;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--rv-line);
 }
 
 .reading-notes-head-title {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.5rem;
-  color: #4a3520;
-  letter-spacing: 0.03em;
+  margin: 0;
+  font-family: var(--rv-serif);
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rv-ink);
 }
 
-/* 两栏滚动区 */
 .reading-notes-body {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 24px 28px;
-  overflow-y: auto;
-  flex: 1;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px;
 }
 
 .reading-note-full {
-  background: var(--note-bg, #f5f1e8);
-  padding: 22px 24px;
-  border-radius: 6px;
-  position: relative;
+  padding: 24px 22px;
+  background: var(--rv-paper-warm);
+  border: 2px solid var(--rv-line);
+  border-radius: 0;
   transform: rotate(var(--note-tilt, 0deg));
-  transition: transform 0.3s ease;
-  align-self: start;
+  transition: background-color var(--rv-slow), border-color var(--rv-slow);
 }
 
 .reading-note-full:hover {
-  transform: rotate(0deg);
-}
-
-.reading-note-full::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #c8a24b;
-  opacity: 0.5;
+  background: var(--rv-paper-deep);
+  border-color: var(--rv-ink);
 }
 
 .reading-note-full-date {
   display: block;
-  font-size: 0.65rem;
-  color: #c4b5a0;
-  font-family: 'Space Mono', 'Consolas', monospace;
   margin-bottom: 10px;
+  font-family: var(--rv-serif);
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--rv-rust-text);
 }
 
 .reading-note-full-title {
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.5rem;
-  color: #4a3520;
   margin: 0 0 12px;
-  line-height: 1.2;
-  letter-spacing: 0.03em;
+  font-family: var(--rv-serif-cn);
+  font-size: 1.16rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--rv-ink);
 }
 
 .reading-note-full-text {
-  font-size: 0.88rem;
-  line-height: 1.8;
-  color: #6b5a42;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: var(--rv-ink-soft);
 }
 
 .reading-note-full-text p {
-  margin-bottom: 0.7em;
+  margin: 0 0 0.85em;
+}
+
+.reading-note-full-text p:last-child {
+  margin-bottom: 0;
 }
 
 /* ============================================
-   页尾
+   书籍详情弹窗
    ============================================ */
+.reading-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(92, 46, 10, 0.5);
+}
 
+.reading-modal {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: var(--rv-paper);
+  border: 4px double var(--rv-ink);
+  border-radius: 0;
+}
+
+.reading-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  background: var(--rv-paper);
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  color: var(--rv-ink);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--rv-slow), color var(--rv-slow);
+}
+
+.reading-modal-close:hover {
+  background: var(--rv-ink);
+  color: var(--rv-paper);
+}
+
+.reading-modal-cover {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  background: var(--rv-paper-deep);
+  border-bottom: 2px solid var(--rv-ink);
+  color: var(--rv-ink);
+  font-family: var(--rv-serif-cn);
+  font-size: 1.5rem;
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+.reading-modal-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: sepia(0.3) brightness(0.95) contrast(0.97);
+}
+
+.reading-modal-body {
+  padding: 32px 36px 38px;
+}
+
+.reading-modal-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.reading-modal-genre {
+  padding: 4px 13px;
+  background: transparent;
+  border: 2px solid var(--rv-ink);
+  border-radius: 0;
+  font-family: var(--rv-serif);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rv-ink);
+}
+
+.reading-modal-date {
+  font-family: var(--rv-serif);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
+}
+
+.reading-modal-title {
+  margin: 0 0 8px;
+  font-family: var(--rv-serif-cn);
+  font-size: 2.1rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--rv-ink);
+}
+
+.reading-modal-author {
+  margin: 0 0 24px;
+  font-family: var(--rv-serif);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rv-ink-faint);
+}
+
+.reading-modal-reflection {
+  padding-top: 22px;
+  border-top: 2px solid var(--rv-line);
+  font-family: var(--rv-serif-cn);
+  font-size: 0.98rem;
+  line-height: 1.9;
+  color: var(--rv-ink);
+}
+
+.reading-modal-reflection p {
+  margin: 0 0 1em;
+}
+
+.reading-modal-reflection p:last-child {
+  margin-bottom: 0;
+}
+
+.reading-modal-highlights {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.reading-modal-highlight-text {
+  margin: 0 0 8px;
+  padding-left: 18px;
+  border-left: 3px solid var(--rv-rust);
+  font-family: var(--rv-serif-cn);
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--rv-ink);
+}
+
+.reading-modal-highlight-note {
+  margin: 0 0 0 21px;
+  font-family: var(--rv-serif-cn);
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--rv-ink-soft);
+}
+
+/* ============================================
+   读书笔记附件（FileAttach 组件）
+   组件默认是孟菲斯风（粗黑边 + 硬阴影 + 玩具按键），这里覆盖成
+   复古怀旧：鞍棕墨 + 羊皮纸 + 方角 + 无阴影 + 无位移，过渡拉长到 0.7s
+   ============================================ */
+.reading-modal-files {
+  margin-top: 32px;
+  padding-top: 26px;
+  border-top: 4px double var(--rv-line);
+}
+
+.reading-modal-files-label {
+  margin: 0 0 16px;
+  font-family: var(--rv-serif);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--rv-ink);
+}
+
+.reading-modal-files .fa {
+  --fa-ink: #8b4513;
+  --fa-bg: #f5e6d3;
+  --fa-accent: #8b4513;
+  --fa-accent-ink: #f5e6d3;
+  --fa-border: 2px solid #8b4513;
+  --fa-shadow: none;
+  --fa-shadow-lg: none;
+  --fa-radius: 0;
+  --fa-radius-sm: 0;
+  --fa-t: 0.7s ease-in-out;
+  --fa-font: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+
+  /* 平面：不要位移、不要硬阴影 */
+  --fa-hover-lift: none;
+  --fa-press: none;
+  --fa-btn-border: 2px solid #8b4513;
+  --fa-btn-shadow: none;
+  --fa-btn-shadow-hover: none;
+
+  --fa-md-font: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+  --fa-md-title-font: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
+  --fa-md-muted: #7a4a1e;
+  --fa-md-line: rgba(139, 69, 19, 0.3);
+  --fa-md-code-bg: rgba(139, 69, 19, 0.07);
+  --fa-md-bg: #f5e6d3;
+}
+
+/* Ink & Oxidation：hover 时纸面泛黄、墨迹加深，而不是换色 */
+.reading-modal-files .fa-item:hover {
+  background: var(--rv-paper-warm);
+  border-color: var(--rv-ink-deep);
+}
+
+.reading-modal-files .fa-btn {
+  font-family: var(--rv-serif);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.reading-modal-files .fa-name {
+  font-weight: 400;
+  font-family: 'Noto Serif SC', 'Songti SC', Georgia, serif;
+}
+
+.reading-modal-files .fa-sub {
+  font-family: var(--rv-serif);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.reading-modal-files .fa-btn:hover {
+  background: var(--rv-ink-deep);
+  border-color: var(--rv-ink-deep);
+  color: var(--rv-paper);
+}
+
+.reading-modal-files .fa-btn--read {
+  background: var(--rv-ink);
+  color: var(--rv-paper);
+}
+
+.reading-modal-files .fa-btn--read:hover {
+  background: var(--rv-ink-deep);
+}
+
+.reading-modal-files .fa-btn--danger:hover {
+  background: var(--rv-rust-deep);
+  border-color: var(--rv-rust-deep);
+  color: var(--rv-paper);
+}
+
+/* ============================================
+   页尾标记
+   ============================================ */
 .reading-end-mark {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 32px 0 16px;
-}
-/* 页脚已统一到 SiteFooter，主题见 src/data/footerTheme.js */
-
-/* 导航栏配色已移到 src/data/navTheme.js 的 '/reading' 一项 */
-
-/* ============================================
-   动画
-   ============================================ */
-
-@keyframes reading-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes reading-scale-in {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
+  gap: 18px;
+  padding: 40px 0 8px;
 }
 
 /* ============================================
-   响应式
+   响应式：全站三档 900 / 768 / 480
    ============================================ */
+@media (max-width: 900px) {
+  .reading-inner {
+    padding: 0 32px 80px;
+  }
+
+  .reading-current-card {
+    gap: 26px;
+    padding: 28px;
+  }
+
+  .reading-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+  }
+
+  .reading-notes-body {
+    grid-template-columns: 1fr;
+  }
+}
 
 @media (max-width: 768px) {
   .reading-inner {
-    padding: 32px 16px 40px;
+    padding: 0 22px 64px;
   }
 
   .reading-quote-banner {
-    padding: 28px 22px 22px;
+    margin: 40px 0 56px;
+    padding: 32px 24px 28px;
   }
 
   .reading-quote-text {
-    font-size: 2rem;
+    font-size: 1.35rem;
   }
 
   .reading-stats {
-    gap: 32px;
+    margin-bottom: 60px;
   }
 
   .reading-stat-num {
-    font-size: 2.4rem;
+    font-size: 1.9rem;
   }
 
   .reading-current-card {
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
     padding: 24px;
   }
 
   .reading-current-cover {
-    width: 100px;
-    height: 140px;
+    width: 118px;
+    height: 168px;
+    align-self: center;
   }
 
   .reading-current-title {
     font-size: 1.6rem;
   }
 
-  /* 画廊 → 两列 */
   .reading-gallery {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
     gap: 16px;
   }
 
-  /* 想读 → 单列 */
   .reading-want-grid {
     grid-template-columns: 1fr;
   }
 
-  .reading-sticky-note {
-    max-width: 100%;
-  }
-
-  /* 感想弹窗 → 单栏 */
-  .reading-notes-body {
+  .reading-reflections-flow {
     grid-template-columns: 1fr;
   }
 
+  .reading-modal-body {
+    padding: 26px 22px 30px;
+  }
+
+  .reading-modal-cover {
+    height: 220px;
+  }
+
+  .reading-modal-title {
+    font-size: 1.7rem;
+  }
+
+  .reading-quote-history-panel,
   .reading-notes-panel {
-    max-width: 100%;
-    max-height: 90vh;
+    padding: 24px 20px;
   }
 }
 
 @media (max-width: 480px) {
-  .reading-gallery {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+  .reading-inner {
+    padding: 0 16px 52px;
   }
 
   .reading-stats {
+    flex-direction: column;
     gap: 20px;
   }
 
-  .reading-quote-text {
-    font-size: 1.6rem;
+  .reading-stat-item {
+    border-right: none;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rv-line);
+  }
+
+  .reading-stat-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .reading-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reading-section-label {
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
   }
 }
 
 /* ============================================
-   读书笔记附件（FileAttach 组件）
-
-   组件默认是孟菲斯风（粗黑边 + 硬阴影 + 玩具按键），这里覆盖成书籍页的
-   暖纸 + 金 + 手写体：细边、小圆角、无阴影、无位移。
-   只需要覆盖变量，组件结构一行不用改。
+   Slow Passage 的例外：系统开了「减少动效」时，
+   长过渡反而会让人觉得卡，所以直接关掉
    ============================================ */
-
-.reading-modal-files {
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(180, 160, 140, 0.25);
-}
-
-.reading-modal-files-label {
-  margin: 0 0 14px;
-  font-family: 'Long Cang', 'Noto Serif SC', cursive;
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.2;
-  color: #4a3520;
-}
-
-.reading-modal-files .fa {
-  --fa-ink: #6b5a42;
-  --fa-bg: #fdfbf5;
-  --fa-accent: #f0e3c4;
-  --fa-border: 1px solid rgba(180, 160, 140, 0.45);
-  --fa-shadow: none;
-  --fa-shadow-lg: none;
-  --fa-radius: 8px;
-  --fa-radius-sm: 4px;
-  --fa-t: 0.2s ease;
-  --fa-font: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
-
-  /* 平面风格：不要位移和硬阴影 */
-  --fa-hover-lift: none;
-  --fa-press: none;
-  --fa-btn-border: 1px solid rgba(180, 160, 140, 0.55);
-  --fa-btn-shadow: none;
-  --fa-btn-shadow-hover: none;
-
-  /* 阅读区：标题用手写体，和页面其余标题一致 */
-  --fa-md-title-font: 'Long Cang', 'Noto Serif SC', cursive;
-  /* 次要色（引用块）实测 #8a7a62 只有 4.03，达不到 AA 的 4.5，
-     压深一档到 4.6 左右 */
-  --fa-md-muted: #807058;
-  --fa-md-line: rgba(180, 160, 140, 0.35);
-  --fa-md-code-bg: rgba(200, 162, 75, 0.1);
-  --fa-md-bg: #fdfbf5;
+@media (prefers-reduced-motion: reduce) {
+  .reading-world *,
+  .rv-corner,
+  .reading-modal-files .fa * {
+    transition-duration: 0.01ms !important;
+  }
 }

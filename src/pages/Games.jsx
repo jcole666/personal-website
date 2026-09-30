@@ -11,19 +11,11 @@ function Stars({ n }) {
 
 const statusLabels = { completed: '已通关', playing: '正在玩', 'want-to-play': '想去玩' }
 
-/* 状态颜色 */
+/* 状态颜色 —— 全部取自蒸汽波的四支霓虹 */
 const statusColors = {
-  completed: '#c8a050',
-  playing: '#4aa8e0',
-  'want-to-play': '#9c9080',
-}
-
-/* 平台图标映射 */
-const platformIcon = {
-  Switch: '🕹️',
-  'Nintendo Switch': '🕹️',
-  PC: '🖥️',
-  'PC / Switch': '🖥️🕹️',
+  completed: '#05ffa1',
+  playing: '#01cdfe',
+  'want-to-play': '#b967ff',
 }
 
 /* ====== 游戏卡片 ====== */
@@ -32,6 +24,8 @@ function GameCard({ game, onSelect }) {
 
   return (
     <div className="games-card" onClick={() => onSelect(game)}>
+      {/* 高光扫光：hover 时一道白光从左侧扫过 */}
+      <span className="vw-sweep" aria-hidden="true" />
       <div className="games-card-stripe" style={{ background: color }} />
 
       <div className="games-card-body">
@@ -40,9 +34,7 @@ function GameCard({ game, onSelect }) {
           <span className="games-card-status" style={{ color, borderColor: `${color}55` }}>
             {statusLabels[game.status]}
           </span>
-          <span className="games-card-platform">
-            {platformIcon[game.platform] || '🎮'} {game.platform}
-          </span>
+          <span className="games-card-platform">{game.platform}</span>
         </div>
 
         {/* 标题 + 评分 */}
@@ -88,9 +80,11 @@ function GameModal({ game, onClose }) {
           <div className="games-modal-subtitle">{game.subtitle}</div>
 
           <div className="games-modal-meta">
-            {game.platform && <span>{platformIcon[game.platform] || '🎮'} {game.platform}</span>}
+            {game.platform && <span>{game.platform}</span>}
             {game.period && <span>{game.period}</span>}
-            {game.hours && <span>⏱ {game.hours}</span>}
+            {/* 数据里 hours 是 "300+" 这种纯数字，原来靠 ⏱ emoji 提示单位，
+                emoji 去掉后要自己补上，否则会显示成一个孤零零的 300+ */}
+            {game.hours && <span>{game.hours} 小时</span>}
           </div>
 
           {game.rating && (
@@ -163,14 +157,19 @@ function Games() {
 
   return (
     <main className="games-world">
-      {/* 海拉鲁全景图片背景 */}
-      <div className="games-backdrop" />
-      <div className="games-cloud-layer games-cloud-layer-1" />
-      <div className="games-cloud-layer games-cloud-layer-2" />
+      {/* Vaporwave 背景：落日圆盘 + 透视网格地面 + 扫描线。
+          原来那张海拉鲁全景照片去掉了 —— 蒸汽波要的是深紫底 + 霓虹网格，
+          写实风景照片叠上去只会互相打架（文件还在 public/ 里，没删） */}
+      <div className="vw-bg" aria-hidden="true">
+        <div className="vw-sun" />
+        <div className="vw-floor" />
+        <div className="vw-scanlines" />
+      </div>
 
       <div className="games-inner">
         {/* 标题 */}
         <div className="games-hero">
+          <p className="vw-kana">ゲーム コレクション</p>
           <h1 className="games-hero-title">流前游戏</h1>
           <p className="games-hero-sub">
             {gameData.stats.total} 款游戏 · {gameData.stats.completed} 已通关 · {gameData.stats.playing} 正在玩 · {gameData.stats.wantToPlay} 想去玩
