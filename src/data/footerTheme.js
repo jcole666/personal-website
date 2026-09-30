@@ -141,15 +141,18 @@ export const footerThemes = {
     max: '1024px',
   },
   '/movies': {
+    // 同上一套。页脚用抬升面 #141821，比页面的近黑底亮一档 ——
+    // 形成「舞台后区 / 前区」的层次，又不破坏单一暖金调色。
+    // 对比度实测（底色 #141821）：ink 15.50 / muted 7.21 / accent 10.17
     brand: '流前 · 露天影院',
     tag: '总有光，总会亮',
-    bg: '#222540',
-    border: 'rgba(140, 138, 160, 0.1)',
-    divider: 'rgba(140, 138, 160, 0.08)',
-    ink: '#ebe8dd',
-    muted: '#9896aa',
-    faint: '#8f8da2',
-    accent: '#ffcf5c',
+    bg: '#141821',
+    border: 'rgba(154, 166, 184, 0.14)',
+    divider: 'rgba(154, 166, 184, 0.1)',
+    ink: '#F3EFE8',
+    muted: '#9AA6B8',
+    faint: '#9AA6B8',
+    accent: '#E4C063',
     font: "'Playfair Display', 'Noto Serif SC', serif",
     size: '1.5rem',
     spacing: '0.04em',

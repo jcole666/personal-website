@@ -4,6 +4,7 @@ import { useData } from '../context/DataContext.jsx'
 import Filmstrip, { Stars } from '../components/Filmstrip.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import CineHero from '../components/CineHero.jsx'
 
 /* 小工具 */
 function renderParagraphs(text) {
@@ -315,6 +316,14 @@ function Movies() {
     <main className="movies-world">
       <Stars />
 
+      {/* 0. 电影感视频首屏 —— 文字全在遮罩层上，视频只是氛围 */}
+      <CineHero>
+        <p className="cine-hero-kicker">NOW SHOWING</p>
+        <h1 className="cine-hero-title">流前影院</h1>
+        <p className="cine-hero-sub">一场一场，都记着。</p>
+        <a className="cine-hero-cta" href="#movie-gallery">开始放映</a>
+      </CineHero>
+
       <div className="movies-inner">
         {/* 1. 滚动胶片 Banner */}
         <Filmstrip movies={movieData.bannerMovies} onSelect={setModalItem} />
@@ -327,7 +336,7 @@ function Movies() {
         {/* 3. 标签筛选 + 画廊 */}
         <TagFilter tags={allTags} activeTag={activeTag} onSelect={setActiveTag} />
 
-        <section className="movie-gallery-section">
+        <section className="movie-gallery-section" id="movie-gallery">
           <h2 className="movies-section-label">🎞️ 观影画廊</h2>
           <div className="movie-gallery">
             {visibleMovies.map((m) => (

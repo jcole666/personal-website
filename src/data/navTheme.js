@@ -123,12 +123,15 @@ export const navThemes = {
     logoSpacing: '0.04em',
   },
   '/movies': {
+    // 电影页是 Cinematic Video Hero：暗场调色 + 唯一暖金强调。
+    // 原来那套深蓝紫的色相被收敛掉了 —— 底色越接近纯黑，
+    // 那支暖金越像从画面里透出来的光，而不是印上去的颜色。
     tag: 'SCREENING ROOM',
-    bg: 'rgba(34, 37, 64, 0.92)',
-    border: 'rgba(140, 138, 160, 0.12)',
-    ink: '#ebe8dd',
-    accent: '#ffcf5c',
-    tagInk: '#8c8aa0',
+    bg: 'rgba(5, 6, 10, 0.92)',
+    border: 'rgba(154, 166, 184, 0.14)',
+    ink: '#F3EFE8',
+    accent: '#E4C063',
+    tagInk: '#9AA6B8',
     logoFont: "'Playfair Display', 'Noto Serif SC', serif",
     logoSpacing: '0.04em',
   },

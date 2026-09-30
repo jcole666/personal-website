@@ -1,0 +1,195 @@
+/* ============================================
+   电影感视频首屏
+   ============================================ */
+
+.cine-hero {
+  position: relative;
+  /* 显式高度，不用内容撑 —— 防 CLS。视频没加载出来时占位也不能塌 */
+  height: 78vh;
+  min-height: 460px;
+  max-height: 820px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #05060A;
+}
+
+.cine-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* poster 先出（瞬间可见），视频就绪后淡入 —— 避免视频第一帧"跳"出来 */
+  opacity: 0;
+  transition: opacity 700ms ease-out;
+}
+
+.cine-hero-video--ready {
+  opacity: 1;
+}
+
+/* 可读性遮罩：文字压视频前必须先铺这一层，否则对比度无法保证 */
+.cine-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 6, 10, 0.78) 0%,
+    rgba(5, 6, 10, 0.2) 45%,
+    rgba(5, 6, 10, 0.45) 100%
+  );
+}
+
+/* 宽银幕上下黑边 */
+.cine-hero-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: #05060A;
+  z-index: 3;
+}
+
+.cine-hero-bar--top {
+  top: 0;
+}
+
+.cine-hero-bar--bottom {
+  bottom: 0;
+}
+
+.cine-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 32px;
+  text-align: center;
+}
+
+.cine-hero-kicker {
+  margin: 0 0 18px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  color: #E4C063;
+}
+
+.cine-hero-title {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 8vw, 5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: #F3EFE8;
+}
+
+.cine-hero-sub {
+  margin: 0 0 30px;
+  font-size: clamp(0.98rem, 2vw, 1.16rem);
+  line-height: 1.8;
+  color: rgba(243, 239, 232, 0.8);
+}
+
+.cine-hero-cta {
+  display: inline-block;
+  padding: 14px 34px;
+  border-radius: 999px;
+  background: #E4C063;
+  color: #05060A;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: transform 300ms ease-out, box-shadow 300ms ease-out,
+    background-color 300ms ease-out;
+}
+
+.cine-hero-cta:hover {
+  background: #f0d489;
+  box-shadow: 0 16px 44px rgba(228, 192, 99, 0.28);
+}
+
+.cine-hero-cta:active {
+  transform: scale(0.98);
+}
+
+.cine-hero-cta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(228, 192, 99, 0.5);
+}
+
+/* 播放/暂停入口 —— 绝不剥夺用户的控制权 */
+.cine-hero-toggle {
+  position: absolute;
+  right: 26px;
+  bottom: 42px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: #F3EFE8;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: background-color 300ms ease-out, border-color 300ms ease-out;
+}
+
+.cine-hero-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cine-hero-toggle:active {
+  transform: scale(0.98);
+}
+
+.cine-hero-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(228, 192, 99, 0.5);
+}
+
+.cine-hero-toggle-icon {
+  font-size: 0.62rem;
+  color: #E4C063;
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+@media (max-width: 768px) {
+  .cine-hero {
+    height: 62vh;
+    min-height: 380px;
+  }
+
+  .cine-hero-bar {
+    height: 14px;
+  }
+
+  .cine-hero-toggle {
+    right: 16px;
+    bottom: 30px;
+  }
+}
+
+/* 用户开了「减少动效」—— 视频本来就不播了，淡入也去掉 */
+@media (prefers-reduced-motion: reduce) {
+  .cine-hero-video {
+    transition: none;
+  }
+
+  .cine-hero-cta,
+  .cine-hero-toggle {
+    transition: none;
+  }
+}
