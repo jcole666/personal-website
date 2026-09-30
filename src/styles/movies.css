@@ -674,16 +674,24 @@
 }
 
 .watchlist-note {
-  background: #f5f0e6;
-  color: #3a3028;
+  /* 原来是米白便签 #f5f0e6 —— 在近黑页面上是一大片刺眼的亮块，
+     把整页的暗场调色撕开一个口子。改成抬升面，保留「便签 + 悬挂线 +
+     微倾斜」这套形态语言，只是让它落回暗场里。 */
+  background: #141821;
+  color: #F3EFE8;
+  border: 1px solid rgba(228, 192, 99, 0.16);
   padding: 20px 24px;
   border-radius: 10px;
   position: relative;
   transform: rotate(var(--note-tilt, 0deg));
-  transition: transform 0.4s ease-out;
+  transition: transform 0.4s ease-out, border-color 0.4s ease-out;
   flex: 0 1 auto;
   min-width: 180px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.watchlist-note:hover {
+  border-color: rgba(228, 192, 99, 0.4);
 }
 
 .watchlist-note::before {
@@ -706,7 +714,7 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(90, 80, 60, 0.4);
+  border: 2px solid rgba(228, 192, 99, 0.35);
   border-radius: 3px;
   margin-right: 8px;
   vertical-align: middle;
@@ -721,14 +729,14 @@
 .watchlist-note-director {
   display: block;
   font-size: 0.8rem;
-  color: #8c7a60;
+  color: #9AA6B8;
   margin-top: 6px;
   margin-left: 26px;
 }
 
 .watchlist-note-year {
   font-size: 0.7rem;
-  color: #b0a090;
+  color: #9AA6B8;
   font-family: 'Space Mono', monospace;
   float: right;
 }
@@ -1290,6 +1298,37 @@
   .full-list-body--grid,
   .full-list-body--people { grid-template-columns: 1fr; }
   .film-poster-card { width: 110px; }
+}
+
+/* ============================================
+   海报做旧
+
+   海报颜色由数据里的 posterColor 控制，所以胶片带上是紫、绿、粉、蓝、黄
+   五种高饱和色贴在一起 —— 这是整页唯一不受调色约束的地方，也是「花」的根源。
+   海报是内容，不能改它本身的颜色，但可以让它整体过一层 sepia + 降饱和 + 压暗，
+   统一到暗场的暖调里。老胶片本来就是偏黄褐的，所以这层滤镜在语义上也成立。
+   ============================================ */
+.film-poster-img,
+.movie-gallery-poster,
+.movie-modal-cover,
+.signboard-poster,
+.person-avatar {
+  /* saturate 从 0.55 回调到 0.72：0.55 时海报死灰一片，
+     虽然统一但完全没了色彩。0.72 能压住「五种高饱和贴在一起」的冲突，
+     又保住各自的色相可辨 */
+  filter: sepia(0.3) saturate(0.72) brightness(0.9) contrast(1.04);
+  transition: filter 400ms ease-out;
+}
+
+/* hover 时稍微「亮起来」—— 像聚光灯打到海报上 */
+.film-poster-card:hover .film-poster-img,
+.movie-gallery-card:hover .movie-gallery-poster {
+  filter: sepia(0.2) saturate(0.85) brightness(1) contrast(1);
+}
+
+/* 弹窗里的封面是主角，做旧可以轻一点 */
+.movie-modal-cover {
+  filter: sepia(0.28) saturate(0.72) brightness(0.92) contrast(1.02);
 }
 
 /* ============================================

@@ -5,6 +5,7 @@ import Filmstrip, { Stars } from '../components/Filmstrip.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import CineHero from '../components/CineHero.jsx'
+import PhotoArt from '../components/PhotoArt.jsx'
 
 /* 小工具 */
 function renderParagraphs(text) {
@@ -30,7 +31,7 @@ function MovieModal({ movie, onClose }) {
       <div className="movie-modal" onClick={(e) => e.stopPropagation()}>
         <button className="movie-modal-close" onClick={onClose}>✕</button>
         <div className="movie-modal-cover">
-          {movie.posterUrl ? <img src={movie.posterUrl} alt={movie.title} /> : <span>{movie.title}</span>}
+          <PhotoArt src={movie.posterUrl} alt={movie.title} id={movie.id} label={movie.title} theme="poster" accent={movie.posterColor} />
         </div>
         <div className="movie-modal-body">
           <div className="movie-modal-meta">
@@ -55,7 +56,7 @@ function PersonModal({ person, onClose }) {
       <div className="person-modal" onClick={(e) => e.stopPropagation()}>
         <button className="person-modal-close" onClick={onClose}>✕</button>
         <div className="person-modal-avatar">
-          {person.avatarUrl ? <img src={person.avatarUrl} alt={person.name} /> : <span>{person.name.slice(0, 2)}</span>}
+          <PhotoArt src={person.avatarUrl} alt={person.name} id={person.id} label={person.name} theme="poster" />
         </div>
         <h2 className="person-modal-name">{person.name}</h2>
         <p className="person-modal-role">{person.role}</p>
@@ -75,7 +76,7 @@ function FeaturedSignboard({ movie }) {
         <span className="signboard-label">▼ 今夜放映 ▼</span>
         <div className="signboard-content">
           <div className="signboard-poster">
-            {movie.posterUrl ? <img src={movie.posterUrl} alt={movie.title} /> : <span>{movie.title.slice(0, 3)}</span>}
+            <PhotoArt src={movie.posterUrl} alt={movie.title} id={movie.id} label={movie.title} theme="poster" accent={movie.posterColor} />
           </div>
           <div className="signboard-info">
             <h2 className="signboard-title">{movie.title}</h2>
@@ -114,7 +115,7 @@ function GalleryCard({ movie, onSelect }) {
   return (
     <div className="movie-gallery-card" onClick={() => onSelect(movie)}>
       <div className="movie-gallery-poster">
-        {movie.posterUrl ? <img src={movie.posterUrl} alt={movie.title} /> : <span>{movie.title.slice(0, 3)}</span>}
+        <PhotoArt src={movie.posterUrl} alt={movie.title} id={movie.id} label={movie.title} theme="poster" accent={movie.posterColor} />
       </div>
       <div className="movie-gallery-info">
         <div className="movie-gallery-title">{movie.title}</div>
@@ -237,7 +238,7 @@ function PeopleGrid({ people, onSelect }) {
       {people.map((p) => (
         <div key={p.id} className="person-card" onClick={() => onSelect(p)}>
           <div className="person-avatar">
-            {p.avatarUrl ? <img src={p.avatarUrl} alt={p.name} /> : <span>{p.name.slice(0, 2)}</span>}
+            <PhotoArt src={p.avatarUrl} alt={p.name} id={p.id} label={p.name} theme="poster" />
           </div>
           <h3 className="person-name">{p.name}</h3>
           <p className="person-role">{p.role}</p>
@@ -278,7 +279,7 @@ function FullPeopleModal({ title, items, onClose, onSelect }) {
           {items.map((p) => (
             <div key={p.id} className="person-card" onClick={() => { onSelect(p); onClose() }}>
               <div className="person-avatar">
-                {p.avatarUrl ? <img src={p.avatarUrl} alt={p.name} /> : <span>{p.name.slice(0, 2)}</span>}
+                <PhotoArt src={p.avatarUrl} alt={p.name} id={p.id} label={p.name} theme="poster" />
               </div>
               <h3 className="person-name">{p.name}</h3>
               <p className="person-role">{p.role}</p>
@@ -337,7 +338,7 @@ function Movies() {
         <TagFilter tags={allTags} activeTag={activeTag} onSelect={setActiveTag} />
 
         <section className="movie-gallery-section" id="movie-gallery">
-          <h2 className="movies-section-label">🎞️ 观影画廊</h2>
+          <h2 className="movies-section-label">观影画廊</h2>
           <div className="movie-gallery">
             {visibleMovies.map((m) => (
               <GalleryCard key={m.id} movie={m} onSelect={setModalItem} />
@@ -353,19 +354,19 @@ function Movies() {
 
         {/* 4. 星空观影日历 */}
         <section className="calendar-section">
-          <h2 className="movies-section-label">📅 星空观影日历</h2>
+          <h2 className="movies-section-label">星空观影日历</h2>
           <TicketCalendar movies={movieData.watched} onSelect={setModalItem} />
         </section>
 
         {/* 5. 放映排期 */}
         <section className="watchlist-section">
-          <h2 className="movies-section-label">📋 放映排期</h2>
+          <h2 className="movies-section-label">放映排期</h2>
           <WatchlistNotes watchlist={movieData.watchlist} />
         </section>
 
         {/* 6. 关注人物 */}
         <section className="people-section">
-          <h2 className="movies-section-label">🎬 关注人物</h2>
+          <h2 className="movies-section-label">关注人物</h2>
           <PeopleGrid people={visiblePeople} onSelect={setPersonItem} />
           {hasMorePeople && (
             <button className="movies-more-btn" onClick={() => setShowMorePeople(true)}>
