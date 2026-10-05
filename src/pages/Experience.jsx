@@ -177,11 +177,12 @@ function Experience() {
             >
               {/* 照片区 */}
               <div className="exp-card-cover">
+                {/* 不传 label —— PhotoArt 会把 label 画成一个圆形徽章，
+                    在这个尺寸下会被卡片边缘裁掉一半；类型信息下面已经有 Tag 了 */}
                 <PhotoArt
                   src={item.cover}
                   alt={item.title}
                   id={item.id}
-                  label={item.type}
                   theme="journal"
                 />
               </div>
