@@ -106,25 +106,24 @@ export const footerThemes = {
     max: '960px',
   },
   '/reading': {
-    // Retro Vintage：页脚用比页面略深的羊皮纸，视觉上「压在下面」。
-    // 对比度实测（底色 #e8d5c0）：ink 7.95 / muted 6.08 / faint 4.96，都过 AA。
-    // 注意 muted 比 faint 深 —— 这个底色上棕色系的可用范围很窄，
-    // 再浅一档（#a0632a）就只有 3.4 了，所以「次要」和「更次要」只能靠这两档分。
+    // Watercolor：页脚用比页面略深一档的纸色（#f0ebe3），同一族但压下去一层。
+    // 对比度实测（底色 #f0ebe3）：ink 10.57 / muted 4.92 / accent 5.46，都过 AA。
+    // ⚠️ accent 用了压深版 #3f5f8f —— 页面主色 #4a6fa5 在这个略深的纸色上只有 4.32，
+    // 差一点点；主色留给页面（那里底更亮，4.84 是够的）。
     brand: '流前 · 读书笔记',
     tag: '好记性不如烂笔头',
-    bg: '#e8d5c0',
-    border: '#8b4513',
-    borderWidth: '2px',
-    divider: 'rgba(139, 69, 19, 0.3)',
-    ink: '#5c2e0a',
-    muted: '#7a4a1e',
-    faint: '#8b4513',
-    accent: '#8b2c2c',
-    font: "'Playfair Display', 'Noto Serif SC', serif",
-    size: '1.5rem',
-    spacing: '0.06em',
-    uiFont: "'Playfair Display', 'Noto Serif SC', serif",
-    max: '1080px',
+    bg: '#f0ebe3',
+    border: 'rgba(74, 111, 165, 0.2)',
+    divider: 'rgba(74, 111, 165, 0.16)',
+    ink: '#3a3430',
+    muted: '#6b6459',
+    faint: '#6b6459',
+    accent: '#3f5f8f',
+    font: "'Fraunces', 'Noto Serif SC', Georgia, serif",
+    size: '1.4rem',
+    spacing: '0.03em',
+    uiFont: "'Fraunces', 'Noto Serif SC', Georgia, serif",
+    max: '1060px',
   },
   '/music': {
     // Neo-Brutalist：纯黑底 + 白字 + 荧光绿强调。

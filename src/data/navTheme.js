@@ -95,22 +95,20 @@ export const navThemes = {
     logoFont: "Nunito, 'Noto Sans SC', sans-serif",
   },
   '/reading': {
-    // 书籍页是 Retro Vintage 复古怀旧风：羊皮纸底 + 鞍棕墨 + 粗边。
-    // 导航栏跟着换同一套，底边加粗到 2px（该风格要求 border-2 起步，禁止细边框）。
-    // logo 从 Long Cang 手写体换成 Playfair 衬线 —— 这个风格要的是
-    // 「老式印刷」而不是「手写」，参考站全站 font-serif，没有一处手写体。
+    // 书籍页是 Watercolor Style：纸张色底 + 蓝灰墨 + 柔和细边。
+    // 边框必须细（半透明 1px）—— 这个风格明令禁止硬边框和粗边框，
+    // 上一版这里的 2px 棕边要收回。
+    // logo 保留衬线 —— 水彩要求「衬线字体增加艺术感」。
     tag: 'READING NOTES',
-    bg: 'rgba(245, 230, 211, 0.94)',
-    border: '#8b4513',
-    borderWidth: '2px',
-    ink: '#8b4513',
-    // 强调色用深红而不是铁锈红 #c94c4c —— 后者在这个底色上只有 3.18，
-    // 而且风格明确要求 hover 只能「加深」现有色调，不能换成更亮的色
-    accent: '#8b2c2c',
-    tagInk: '#8b2c2c',
-    logoFont: "'Playfair Display', 'Noto Serif SC', serif",
-    logoSize: '1.45rem',
-    logoSpacing: '0.06em',
+    bg: 'rgba(250, 248, 245, 0.94)',
+    border: 'rgba(74, 111, 165, 0.2)',
+    ink: '#3a3430',
+    // 蓝灰主色在纸色上 4.84，达标（弱化色 #8a8a8a 只有 3.25，所以用压深版）
+    accent: '#4a6fa5',
+    tagInk: '#6b6459',
+    logoFont: "'Fraunces', 'Noto Serif SC', Georgia, serif",
+    logoSize: '1.4rem',
+    logoSpacing: '0.03em',
   },
   '/music': {
     // 音乐页是 Neo-Brutalist：白底 + 纯黑粗边 + 直角。

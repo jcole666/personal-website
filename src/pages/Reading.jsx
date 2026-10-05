@@ -21,6 +21,7 @@ import {
 import EditButton from '../components/edit/EditButton.jsx'
 import FileAttach from '../components/FileAttach.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
+import PhotoArt from '../components/PhotoArt.jsx'
 
 /* ===================================================================
    小工具
@@ -48,14 +49,40 @@ function cachedTilt(key) {
  * 用 4 个 span 而不是伪元素，因为 ::before/::after 只有两个，
  * 而且分开写才能让四角各自做透明度过渡。
  */
-function Corners() {
+/**
+ * 水彩晕染色块
+ *
+ * 参考站的招牌手法：几个绝对定位的圆，各带一支水彩色（半透明），
+ * 用大半径 blur 化开，再以 11~18s 的不同周期缓慢漂移 —— 像颜料在湿纸上渗。
+ * 颜色和位置每个都不同，所以走内联 style；模糊和动画由 CSS 类统一管。
+ */
+const BLOBS = [
+  { rgb: '232, 168, 124', a: 0.26, size: 440, top: '3%', left: '-8%', dur: 13, delay: 0 },
+  { rgb: '133, 205, 202', a: 0.24, size: 400, top: '10%', right: '-6%', dur: 16, delay: -4 },
+  { rgb: '195, 141, 148', a: 0.2, size: 340, top: '48%', left: '4%', dur: 11, delay: -8 },
+  { rgb: '212, 163, 115', a: 0.22, size: 380, top: '76%', right: '0%', dur: 18, delay: -11 },
+]
+
+function WatercolorBlobs() {
   return (
-    <>
-      <span className="rv-corner rv-corner--tl" aria-hidden="true" />
-      <span className="rv-corner rv-corner--tr" aria-hidden="true" />
-      <span className="rv-corner rv-corner--bl" aria-hidden="true" />
-      <span className="rv-corner rv-corner--br" aria-hidden="true" />
-    </>
+    <div className="reading-blobs" aria-hidden="true">
+      {BLOBS.map((b, i) => (
+        <span
+          key={i}
+          className="reading-blob"
+          style={{
+            background: `rgba(${b.rgb}, ${b.a})`,
+            width: `${b.size}px`,
+            height: `${b.size}px`,
+            top: b.top,
+            left: b.left,
+            right: b.right,
+            animationDuration: `${b.dur}s`,
+            animationDelay: `${b.delay}s`,
+          }}
+        />
+      ))}
+    </div>
   )
 }
 
@@ -96,16 +123,9 @@ function DetailModal({ book, onClose, onFilesChange }) {
       <div className="reading-modal" onClick={(e) => e.stopPropagation()}>
         <button className="reading-modal-close" onClick={onClose}>✕</button>
 
-        {book.coverUrl ? (
-          <div className="reading-modal-cover">
-            <img src={book.coverUrl} alt={book.title} />
-          </div>
-        ) : (
-          <div className="reading-modal-cover">
-            <span>{book.title}</span>
-            <span style={{ fontSize: '0.7rem' }}>{book.author}</span>
-          </div>
-        )}
+        <div className="reading-modal-cover">
+          <PhotoArt src={book.coverUrl} alt={book.title} id={book.id} theme="journal" />
+        </div>
 
         <div className="reading-modal-body">
           <div className="reading-modal-meta">
@@ -166,7 +186,6 @@ function QuoteBanner({ dailyQuotes }) {
   return (
     <>
       <section className="reading-quote-banner">
-        <Corners />
         <div className="reading-quote-label">
           <span className="reading-quote-tag">DAILY · 每日金句</span>
           <button
@@ -264,16 +283,8 @@ function CurrentlyReading({ books }) {
       <h2 className="reading-section-label">正在读</h2>
 
       <div className="reading-current-card">
-        <Corners />
         <div className="reading-current-cover">
-          {book.coverUrl ? (
-            <img src={book.coverUrl} alt={book.title} />
-          ) : (
-            <>
-              <span>{book.title}</span>
-              <span style={{ fontSize: '0.68rem' }}>{book.author}</span>
-            </>
-          )}
+          <PhotoArt src={book.coverUrl} alt={book.title} id={book.id} theme="journal" />
         </div>
 
         <div className="reading-current-info">
@@ -440,16 +451,8 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
               className="reading-gallery-card"
               onClick={() => setSelectedId(book.id)}
             >
-              <Corners />
               <div className="reading-gallery-cover">
-                {book.coverUrl ? (
-                  <img src={book.coverUrl} alt={book.title} />
-                ) : (
-                  <>
-                    <span style={{ fontWeight: 600 }}>{book.title}</span>
-                    <span style={{ fontSize: '0.68rem' }}>{book.author}</span>
-                  </>
-                )}
+                <PhotoArt src={book.coverUrl} alt={book.title} id={book.id} theme="journal" />
               </div>
               <div className="reading-gallery-body">
                 <h3 className="reading-gallery-title">{book.title}</h3>
@@ -499,13 +502,8 @@ function WantToRead({ books }) {
       <div className="reading-want-grid">
         {wantBooks.map((book) => (
           <div key={book.id} className="reading-want-card">
-            <Corners />
             <div className="reading-want-cover">
-              {book.coverUrl ? (
-                <img src={book.coverUrl} alt={book.title} />
-              ) : (
-                <span>{book.title}</span>
-              )}
+                <PhotoArt src={book.coverUrl} alt={book.title} id={book.id} theme="journal" />
             </div>
             <div className="reading-want-info">
               <h3 className="reading-want-title">{book.title}</h3>
@@ -650,6 +648,8 @@ function Reading() {
 
   return (
     <main className="reading-world">
+      <WatercolorBlobs />
+
       <div className="reading-inner">
         <QuoteBanner dailyQuotes={readingData.dailyQuotes} />
         <StatsRow profile={readingData.profile} />
