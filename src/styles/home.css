@@ -271,14 +271,23 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    /* 顶部高光原来 0.9，几乎纯白 —— 那圈「白」主要来自它，压到 0.35 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 24px 48px -20px rgba(76, 60, 120, 0.5);
   /* 头像与卡片内容上下居中对齐（去掉原先向上破格的 -72px 偏移） */
   transform: translateY(0);
   /* 虹彩描边（液态玻璃边缘） */
   border: 1.5px solid transparent;
+  /* 外圈从「白玻璃」改成「淡紫玻璃」—— 这是方案 C 的核心：
+     不动图片（保留素描纸的暖调），只让包着它的那圈退到紫色系里，
+     这样「米白纸 → 淡紫圈 → 深紫背景」是一个连续过渡，
+     而不是原来那种「米白纸 → 纯白圈 → 深紫背景」的硬跳。 */
   background:
-    linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3))
+    linear-gradient(
+        160deg,
+        rgba(184, 155, 255, 0.16),
+        rgba(108, 60, 158, 0.22)
+      )
       padding-box,
     var(--glass-iris) border-box;
   /* 裁剪放大的头像，保证始终圆形 */
