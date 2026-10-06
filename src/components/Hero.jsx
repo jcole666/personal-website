@@ -12,7 +12,7 @@ function Hero() {
           </p>
         </div>
         <div className="hero-avatar-frame">
-          <img className="hero-avatar" src="/images/avatar2.png" alt="流前的头像" />
+          <img className="hero-avatar" src="/images/avatar-sketch.jpg" alt="流前的头像" />
         </div>
       </div>
     </header>
