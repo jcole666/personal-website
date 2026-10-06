@@ -285,6 +285,29 @@
   overflow: hidden;
 }
 
+/* 紫色调叠加 —— 解决「素描纸底的暖白」和「首页深紫」的色调冲突。
+   纸底约 #efe9dd（暖黄调），页面主色 #b89bff（冷紫），色相相差近 200°，
+   贴在一起像在紫色玻璃上放了张白纸。
+
+   用 mix-blend-mode: multiply 把紫色「染」进纸里，而不是浮在上面：
+     · 米白纸底 × 紫 → 变成淡紫，和玻璃融为一体
+     · 黑色铅笔线条 × 紫 → 仍是黑（multiply 对黑无效），素描的对比度不掉
+   放在 frame 上而不是 img 上 —— img 有 scale(1.32)，伪元素会跟着变形。 */
+.hero-avatar-frame::after {
+  content: '';
+  position: absolute;
+  inset: 10px; /* 对齐 frame 的 padding，只覆盖头像本身 */
+  border-radius: 50%;
+  background: linear-gradient(
+    155deg,
+    rgba(184, 155, 255, 0.3),
+    rgba(108, 60, 158, 0.44)
+  );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 2;
+}
+
 .hero-avatar {
   width: 200px;
   height: 200px;
@@ -295,6 +318,9 @@
   /* 放大主体 + 锚点上移：裁掉头顶多余留白，让脸部更突出 */
   transform: scale(1.32);
   transform-origin: 50% 32%;
+  /* 再压一点暖度，配合上面的紫色叠加 —— 只降饱和不动明度，
+     素描的层次不能压掉 */
+  filter: saturate(0.68) contrast(1.06);
 }
 
 @media (max-width: 768px) {
