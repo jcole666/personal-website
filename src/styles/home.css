@@ -332,7 +332,7 @@
 }
 
 .worlds-head {
-  max-width: 920px;
+  max-width: 1080px;
   margin: 0 auto 44px;
   text-align: center;
 }
@@ -354,7 +354,7 @@
 }
 
 .worlds-list {
-  max-width: 920px;
+  max-width: 1080px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -366,8 +366,10 @@
   overflow: hidden;
   display: flex;
   align-items: center;
-  gap: 28px;
-  padding: 28px 36px;
+  /* 卡片放大：920×148 在 1440 视口下只占 64% 宽、比例 6.2:1，显得又细又长。
+     加宽到 1080 + 加厚内边距，体量感才够。 */
+  gap: 36px;
+  padding: 40px 48px;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -448,7 +450,7 @@
   flex-shrink: 0;
   width: 84px;
   font-family: var(--font-display);
-  font-size: 4.5rem;
+  font-size: 5.2rem;
   font-weight: 600;
   line-height: 1;
   color: var(--purple);
@@ -466,7 +468,7 @@
 }
 
 .world-icon {
-  font-size: 2rem;
+  font-size: 2.4rem;
 }
 
 .world-text {
@@ -477,7 +479,7 @@
 
 .world-title {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 600;
   color: var(--purple-deep);
 }
@@ -485,7 +487,7 @@
 .world-label {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 0.9rem;
+  font-size: 1rem;
   letter-spacing: 0.02em;
   text-transform: lowercase;
   color: var(--purple);
@@ -494,7 +496,7 @@
 
 .world-desc {
   font-family: var(--font-display);
-  font-size: 0.98rem;
+  font-size: 1.12rem;
   line-height: 1.5;
   color: rgba(51, 34, 90, 0.78);
 }
@@ -514,14 +516,14 @@
 
 .world-latest-tag {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   letter-spacing: 0.2em;
   color: var(--gold);
 }
 
 .world-latest-text {
   font-family: var(--font-display);
-  font-size: 0.98rem;
+  font-size: 1.12rem;
   line-height: 1.45;
   color: var(--purple-deep);
 }
@@ -529,7 +531,7 @@
 .world-enter {
   margin-top: 6px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--purple);
   opacity: 0;
   transform: translateX(-6px);

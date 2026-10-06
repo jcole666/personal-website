@@ -25,7 +25,7 @@ function Sections() {
             </span>
             <div className="world-body">
               <span className="world-icon">
-                <Icon name={section.icon} size={36} />
+                <Icon name={section.icon} size={42} />
               </span>
               <div className="world-text">
                 <h3 className="world-title">{section.title}</h3>
