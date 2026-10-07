@@ -7,16 +7,27 @@ import {
   Time,
   Icon,
 } from 'animal-island-ui'
+import { useModalBehavior } from '../hooks/useModalBehavior.js'
 import { experiences as seedExperiences, experienceTypes as seedTypes } from '../data/experience.js'
 import { useData } from '../context/DataContext.jsx'
-import Villagers from '../components/Villagers.jsx'
+import { useEditMode } from '../context/EditModeContext.jsx'
+import SiteFooter from '../components/SiteFooter.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
 import PhotoArt from '../components/PhotoArt.jsx'
 import FileAttach from '../components/FileAttach.jsx'
-import { useEditMode } from '../context/EditModeContext.jsx'
 
 const IMAGE_RE = /\.(png|jpe?g|gif|webp|svg|avif|bmp)$/i
-import SiteFooter from '../components/SiteFooter.jsx'
+
+// 后端未返回时的回落数据。提到模块层（只建一次），
+// 否则每次渲染都新建对象 → experiences 引用每次都变 → useMemo 失效
+const FALLBACK = { experiences: seedExperiences, experienceTypes: seedTypes }
+
+// 取 date 里的起始日期，拼成可比较的 yyyymmdd 数字（用于倒序）。
+// date 形如 "2025.07.12 - 2025.07.23" 或 "2025.10.02"
+function startOf(item) {
+  const m = String(item.date || '').match(/(\d{4})\.(\d{1,2})\.(\d{1,2})/)
+  return m ? Number(m[1] + m[2].padStart(2, '0') + m[3].padStart(2, '0')) : 0
+}
 
 // 类型标签颜色映射
 const typeColors = {
@@ -27,6 +38,7 @@ const typeColors = {
   '竞赛': 'app-yellow',
   '社团': 'app-green',
   '志愿': 'lime-green',
+  '演出': 'purple',
 }
 
 function renderParagraphs(text) {
@@ -42,6 +54,9 @@ function renderParagraphs(text) {
  */
 function DetailModal({ item, onClose, onFilesChange }) {
   const { editMode } = useEditMode()
+  // Esc 关闭 + 锁背景滚动。组件常驻挂载、内部 return null，
+  // 必须传 isOpen 跟随「是否真的打开」，否则一进页面就锁死整页滚动
+  useModalBehavior(Boolean(item), onClose)
   if (!item) return null
 
   const files = item.files ?? []
@@ -99,7 +114,7 @@ function DetailModal({ item, onClose, onFilesChange }) {
 
 function Experience() {
   const { data, saveSection } = useData()
-  const { experiences, experienceTypes } = data.experience ?? { experiences: seedExperiences, experienceTypes: seedTypes }
+  const { experiences, experienceTypes } = data.experience ?? FALLBACK
 
   const [activeType, setActiveType] = useState(null) // null = 全部
   // 存 id 而不是对象快照 —— 上传附件后 experiences 会更新，按 id 重查才拿得到最新的 files
@@ -115,10 +130,10 @@ function Experience() {
     await saveSection('experience', next)
   }
 
-  // 根据类型筛选
+  // 根据类型筛选，并按时间倒序（最新的在前）
   const filtered = useMemo(() => {
-    if (!activeType) return experiences
-    return experiences.filter((e) => e.type === activeType)
+    const list = activeType ? experiences.filter((e) => e.type === activeType) : experiences
+    return [...list].sort((a, b) => startOf(b) - startOf(a))
   }, [activeType, experiences])
 
   return (
@@ -212,9 +227,8 @@ function Experience() {
       {/* 页脚 */}
       <SiteFooter path="/experience" />
 
-      {/* 海浪 + 桌面宠物（回到顶部已统一放进页脚，这里不再重复放一个） */}
+      {/* 海浪（回到顶部已统一放进页脚，这里不再重复放一个） */}
       <div className="experience-sea" />
-      <Villagers />
 
       {/* 详情弹窗 */}
       <DetailModal

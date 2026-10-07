@@ -346,6 +346,7 @@ const JOURNAL_SCENE_BY_TYPE = {
   竞赛: 2,
   活动: 1,
   社团: 1,
+  演出: 2,
 }
 
 /**

@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useModalBehavior } from '../hooks/useModalBehavior.js'
 import seedCourseData from '../data/courses.js'
 import { useData } from '../context/DataContext.jsx'
@@ -47,7 +48,9 @@ const courseColor = {
 const DEFAULT_COLOR = { bg: MP.red, ink: '#000000' }
 
 const statusLabels = { learning: '正在学', completed: '学完了', planned: '想去学' }
-const subjectTags = ['CS基础', 'AI', '数学', '系统', '其他']
+const subjectTags = ['CS基础', 'AI', '数学', '音乐']
+// 卡片排序：正在学 → 学完了 → 想去学
+const statusOrder = { learning: 0, completed: 1, planned: 2 }
 
 function Stars({ n }) {
   return (
@@ -89,7 +92,6 @@ function CourseCard({ course, onSelect }) {
 
         <h3 className="mp-card-title">{course.title}</h3>
         {course.subtitle && <p className="mp-card-subtitle">{course.subtitle}</p>}
-        <p className="mp-card-school">{course.school}</p>
 
         <div className="mp-card-tags">
           {course.tags.map((t) => (
@@ -120,10 +122,15 @@ function CourseModal({ course, onClose, onFilesChange }) {
   // 跟随 course 是否存在决定是否上锁；CourseModal 常驻挂载（无数据时 return null），
   // 不传 isOpen 会一进页面就锁死整页滚动（和 ProjectModal 同坑）
   useModalBehavior(Boolean(course), onClose)
+  // 当前展开的章节（手风琴）。hooks 必须在 early return 之前调用
+  const [openChapter, setOpenChapter] = useState(null)
+  useEffect(() => {
+    setOpenChapter(null)
+  }, [course?.id])
   if (!course) return null
   const c = courseColor[course.color] || DEFAULT_COLOR
   const files = course.files ?? []
-  const notes = course.notes ?? []
+  const chapters = course.chapters ?? []
 
   return (
     <div className="mp-modal-overlay" onClick={onClose}>
@@ -143,9 +150,6 @@ function CourseModal({ course, onClose, onFilesChange }) {
           </div>
           <h2 className="mp-modal-title">{course.title}</h2>
           {course.subtitle && <p className="mp-modal-subtitle">{course.subtitle}</p>}
-          <p className="mp-modal-school">
-            {course.school} · {course.platform}
-          </p>
           <div className="mp-card-tags">
             {course.tags.map((t) => (
               <span key={t} className="mp-card-tag">
@@ -167,24 +171,47 @@ function CourseModal({ course, onClose, onFilesChange }) {
             <blockquote className="mp-modal-quote">「{course.feeling}」</blockquote>
           )}
 
-          {/* 学习笔记 = 文字笔记 + 附件（PDF / Markdown / 作业 ZIP） */}
-          {(notes.length > 0 || files.length > 0 || editMode) && (
+          {/* 学习笔记 = 分章节笔记（点章节展开）+ 附件（PDF / Markdown / 作业 ZIP） */}
+          {(chapters.length > 0 || files.length > 0 || editMode) && (
             <div className="mp-modal-notes">
               <h4 className="mp-modal-label">学习笔记</h4>
 
-              {notes.length > 0 && (
-                <ul>
-                  {notes.map((n, i) => (
-                    <li key={i}>{n}</li>
-                  ))}
-                </ul>
+              {chapters.length > 0 && (
+                <div className="mp-chapters">
+                  {chapters.map((ch, i) => {
+                    const open = openChapter === i
+                    return (
+                      <div key={i} className={`mp-chapter${open ? ' mp-chapter--open' : ''}`}>
+                        <button
+                          type="button"
+                          className="mp-chapter-head"
+                          onClick={() => setOpenChapter(open ? null : i)}
+                          aria-expanded={open}
+                        >
+                          <span className="mp-chapter-num">{String(i + 1).padStart(2, '0')}</span>
+                          <span className="mp-chapter-title">{ch.title}</span>
+                          <span className="mp-chapter-toggle">{open ? '−' : '+'}</span>
+                        </button>
+                        {open && (
+                          <div className="mp-chapter-body">
+                            {ch.content.split('\n\n').map((p, j) => (
+                              <p key={j}>{p.trim()}</p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
               )}
 
               <FileAttach
                 files={files}
                 onChange={onFilesChange}
                 label="笔记 / 作业"
-                emptyHint="这门课还没有上传笔记或作业。"
+                /* 只有这门课完全没有笔记时才提示「还没上传」——
+                   有章节笔记的课不该再说「没有笔记」，那只是没传附件而已 */
+                emptyHint={chapters.length === 0 ? '这门课还没有上传笔记或作业。' : undefined}
               />
             </div>
           )}
@@ -213,7 +240,67 @@ function Courses() {
   const [subjectFilter, setSubjectFilter] = useState('all')
   // 存 id 而不是快照 —— 上传附件后 courseData 会更新，按 id 重新查才能拿到最新的 files
   const [modalId, setModalId] = useState(null)
-  const [showCount, setShowCount] = useState(4)
+  // 进入页面先显示 12 张，再点「查看剩下的」一次性展开剩余
+  const [showCount, setShowCount] = useState(12)
+  // URL 里的 ?q= 用来过滤课程（筛选区右侧的搜索框），?focus= 用来直接打开某门课的弹窗
+  const [searchParams, setSearchParams] = useSearchParams()
+  const urlQ = searchParams.get('q') || ''
+  // 输入框受控，初始化取 URL，避免切走再回来时输入框与 URL 不同步
+  const [term, setTerm] = useState(urlQ)
+  const q = urlQ.trim().toLowerCase()
+  const isSearching = q.length > 0
+
+  // 搜索词变化时把卡片展开数重置回初始（搜索态下本来就是全部显示）
+  useEffect(() => {
+    setShowCount(12)
+  }, [q])
+
+  // URL 里的 q 被外部改动（前进/后退、带 focus 跳转）时同步回输入框
+  useEffect(() => {
+    setTerm(urlQ)
+  }, [urlQ])
+
+  // 带着 ?focus=<id> 跳转过来时打开对应课程弹窗，并立刻把 focus 从 URL 抹掉。
+  // 否则关掉弹窗后刷新 / 回退会又弹一次（focus 一直留在地址栏里）。
+  useEffect(() => {
+    const f = searchParams.get('focus')
+    if (!f) return
+    setModalId(f)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('focus')
+        return next
+      },
+      { replace: true },
+    )
+  }, [searchParams, setSearchParams])
+
+  /** 点 🔍 或回车才把输入框内容写进 URL 触发搜索（输入过程不即时过滤） */
+  const runSearch = () => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (term.trim()) next.set('q', term)
+        else next.delete('q')
+        return next
+      },
+      { replace: true },
+    )
+  }
+
+  /** 清空输入框并撤销搜索 */
+  const clearSearch = () => {
+    setTerm('')
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('q')
+        return next
+      },
+      { replace: true },
+    )
+  }
 
   const modalCourse = modalId ? courseData.courses.find((c) => c.id === modalId) : null
 
@@ -231,11 +318,21 @@ function Courses() {
     let list = courseData.courses
     if (statusFilter !== 'all') list = list.filter((c) => c.status === statusFilter)
     if (subjectFilter !== 'all') list = list.filter((c) => c.tags.includes(subjectFilter))
-    return list
-  }, [courseData, statusFilter, subjectFilter])
+    if (q) {
+      list = list.filter((c) => {
+        const hay = [c.title, c.subtitle, ...(c.tags || [])].join(' ').toLowerCase()
+        return hay.includes(q)
+      })
+    }
+    // 正在学 → 学完了 → 想去学（同组内保持原始顺序，sort 是稳定的）
+    return [...list].sort(
+      (a, b) => (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9),
+    )
+  }, [courseData, statusFilter, subjectFilter, q])
 
-  const visible = filtered.slice(0, showCount)
-  const hasMore = showCount < filtered.length
+  // 搜索态下直接展示全部匹配结果；普通态只显示前 showCount 张，点按钮一次性展开
+  const visible = isSearching ? filtered : filtered.slice(0, showCount)
+  const hasMore = !isSearching && showCount < filtered.length
 
   const statusFilters = [
     { key: 'all', label: '全部' },
@@ -245,7 +342,10 @@ function Courses() {
   ]
   const subjectFilters = [
     { key: 'all', label: '全部科目' },
-    ...subjectTags.map((s) => ({ key: s, label: s })),
+    // 只列出「当前真有课」的科目，避免出现点了必定空列表的分类（如「其他」）
+    ...subjectTags
+      .filter((s) => courseData.courses.some((c) => c.tags.includes(s)))
+      .map((s) => ({ key: s, label: s })),
   ]
 
   const stats = [
@@ -257,7 +357,7 @@ function Courses() {
 
   const change = (setter) => (key) => {
     setter(key)
-    setShowCount(4)
+    setShowCount(12)
   }
 
   return (
@@ -318,6 +418,33 @@ function Courses() {
               {f.label}
             </button>
           ))}
+          <div className="mp-search-inline">
+            <input
+              type="text"
+              className="mp-search-input"
+              placeholder="搜索课程…"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') runSearch()
+                if (e.key === 'Escape') clearSearch()
+              }}
+              aria-label="搜索课程"
+            />
+            {term && (
+              <button
+                type="button"
+                className="mp-search-clear-inline"
+                aria-label="清除搜索"
+                onClick={clearSearch}
+              >
+                ✕
+              </button>
+            )}
+            <button type="button" className="mp-search-btn" aria-label="搜索" onClick={runSearch}>
+              🔍
+            </button>
+          </div>
         </div>
       </section>
 
@@ -333,8 +460,8 @@ function Courses() {
 
         {hasMore && (
           <div className="mp-more-wrap">
-            <button className="mp-btn mp-btn--lg" onClick={() => setShowCount((n) => n + 4)}>
-              再看 {Math.min(4, filtered.length - showCount)} 门 ↓
+            <button className="mp-btn mp-btn--lg" onClick={() => setShowCount(filtered.length)}>
+              查看剩下的 {filtered.length - showCount} 门 ↓
             </button>
           </div>
         )}

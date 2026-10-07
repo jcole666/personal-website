@@ -469,13 +469,6 @@
   opacity: 0.75;
 }
 
-.mp-card-school {
-  margin: 0 0 16px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  opacity: 0.7;
-}
-
 .mp-card-tags {
   display: flex;
   flex-wrap: wrap;
@@ -618,17 +611,10 @@
 }
 
 .mp-modal-subtitle {
-  margin: 0 0 6px;
+  margin: 0 0 16px;
   font-size: 1rem;
   font-weight: 700;
   opacity: 0.8;
-}
-
-.mp-modal-school {
-  margin: 0 0 16px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  opacity: 0.72;
 }
 
 .mp-modal-body {
@@ -768,5 +754,186 @@
   .mp-stat:hover,
   .mp-modal-close:hover {
     transform: none;
+  }
+}
+
+/* ===== 筛选区右侧的课程搜索框 ===== */
+.mp-search-inline {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.mp-search-input {
+  height: 44px;
+  width: 220px;
+  padding: 0 var(--sp-3);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--mp-black);
+  background: #ffffff;
+  border: var(--mp-border);
+  border-radius: 0;
+  box-shadow: var(--mp-shadow-sm);
+  outline: none;
+  transition: box-shadow var(--mp-t), transform var(--mp-t);
+}
+
+.mp-search-input::placeholder {
+  color: var(--mp-black);
+  opacity: 0.45;
+  font-weight: 700;
+}
+
+.mp-search-input:focus {
+  box-shadow: var(--mp-shadow);
+  transform: translate(-2px, -2px);
+}
+
+.mp-search-clear-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--mp-black);
+  background: #ffffff;
+  border: 3px solid var(--mp-black);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--mp-shadow-sm);
+  transition: transform var(--mp-t), box-shadow var(--mp-t);
+}
+
+.mp-search-clear-inline:hover {
+  transform: rotate(90deg);
+}
+
+.mp-search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 44px;
+  padding: 0;
+  flex: 0 0 auto;
+  font-size: 1.05rem;
+  line-height: 1;
+  background: var(--mp-yellow);
+  border: var(--mp-border);
+  border-radius: 0;
+  cursor: pointer;
+  box-shadow: var(--mp-shadow-sm);
+  transition: transform var(--mp-t), box-shadow var(--mp-t), background var(--mp-t);
+}
+
+.mp-search-btn:hover {
+  background: var(--mp-red);
+  box-shadow: var(--mp-shadow);
+  transform: translate(-2px, -2px);
+}
+
+.mp-search-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .mp-search-inline {
+    margin-left: 0;
+    width: 100%;
+  }
+  .mp-search-input {
+    width: 100%;
+  }
+}
+
+/* ===== 弹窗里的分章节笔记（手风琴） ===== */
+.mp-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mp-chapter {
+  border: 3px solid var(--mp-black);
+  background: #ffffff;
+  box-shadow: var(--mp-shadow-sm);
+  transition: box-shadow var(--mp-t), transform var(--mp-t);
+}
+
+.mp-chapter--open {
+  box-shadow: var(--mp-shadow);
+}
+
+.mp-chapter-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 900;
+  text-align: left;
+  color: var(--mp-black);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.mp-chapter-head:hover {
+  background: var(--mp-yellow);
+}
+
+.mp-chapter-num {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 26px;
+  padding: 0 6px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #ffffff;
+  background: var(--mp-black);
+}
+
+.mp-chapter-title {
+  flex: 1 1 auto;
+}
+
+.mp-chapter-toggle {
+  flex: 0 0 auto;
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.mp-chapter-body {
+  padding: 4px 16px 16px;
+  border-top: 3px solid var(--mp-black);
+}
+
+.mp-chapter-body p {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .mp-search-inline {
+    margin-left: 0;
+    width: 100%;
+  }
+  .mp-search-input {
+    width: 100%;
   }
 }

@@ -96,6 +96,12 @@
   min-width: 0;
 }
 
+/* 开场语首行缩进两个字符（中文排版习惯） */
+.experience-intro-text {
+  text-indent: 2em;
+  margin: 0;
+}
+
 /* ===== 经历分享· 画廊卡片网格（替换旧统计卡片） ===== */
 
 /* 筛选栏 —— 轻量标签按钮 */
@@ -120,13 +126,16 @@
 }
 
 .exp-filter-btn:hover {
-  border-color: #19c8b9;
-  color: #19c8b9;
+  border-color: #0b7a6f;
+  color: #0b7a6f;
 }
 
+/* 激活态：白字必须压深底色才够对比度。
+   原来的 #19c8b9 白字只有 2.1:1（远低于 4.5 的正文标准），
+   压深到 #0b7a6f 后为 5.21:1，仍是青绿色系。 */
 .exp-filter-btn--active {
-  background: #19c8b9;
-  border-color: #19c8b9;
+  background: #0b7a6f;
+  border-color: #0b7a6f;
   color: #fff;
 }
 
@@ -210,7 +219,7 @@
 
 .exp-card-date {
   font-size: 0.75rem;
-  color: #b8a99a;
+  color: #7d6a52;
   font-family: 'Space Mono', 'Consolas', monospace;
 }
 
@@ -224,7 +233,7 @@
 
 .exp-card-summary {
   font-size: 0.88rem;
-  color: #8c7b65;
+  color: #7d6a52;
   line-height: 1.6;
   margin: 0;
   display: -webkit-box;
@@ -237,7 +246,7 @@
 .exp-empty {
   text-align: center;
   padding: 64px 24px;
-  color: #b8a99a;
+  color: #7d6a52;
   font-size: 0.95rem;
 }
 
@@ -312,11 +321,6 @@
   object-fit: cover;
 }
 
-.exp-modal-cover--placeholder {
-  color: #d4cbbc;
-  font-size: 0.85rem;
-}
-
 .exp-modal-body {
   padding: 20px 28px 32px;
 }
@@ -330,7 +334,7 @@
 
 .exp-modal-date {
   font-size: 0.78rem;
-  color: #b8a99a;
+  color: #7d6a52;
   font-family: 'Space Mono', 'Consolas', monospace;
 }
 
@@ -350,6 +354,8 @@
 
 .exp-modal-details p {
   margin-bottom: 1em;
+  /* 中文排版：段落首行缩进两字符 */
+  text-indent: 2em;
 }
 
 /* ===== 经历分享 · 照片与资料附件（FileAttach 组件） =====
