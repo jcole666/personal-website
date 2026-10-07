@@ -78,14 +78,20 @@ const projectData = {
       date: '2026-07',
       repoUrl: 'https://github.com/jcole666/econometrics-agent-mvp',
     },
+  ],
+
+  /* ===== 废弃/搁置 ===== */
+  /* 之前那个「Markdown 编辑器」是编的，已删。
+     ⚠️ 这个字段必须留着：组件里会 spread 它，undefined 会让整页白屏。 */
+  abandoned: [
     {
-      id: 'done-3',
-      status: 'done',
+      id: 'ab-1',
+      status: 'abandoned',
       title: '协作式任务管理系统',
       techStack: ['Vue 3', 'Spring Boot 3', 'MySQL', 'JWT'],
-      description: '面向个人与团队的轻量级任务协同平台，前后端分离。',
+      description: '课程作业，交付后就没再更新。',
       detail:
-        '课程要求做一套前后端分离的系统，主题自选。选任务管理是因为它够典型——有用户、有权限、有增删改查，但又不会复杂到做不完。\n\n功能本身不难：用户注册登录，加上个人任务的增删改查。但「前后端分离」这四个字一落下来，问题就来了——后端怎么知道这个请求是谁发的？\n\n用 Session 的话，部署时得考虑会话共享，前后端就没那么解耦了。最后选了 JWT：登录成功后后端签发一个 token，之后每个请求带着它，后端验签就知道是谁。状态放在客户端，服务端不用存会话，两边彻底分开。\n\n项目按 frontend / backend / sql 三个目录分开，数据库初始化脚本单独放，别人 clone 下来照着 README 就能跑起来。\n\n技术栈是前端 Vue 3 + Vue Router + Pinia + Axios，后端 Spring Boot 3 + Spring Security + JWT + Spring Data JPA，数据库 MySQL 8.0。',
+        '课程要求做一套前后端分离的系统，主题自选。选任务管理是因为它够典型——有用户、有权限、有增删改查，但又不会复杂到做不完。\n\n功能本身不难：用户注册登录，加上个人任务的增删改查。但「前后端分离」这四个字一落下来，问题就来了——后端怎么知道这个请求是谁发的？\n\n用 Session 的话，部署时得考虑会话共享，前后端就没那么解耦了。最后选了 JWT：登录成功后后端签发一个 token，之后每个请求带着它，后端验签就知道是谁。状态放在客户端，服务端不用存会话，两边彻底分开。\n\n项目按 frontend / backend / sql 三个目录分开，数据库初始化脚本单独放，别人 clone 下来照着 README 就能跑起来。\n\n技术栈是前端 Vue 3 + Vue Router + Pinia + Axios，后端 Spring Boot 3 + Spring Security + JWT + Spring Data JPA，数据库 MySQL 8.0。\n\n课程交付之后就没再动过，所以归到搁置。',
       highlights: [
         '前后端分离：Vue 3 + Pinia 前端 / Spring Boot 3 后端',
         'JWT 做无状态鉴权，前后端彻底解耦',
@@ -95,11 +101,6 @@ const projectData = {
       repoUrl: 'https://github.com/jcole666/task-management-system',
     },
   ],
-
-  /* ===== 废弃/搁置 ===== */
-  /* 暂时是空的 —— 之前那个「Markdown 编辑器」是编的，已删。
-     但这个字段必须留着：组件里会 spread 它，undefined 会让整页白屏。 */
-  abandoned: [],
 
   /* ===== 灵感碎片 ===== */
   /* 每条带 reason（为什么想做）和 thoughts（初步思路），点开卡片能看到。
