@@ -1,5 +1,5 @@
 /**
- * 课程学习 · 夜之城霓虹 v2
+ * 课程学习 · Memphis 孟菲斯风格
  */
 
 const courseData = {

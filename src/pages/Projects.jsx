@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useModalBehavior } from '../hooks/useModalBehavior.js'
 import seedProjectData from '../data/projects.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
@@ -75,44 +76,6 @@ function useReveal() {
   return [ref, shown]
 }
 
-/**
- * 弹窗通用行为：Esc 关闭 + 锁住背景滚动
- *
- * 之前只有「查看全部」面板做了这两件事，详情弹窗和灵感弹窗都没有 ——
- * 结果是 Esc 关不掉弹窗、滚轮会穿透到背后页面。
- * 抽出来统一用，之后新增任何弹窗都套这个，别再各写一份。
- *
- * ⚠️ 两个弹窗同时打开时（比如详情里再开一个），后关的那个会把
- * document.body.style.overflow 恢复成前一个锁之前的快照，这没问题；
- * 但如果有三层嵌套就要小心了 —— 目前没有这种场景。
- */
-/**
- * 弹窗通用行为：Esc 关闭 + 锁住背景滚动。
- *
- * ⚠️ 关键：isOpen 为 false 时**完全不做事、也不残留锁**。
- * ProjectModal / IdeaModal 是常驻挂载的（没数据时内部 return null），
- * 如果去掉这个判断，一进页面就把 body.overflow 设成 hidden 且永远不还原，
- * 整页就滑不动了。所以锁必须跟着"是否真的打开"走。
- */
-function useModalBehavior(isOpen, onClose) {
-  useEffect(() => {
-    if (!isOpen) return
-    const onKey = (e) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [isOpen, onClose])
-
-  useEffect(() => {
-    if (!isOpen) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
-  }, [isOpen])
-}
 
 /** delay 用来做错落感（毫秒） */
 function Reveal({ as: Tag = 'div', delay = 0, className = '', children, ...rest }) {

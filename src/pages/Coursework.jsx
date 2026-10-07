@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useModalBehavior } from '../hooks/useModalBehavior.js'
 import seedCourseData from '../data/courses.js'
 import { useData } from '../context/DataContext.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
@@ -116,6 +117,9 @@ function CourseCard({ course, onSelect }) {
 /* ====== 弹窗 ====== */
 function CourseModal({ course, onClose, onFilesChange }) {
   const { editMode } = useEditMode()
+  // 跟随 course 是否存在决定是否上锁；CourseModal 常驻挂载（无数据时 return null），
+  // 不传 isOpen 会一进页面就锁死整页滚动（和 ProjectModal 同坑）
+  useModalBehavior(Boolean(course), onClose)
   if (!course) return null
   const c = courseColor[course.color] || DEFAULT_COLOR
   const files = course.files ?? []
