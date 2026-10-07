@@ -331,7 +331,79 @@
   white-space: pre-line;
 }
 
-/* 灵感卡不可点，不做悬停反馈 */
+/* 可点开的灵感卡。
+   注意 .ed-idea-text 上有 white-space: pre-line（用来让 text 里的 \n 生效），
+   所以按钮里的文字也得继承这个 —— 用 button 而不是 div，再重置掉浏览器默认样式。 */
+.ed-idea-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ed-idea-more {
+  /* 必须是 block —— inline-block 会跟在标题文字后面，挤在同一行 */
+  display: block;
+  margin-top: 14px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  /* ink-2 而不是 ink-3：ink-3 在这张纸上只有 4.44，差一点不够 AA */
+  color: var(--ed-ink-2);
+  transition: color 0.3s var(--ed-ease), transform 0.3s var(--ed-ease);
+}
+
+.ed-idea-btn:hover .ed-idea-text,
+.ed-idea-btn:hover .ed-idea-more {
+  color: var(--ed-ink);
+}
+
+.ed-idea-btn:hover .ed-idea-more {
+  transform: translateX(5px);
+}
+
+.ed-idea-btn:focus-visible {
+  outline: 2px solid var(--ed-ink);
+  outline-offset: 6px;
+}
+
+/* 弹窗里的两个小标题（为什么想做 / 初步思路） */
+.ed-idea-block {
+  margin-top: 32px;
+}
+
+.ed-idea-block-title {
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ed-line);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ed-ink-2);
+}
+
+.ed-idea-block-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--ed-ink);
+}
+
+/* renderParagraphs 会拆成多个 <p>，段间要有呼吸 */
+.ed-idea-block-text p {
+  margin: 0 0 1.1em;
+}
+
+.ed-idea-block-text p:last-child {
+  margin-bottom: 0;
+}
 
 /* ============================================
    弹窗：放大的一张纸，没有阴影没有圆角

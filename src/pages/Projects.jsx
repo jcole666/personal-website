@@ -127,11 +127,57 @@ function ProjectRow({ project, index, onSelect }) {
 }
 
 /* ====== 灵感碎片 ====== */
-function IdeaCard({ idea, index }) {
+/* 有 reason / thoughts 的卡片可以点开看详情；没有的（旧数据）就还是纯便签 */
+function IdeaCard({ idea, index, onSelect }) {
+  const clickable = Boolean(idea.reason || idea.thoughts)
+
   return (
     <Reveal className="ed-idea" delay={index * 90}>
-      <p className="ed-idea-text">{idea.text}</p>
+      {clickable ? (
+        <button type="button" className="ed-idea-btn" onClick={() => onSelect(idea)}>
+          <span className="ed-idea-text">{idea.text}</span>
+          <span className="ed-idea-more">为什么想做 →</span>
+        </button>
+      ) : (
+        <p className="ed-idea-text">{idea.text}</p>
+      )}
     </Reveal>
+  )
+}
+
+/* 灵感详情：为什么想做 + 初步思路 */
+function IdeaModal({ idea, onClose }) {
+  if (!idea) return null
+
+  return (
+    <div className="ed-modal-overlay" onClick={onClose}>
+      <div className="ed-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="ed-modal-close" onClick={onClose} aria-label="关闭" />
+
+        <div className="ed-modal-body">
+          <div className="ed-modal-head">
+            <span className="ed-label">灵感碎片 · 还没动手</span>
+            <h2 className="ed-modal-title">{idea.text}</h2>
+          </div>
+
+          {idea.reason && (
+            <section className="ed-idea-block">
+              <h3 className="ed-idea-block-title">为什么想做</h3>
+              {/* 走 renderParagraphs：reason / thoughts 里有 \n\n 分段，
+                  直接塞进 <p> 的话换行不会生效 */}
+              <div className="ed-idea-block-text">{renderParagraphs(idea.reason)}</div>
+            </section>
+          )}
+
+          {idea.thoughts && (
+            <section className="ed-idea-block">
+              <h3 className="ed-idea-block-title">初步思路</h3>
+              <div className="ed-idea-block-text">{renderParagraphs(idea.thoughts)}</div>
+            </section>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -295,6 +341,8 @@ function Projects() {
   // 存 id 而不是对象快照 —— 上传附件后 projectData 会更新，按 id 重查才拿得到最新的 files
   const [modalId, setModalId] = useState(null)
   const [showAll, setShowAll] = useState(false)
+  // 灵感碎片的详情弹窗（存对象就行 —— 灵感不涉及附件上传，没有「快照过期」问题）
+  const [ideaItem, setIdeaItem] = useState(null)
 
   // ⚠️ 每个字段都要兜底：spread 一个 undefined 会直接抛 TypeError，
   // 整页白屏。2026-10-07 就踩过一次 —— 数据里删掉 abandoned 字段后
@@ -368,7 +416,7 @@ function Projects() {
             </div>
             <div className="ed-grid">
               {projectData.ideas.map((idea, i) => (
-                <IdeaCard key={idea.id} idea={idea} index={i} />
+                <IdeaCard key={idea.id} idea={idea} index={i} onSelect={setIdeaItem} />
               ))}
             </div>
           </section>
@@ -394,6 +442,7 @@ function Projects() {
         onClose={() => setModalId(null)}
         onFilesChange={handleProjectFiles}
       />
+      <IdeaModal idea={ideaItem} onClose={() => setIdeaItem(null)} />
       <EditButton sectionKey="projects" label="代码开发" />
     </main>
   )
