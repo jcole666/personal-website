@@ -296,9 +296,14 @@ function Projects() {
   const [modalId, setModalId] = useState(null)
   const [showAll, setShowAll] = useState(false)
 
-  const allProjects = projectData.active
-    ? [projectData.active, ...projectData.done, ...projectData.abandoned]
-    : [...projectData.done, ...projectData.abandoned]
+  // ⚠️ 每个字段都要兜底：spread 一个 undefined 会直接抛 TypeError，
+  // 整页白屏。2026-10-07 就踩过一次 —— 数据里删掉 abandoned 字段后
+  // 这里没改，页面直接挂了。
+  const allProjects = [
+    ...(projectData.active ? [projectData.active] : []),
+    ...(projectData.done ?? []),
+    ...(projectData.abandoned ?? []),
+  ]
 
   const preview = allProjects.slice(0, PREVIEW_COUNT)
   const modalItem = modalId ? allProjects.find((p) => p.id === modalId) : null

@@ -1,5 +1,21 @@
 /**
  * 代码开发 · 坐标纸上的疯狂公式
+ *
+ * ⚠️ 2026-10-07 重写：只保留 GitHub 上真实存在的仓库。
+ * 之前这一页有 5 个项目是编的（数据结构课设、命令行 TODO 工具、
+ * 贪吃蛇 AI、寝室自动化工具集、Markdown 编辑器）—— 全部删掉了。
+ *
+ * 现在的 4 个全部来自 github.com/jcole666，描述取自各自的 README。
+ *
+ * 排除的仓库及原因（用户定的标准：只放自己的作品，课程作业和练习都不上）：
+ *   checker / AI_PJ2              fork 自别人，不算自己的作品
+ *   learngit / muyifan...         纯练习，无描述无 README
+ *   Street_Character_Recognition  随堂练习
+ *   DQN-Atari_Games               课程 PJ3 作业
+ *   UC-Berkeley-CS-188            课程 Project 作业
+ *   AI-In-class-Practice          随堂练习
+ *
+ * 加新项目前先确认仓库真实存在，别编。
  */
 
 const projectData = {
@@ -7,118 +23,79 @@ const projectData = {
   active: {
     id: 'active-1',
     status: 'active',
-    title: '个人网站',
-    techStack: ['React', 'Vite', 'React Router', 'Rough.js'],
-    description: '多板块个人站点，每个板块像城市的不同街区。',
+    title: '穿啥 · 智能衣橱管理 App',
+    techStack: ['Flutter', 'Riverpod', 'Supabase', 'go_router'],
+    description: '拍下你的衣服自动抠图归类，根据天气帮你决定今天穿什么。',
     detail:
-      '从零搭建的个人网站，包含首页、代码开发、课程作业、经历分享、读书、音乐、电影、市集八个板块。\n\n每个板块有独立的视觉风格——不是换个颜色那么简单，而是用完全不同的材质和隐喻：音乐页是黑胶唱片和留声机，电影页是露天影院和胶片轮播，市集是木纹台面和摊位卡片。\n\n最大的收获是"设计系统"的意识：不是写更多 CSS，而是定义一套规则让所有页面在一套语言下各自表达。',
+      '一款智能衣橱管理 App。拍下衣服 → 自动抠图去背景 → 打上分类、颜色、季节、场合、风格多维标签，之后按实时天气从衣橱里推荐穿搭组合。\n\n抠图做了两套方案：纯色背景走智能抠图（算法自动识别），复杂背景走手动抠图（手指描边 + 边缘吸附）。这个取舍是被真实使用逼出来的——纯算法在复杂背景上效果不稳定，与其硬调参数不如给用户一个可控的兜底。\n\n后端用 Supabase（Auth + PostgREST + Storage），所以不依赖 Google 服务，Android / iOS 双端都能跑。断网时会回退到本地缓存并明确提示，不会白屏。',
     highlights: [
-      '组件化拆分：每个板块独立的页面组件和样式文件，用 React Router 做路由',
-      '转场动画：用 React Context 编排黑幕收拢、小岛停留、圆圈扩散三个阶段，中途偷偷换页',
-      '用 Rough.js 做手绘线条装饰，比 Canvas 直接画简单',
+      '双方案抠图：智能识别 + 手动描边（带边缘吸附），覆盖纯色和复杂背景',
+      '天气驱动推荐：按温度/降水从衣橱里挑搭配，可 👍/👎 反馈',
+      '穿搭日历：记录每天穿了什么，自动累计穿着次数、算性价比',
+      'Riverpod 状态管理 + go_router 登录态守卫，深色模式完整适配',
     ],
-    progress: 70,
-    startedAt: '2026-07',
-    repoUrl: 'https://github.com/jcole666',
+    startedAt: '2026-10',
+    repoUrl: 'https://github.com/jcole666/chuansha',
   },
 
   /* ===== 已完成 ===== */
   done: [
     {
       id: 'done-1',
-      status: 'done',
-      title: '数据结构课设——小型数据库',
-      techStack: ['C++', 'B+树', 'SQL 解析'],
-      description: '手写一个小型关系数据库，支持基本 SQL 查询和索引。',
+      // 这个其实还在改，所以状态是 active —— 但页面顶部只放得下一个「正在开发」，
+      // 留给穿啥了。组件是按每个项目自己的 status 渲染的，所以显示没问题。
+      status: 'active',
+      title: '个人网站',
+      techStack: ['React 19', 'Vite', 'React Router 7', 'Express'],
+      description: '多板块个人站点，每个板块像城市的不同街区。',
       detail:
-        '大二下数据结构的课程设计。核心是实现 B+ 树索引、SQL 语句的词法分析和语法解析、以及一个简单的缓冲池管理。\n\n最难的其实不是 B+ 树算法本身——课本上伪代码写得挺清楚了——而是处理各种边界情况：节点分裂后父节点满了怎么办、删除导致树高降低怎么递归处理、并发读写时锁的粒度怎么选。\n\n写了大概 2000 行 C++，跑通了老师给的 50 个测试用例。最大的收获是理解了"数据结构不是孤立的算法题，是为上层提供服务的底层引擎"。',
+        '你现在看的这个站点。八个板块各有各的视觉风格——不是换个颜色，而是用完全不同的材质和隐喻：音乐页是黑胶唱片和留声机，电影页是露天影院和胶片轮播，市集是木纹台面和摊位卡片。\n\n最大的收获是"设计系统"的意识：不是写更多 CSS，而是定义一套规则，让所有页面在同一套语言下各自表达。导航栏和页脚都收敛到一份配置表，加新板块只要加一行。\n\n后端是 Express + JSON 文件存储，够用且没有部署负担。',
       highlights: [
-        'B+ 树索引：支持范围查询和等值查询，节点分裂和合并',
-        'SQL 解析：手写词法分析和递归下降语法分析器',
-        '缓冲池：LRU 淘汰策略，页面固定和脏页写回',
+        '九个板块独立的页面组件和样式文件，用 React Router 做路由',
+        '转场动画：黑幕收拢 → 小岛停留 → 圆圈扩散，中途偷偷换页',
+        '导航主题 / 页脚主题各只有一份配置表，加板块不用碰公共层',
       ],
-      date: '2026-06',
-      repoUrl: '',
-      starred: true,
+      date: '2026-07',
+      repoUrl: 'https://github.com/jcole666/personal-website',
     },
     {
       id: 'done-2',
       status: 'done',
-      title: '命令行 TODO 工具',
-      techStack: ['Python', 'SQLite', 'CLI'],
-      description: '一个简单的命令行待办事项管理工具，支持项目分组和优先级排序。',
+      title: '小计 · 计量建模工作台',
+      techStack: ['TypeScript', '本地服务', '计量经济'],
+      description: '本地运行的计量建模桌面工具，双击即用，不用开网页也不碰命令行。',
       detail:
-        '大一寒假写的小项目。当时觉得市面上的 TODO 工具都太重了，想要一个"敲两个字母就能记一条"的东西。用 Python 的 argparse 做命令行解析，SQLite 存数据，支持增删查改、按项目和优先级筛选、以及简单的"今日总结"输出。\n\n虽然功能很少，但这是第一个我自己"不是交作业，而是真的想用"所以写的项目。从需求分析到写完刚好一周，那种"我创造了一个对自己有用的东西"的感觉，是编程最难替代的快乐。',
+        '做计量作业时最烦的是"环境"——想跑个回归得先配 Python 环境、装一堆包、写脚本。这个工具把这些都包起来，做成一个本地桌面应用：双击 exe 就能用，第一次启动自动拉起本地分析服务。\n\n打包成了 portable 版本发布到 GitHub Releases，所以换电脑不用重装。当前版本还没做代码签名，Windows 会弹安全提示——README 里写了怎么绕过。',
       highlights: [
-        'argparse 实现 CLI 子命令',
-        'SQLite 持久化，多项目分组',
-        '优先级排序和"今日总结"视图',
+        '打包成 portable exe 发布，换机器不用重装环境',
+        '首次启动自动拉起本地分析服务，用户不需要碰命令行',
+        '按版本号管理 Release，旧版仍可下载回退',
       ],
-      date: '2026-01',
-      repoUrl: '',
-      starred: false,
+      date: '2026-07',
+      repoUrl: 'https://github.com/jcole666/econometrics-agent-mvp',
     },
     {
       id: 'done-3',
       status: 'done',
-      title: '贪吃蛇 AI——强化学习实验',
-      techStack: ['Python', 'PyTorch', 'DQN'],
-      description: '用 DQN 训练一个玩贪吃蛇的 AI，从零理解强化学习的基本概念。',
+      title: '协作式任务管理系统',
+      techStack: ['Vue 3', 'Spring Boot 3', 'MySQL', 'JWT'],
+      description: '面向个人与团队的轻量级任务协同平台，前后端分离。',
       detail:
-        '寒假花了两周看的强化学习入门课之后做的实验。从最简单的 Q-learning 到 DQN，一步步把蛇训练到能活到 100+ 格。\n\n最好玩的是观察训练过程中的行为变化——前 50 局蛇只会乱撞，100 局左右开始知道不能撞自己了，200 局后明显在追着食物走。',
+        '一个前后端分离的任务管理 Web 应用：用户注册登录、个人任务的增删改查。\n\n前端 Vue 3 + Vue Router + Pinia + Axios，后端 Spring Boot 3 + Spring Security + JWT + Spring Data JPA，数据库 MySQL 8.0。用 JWT 而不是 Session，是为了让前后端彻底解耦、部署时不用考虑会话共享。\n\n项目按 frontend / backend / sql 三个目录分开，数据库初始化脚本单独放，别人 clone 下来照 README 就能跑起来。',
       highlights: [
-        '从 Q-table 到 DQN 的渐进式实现',
-        '用 PyGame 做可视化训练过程',
-        '写了 3 篇博客记录训练观察',
-      ],
-      date: '2025-10',
-      repoUrl: '',
-      starred: true,
-    },
-    {
-      id: 'done-4',
-      status: 'done',
-      title: '寝室自动化工具集',
-      techStack: ['Python', '爬虫', '自动化'],
-      description: '选课监控脚本 + 课表自动解析 → Google Calendar + 图书馆座位提醒。',
-      detail:
-        '起因是大二选课被抢课速度震惊了，决定自己写个选课监控脚本。后来陆续加了课表自动解析、图书馆预约提醒。\n\n技术上没什么高深的——requests + BeautifulSoup + smtplib，但因为是自己要用所以写得很认真。',
-      highlights: [
-        '选课监控：定时刷新教务页面，有余位立即发邮件',
-        '课表解析：Excel 转 iCal 格式，支持周次和节次映射',
-        '图书馆座位：爬虫抓取 + 邮件通知',
+        '前后端分离：Vue 3 + Pinia 前端 / Spring Boot 3 后端',
+        'JWT 做无状态鉴权，前后端彻底解耦',
+        '数据库初始化脚本独立，clone 下来照 README 即可运行',
       ],
       date: '2026-03',
-      repoUrl: '',
-      starred: false,
+      repoUrl: 'https://github.com/jcole666/task-management-system',
     },
   ],
 
   /* ===== 废弃/搁置 ===== */
-  abandoned: [
-    {
-      id: 'ab-1',
-      status: 'abandoned',
-      title: 'Markdown 编辑器',
-      techStack: ['Svelte', 'marked', 'highlight.js'],
-      description: '搭了一半，发现 React 和 Vite 更适合当前阶段。',
-      date: '2026-03',
-    },
-  ],
-
-  /* ===== 踩坑批注 ===== */
-  annotations: [
-    {
-      id: 'ann-1',
-      text: '这里重写了两遍，第一次没搞懂闭包的作用域',
-      near: 'done-2',
-    },
-    {
-      id: 'ann-2',
-      text: 'B+树分裂逻辑是一边画图一边写的',
-      near: 'done-1',
-    },
-  ],
+  /* 暂时是空的 —— 之前那个「Markdown 编辑器」是编的，已删。
+     但这个字段必须留着：组件里会 spread 它，undefined 会让整页白屏。 */
+  abandoned: [],
 
   /* ===== 灵感便签 ===== */
   ideas: [
