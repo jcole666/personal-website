@@ -86,22 +86,32 @@ function useReveal() {
  * document.body.style.overflow 恢复成前一个锁之前的快照，这没问题；
  * 但如果有三层嵌套就要小心了 —— 目前没有这种场景。
  */
-function useModalBehavior(onClose) {
+/**
+ * 弹窗通用行为：Esc 关闭 + 锁住背景滚动。
+ *
+ * ⚠️ 关键：isOpen 为 false 时**完全不做事、也不残留锁**。
+ * ProjectModal / IdeaModal 是常驻挂载的（没数据时内部 return null），
+ * 如果去掉这个判断，一进页面就把 body.overflow 设成 hidden 且永远不还原，
+ * 整页就滑不动了。所以锁必须跟着"是否真的打开"走。
+ */
+function useModalBehavior(isOpen, onClose) {
   useEffect(() => {
+    if (!isOpen) return
     const onKey = (e) => {
       if (e.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  }, [isOpen, onClose])
 
   useEffect(() => {
+    if (!isOpen) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = prev
     }
-  }, [])
+  }, [isOpen])
 }
 
 /** delay 用来做错落感（毫秒） */
@@ -176,8 +186,8 @@ function IdeaCard({ idea, index, onSelect }) {
 
 /* 灵感详情：为什么想做 + 初步思路 */
 function IdeaModal({ idea, onClose }) {
-  // hook 必须在条件返回之前调用
-  useModalBehavior(onClose)
+  // hook 必须在条件返回之前调用；isOpen 跟随 idea 是否存在
+  useModalBehavior(Boolean(idea), onClose)
   if (!idea) return null
 
   return (
@@ -215,8 +225,8 @@ function IdeaModal({ idea, onClose }) {
 /* ====== 弹窗 ====== */
 function ProjectModal({ project, onClose, onFilesChange }) {
   const { editMode } = useEditMode()
-  // hook 必须在条件返回之前调用
-  useModalBehavior(onClose)
+  // hook 必须在条件返回之前调用；isOpen 跟随 project 是否存在
+  useModalBehavior(Boolean(project), onClose)
   if (!project) return null
 
   const files = project.files ?? []
@@ -284,8 +294,9 @@ function ProjectModal({ project, onClose, onFilesChange }) {
 
 /* ====== 「查看全部」面板：全屏列表 + 搜索 + 筛选 ====== */
 function AllProjectsPanel({ projects, onClose, onSelect }) {
-  // Esc 关闭 + 锁滚动，改用公共 hook（原来这里是各写一份内联逻辑）
-  useModalBehavior(onClose)
+  // Esc 关闭 + 锁滚动，改用公共 hook（原来这里是各写一份内联逻辑）。
+  // 面板是条件挂载的，挂载时 isOpen 恒为 true，卸载时 effect 自动还原。
+  useModalBehavior(true, onClose)
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('all')
 
