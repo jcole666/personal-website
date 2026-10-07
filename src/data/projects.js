@@ -125,15 +125,6 @@ const projectData = {
         '最要紧的是「在哪」。录入时顺手记下存放位置（客厅药箱 / 卧室抽屉 / 冰箱），找药时在搜索框敲一下就知道去哪拿，不用满屋子翻。位置就用简单的几个固定选项，别搞成复杂的层级，否则录一次烦一次、最后没人愿意录。\n\n然后是「记不住」：药名、用法用量、有效期，到期前提醒补药，过期了标红。\n\n再做「吃没吃」：按天生成服药清单，吃一次勾一次。\n\n最后是「家里人也能看」：一份清单多人可见，谁都能确认今天有没有漏。\n\n数据敏感，先做本地版不上云，家庭共享放后面。',
     },
   ],
-
-  /* ===== 装备清单 ===== */
-  gear: [
-    { label: '编辑器', value: 'Cursor' },
-    { label: '终端', value: 'Windows Terminal' },
-    { label: '字体', value: 'Fira Code' },
-    { label: '字体', value: 'Ma Shan Zheng' },
-    { label: '键盘', value: 'Keychron K3' },
-  ],
 }
 
 export default projectData

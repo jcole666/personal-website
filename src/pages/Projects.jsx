@@ -75,6 +75,35 @@ function useReveal() {
   return [ref, shown]
 }
 
+/**
+ * 弹窗通用行为：Esc 关闭 + 锁住背景滚动
+ *
+ * 之前只有「查看全部」面板做了这两件事，详情弹窗和灵感弹窗都没有 ——
+ * 结果是 Esc 关不掉弹窗、滚轮会穿透到背后页面。
+ * 抽出来统一用，之后新增任何弹窗都套这个，别再各写一份。
+ *
+ * ⚠️ 两个弹窗同时打开时（比如详情里再开一个），后关的那个会把
+ * document.body.style.overflow 恢复成前一个锁之前的快照，这没问题；
+ * 但如果有三层嵌套就要小心了 —— 目前没有这种场景。
+ */
+function useModalBehavior(onClose) {
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [])
+}
+
 /** delay 用来做错落感（毫秒） */
 function Reveal({ as: Tag = 'div', delay = 0, className = '', children, ...rest }) {
   const [ref, shown] = useReveal()
@@ -147,6 +176,8 @@ function IdeaCard({ idea, index, onSelect }) {
 
 /* 灵感详情：为什么想做 + 初步思路 */
 function IdeaModal({ idea, onClose }) {
+  // hook 必须在条件返回之前调用
+  useModalBehavior(onClose)
   if (!idea) return null
 
   return (
@@ -184,6 +215,8 @@ function IdeaModal({ idea, onClose }) {
 /* ====== 弹窗 ====== */
 function ProjectModal({ project, onClose, onFilesChange }) {
   const { editMode } = useEditMode()
+  // hook 必须在条件返回之前调用
+  useModalBehavior(onClose)
   if (!project) return null
 
   const files = project.files ?? []
@@ -251,26 +284,10 @@ function ProjectModal({ project, onClose, onFilesChange }) {
 
 /* ====== 「查看全部」面板：全屏列表 + 搜索 + 筛选 ====== */
 function AllProjectsPanel({ projects, onClose, onSelect }) {
+  // Esc 关闭 + 锁滚动，改用公共 hook（原来这里是各写一份内联逻辑）
+  useModalBehavior(onClose)
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('all')
-
-  // Esc 关闭
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
-
-  // 面板是整屏的，锁住背后页面的滚动，否则滚轮会穿透
-  useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
-  }, [])
 
   const results = useMemo(() => {
     const kw = query.trim().toLowerCase()
