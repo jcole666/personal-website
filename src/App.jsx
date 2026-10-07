@@ -3,6 +3,7 @@ import { TransitionProvider } from './context/TransitionContext.jsx'
 import LoadingTransition from './components/LoadingTransition.jsx'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 import AcidSquares from './components/AcidSquares.jsx'
 import Home from './pages/Home.jsx'
 import Projects from './pages/Projects.jsx'
@@ -56,6 +57,9 @@ function App() {
         )}
         {/* 内容层（z-index:1，压在背景之上） */}
         <div className="app-content">
+          {/* 路由切换时把滚动位置归零 —— 否则从首页滚到底部点进某个世界，
+              新页面会停在同样的中段位置 */}
+          <ScrollToTop />
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
