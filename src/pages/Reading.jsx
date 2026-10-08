@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   profile as seedProfile,
   books as seedBooks,
@@ -13,9 +13,9 @@ import {
 } from '../data/reading.js'
 import { useData } from '../context/DataContext.jsx'
 import { useEditMode } from '../context/EditModeContext.jsx'
+import { useModalBehavior } from '../hooks/useModalBehavior.js'
 import {
   ScribbleDivider,
-  ScribbleProgress,
   ScribbleBookmark,
 } from '../components/Scribble.jsx'
 import EditButton from '../components/edit/EditButton.jsx'
@@ -115,8 +115,16 @@ function renderParagraphs(text) {
 
 function DetailModal({ book, onClose, onFilesChange }) {
   const { editMode } = useEditMode()
+  // Esc 关闭 + 锁背景滚动。组件常驻挂载、内部 return null，必须传 isOpen
+  useModalBehavior(Boolean(book), onClose)
+  // 当前展开的章节（手风琴）。hooks 必须在 early return 之前调用
+  const [openChapter, setOpenChapter] = useState(null)
+  useEffect(() => {
+    setOpenChapter(null)
+  }, [book?.id])
   if (!book) return null
   const files = book.files ?? []
+  const chapters = book.chapters ?? []
 
   return (
     <div className="reading-modal-overlay" onClick={onClose}>
@@ -130,7 +138,7 @@ function DetailModal({ book, onClose, onFilesChange }) {
         <div className="reading-modal-body">
           <div className="reading-modal-meta">
             <span className="reading-modal-genre">{book.tags?.[0] || ''}</span>
-            <span className="reading-modal-date">{book.finishedDate}</span>
+            {book.finishedDate && <span className="reading-modal-date">{book.finishedDate}</span>}
             <Stars rating={book.rating} />
           </div>
           <h2 className="reading-modal-title">{book.title}</h2>
@@ -142,7 +150,36 @@ function DetailModal({ book, onClose, onFilesChange }) {
             </div>
           )}
 
-          {book.highlights.length > 0 && (
+          {/* 分章节读书笔记：点标题展开该章正文 */}
+          {chapters.length > 0 && (
+            <div className="reading-modal-chapters">
+              <h4 className="reading-modal-chapters-label">读书笔记</h4>
+              {chapters.map((ch, i) => {
+                const open = openChapter === i
+                return (
+                  <div key={i} className={`reading-chapter${open ? ' reading-chapter--open' : ''}`}>
+                    <button
+                      type="button"
+                      className="reading-chapter-head"
+                      onClick={() => setOpenChapter(open ? null : i)}
+                      aria-expanded={open}
+                    >
+                      <span className="reading-chapter-num">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="reading-chapter-title">{ch.title}</span>
+                      <span className="reading-chapter-toggle">{open ? '−' : '+'}</span>
+                    </button>
+                    {open && (
+                      <div className="reading-chapter-body">
+                        {renderParagraphs(ch.content)}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {book.highlights?.length > 0 && (
             <div className="reading-modal-highlights">
               {book.highlights.map((h, i) => (
                 <div key={i}>
@@ -158,12 +195,12 @@ function DetailModal({ book, onClose, onFilesChange }) {
           {/* 读书笔记附件：md 笔记 / 摘抄导出 / 书摘 PDF，md 可以就地阅读 */}
           {(files.length > 0 || editMode) && (
             <div className="reading-modal-files">
-              <h3 className="reading-modal-files-label">读书笔记</h3>
+              <h3 className="reading-modal-files-label">附件</h3>
               <FileAttach
                 files={files}
                 onChange={(next) => onFilesChange(book.id, next)}
                 label="笔记"
-                emptyHint="这本书还没有上传笔记。"
+                emptyHint={chapters.length === 0 ? '这本书还没有上传笔记。' : undefined}
               />
             </div>
           )}
@@ -174,12 +211,14 @@ function DetailModal({ book, onClose, onFilesChange }) {
 }
 
 /* ===================================================================
-   区块 1：每日金句横幅 + 历史记录
+   区块 1：最近金句横幅 + 历史记录
    =================================================================== */
 
 function QuoteBanner({ dailyQuotes }) {
   const [showHistory, setShowHistory] = useState(false)
   const todayQuote = getTodayQuote(dailyQuotes)
+
+  useModalBehavior(showHistory, () => setShowHistory(false))
 
   if (!todayQuote) return null
 
@@ -187,7 +226,7 @@ function QuoteBanner({ dailyQuotes }) {
     <>
       <section className="reading-quote-banner">
         <div className="reading-quote-label">
-          <span className="reading-quote-tag">DAILY · 每日金句</span>
+          <span className="reading-quote-tag">RECENT · 最近金句</span>
           <button
             className="reading-quote-history-btn"
             onClick={() => setShowHistory(true)}
@@ -211,7 +250,7 @@ function QuoteBanner({ dailyQuotes }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="reading-quote-history-head">
-              <h3 className="reading-quote-history-title">历史金句</h3>
+              <h3 className="reading-quote-history-title">过往金句</h3>
               <button
                 className="reading-quote-history-close"
                 onClick={() => setShowHistory(false)}
@@ -238,24 +277,29 @@ function QuoteBanner({ dailyQuotes }) {
 }
 
 /* ===================================================================
-   区块 2：统计数字
+   区块 2：统计数字（四张卡，点击滚到对应区块）
    =================================================================== */
 
-function StatsRow({ profile }) {
+function StatsRow({ profile, notesCount, onJump }) {
+  const stats = [
+    { key: 'finished', num: profile.stats.finished, label: '已读' },
+    { key: 'reading', num: profile.stats.reading, label: '在读' },
+    { key: 'want', num: profile.stats.wantToRead, label: '想读' },
+    { key: 'notes', num: notesCount, label: '随想便签' },
+  ]
   return (
     <div className="reading-stats">
-      <div className="reading-stat-item">
-        <span className="reading-stat-num">{profile.stats.finished}</span>
-        <span className="reading-stat-label">已读</span>
-      </div>
-      <div className="reading-stat-item">
-        <span className="reading-stat-num">{profile.stats.reading}</span>
-        <span className="reading-stat-label">在读</span>
-      </div>
-      <div className="reading-stat-item">
-        <span className="reading-stat-num">{profile.stats.wantToRead}</span>
-        <span className="reading-stat-label">想读</span>
-      </div>
+      {stats.map((s) => (
+        <button
+          key={s.key}
+          type="button"
+          className="reading-stat-item"
+          onClick={() => onJump(s.key)}
+        >
+          <span className="reading-stat-num">{s.num}</span>
+          <span className="reading-stat-label">{s.label}</span>
+        </button>
+      ))}
     </div>
   )
 }
@@ -264,7 +308,7 @@ function StatsRow({ profile }) {
    区块 3：在读
    =================================================================== */
 
-function CurrentlyReading({ books }) {
+function CurrentlyReading({ books, onSelect }) {
   const readingBooks = getReadingBooks(books)
 
   if (readingBooks.length === 0) {
@@ -290,10 +334,14 @@ function CurrentlyReading({ books }) {
         <div className="reading-current-info">
           <h3 className="reading-current-title">{book.title}</h3>
           <p className="reading-current-author">{book.author}</p>
-          <p className="reading-current-progress-label">阅读进度</p>
-          <ScribbleProgress progress={0.35} color="#8b4513" />
 
-          {book.highlights.length > 0 && (
+          {book.reflection && (
+            <div className="reading-current-reflection">
+              {renderParagraphs(book.reflection)}
+            </div>
+          )}
+
+          {book.highlights?.length > 0 && (
             <div className="reading-current-highlights">
               {book.highlights.map((h, i) => (
                 <div key={i} className="reading-current-highlight">
@@ -305,6 +353,14 @@ function CurrentlyReading({ books }) {
               ))}
             </div>
           )}
+
+          <button
+            type="button"
+            className="reading-current-open"
+            onClick={() => onSelect(book.id)}
+          >
+            查看读书笔记 →
+          </button>
         </div>
       </div>
     </section>
@@ -315,24 +371,20 @@ function CurrentlyReading({ books }) {
    区块 4：已读 —— 多维标签筛选 + 画廊网格 + 详情弹窗
    =================================================================== */
 
-const PAGE_SIZE = 15
+const PAGE_SIZE = 12
 
-function FinishedGallery({ books, tagDimensions, onFilesChange }) {
+function FinishedGallery({ books, tagDimensions, modalId, onModalChange }) {
   const finishedBooks = useMemo(() => getFinishedBooks(books), [books])
 
   // 类型多选 + 国家单选
   const [selectedTags, setSelectedTags] = useState([])
   const [selectedCountry, setSelectedCountry] = useState(null)  // 单选
-  const [customTags, setCustomTags] = useState([])
-  const [newTagInput, setNewTagInput] = useState('')
   const [showAll, setShowAll] = useState(false)
-  // 存 id 而不是对象快照 —— 上传附件后 books 会更新，按 id 重查才拿得到最新的 files
-  const [selectedId, setSelectedId] = useState(null)
-  const selectedBook = selectedId ? books.find((b) => b.id === selectedId) : null
+  // 搜索：输入不即时过滤，点 🔍 或回车才提交（同课程学习页）
+  const [term, setTerm] = useState('')
+  const [query, setQuery] = useState('')
 
-  const allCustomOptions = useMemo(() => [...new Set(customTags)], [customTags])
-
-  // 筛选：类型多选 AND 国家单选
+  // 筛选：类型多选 AND 国家单选 AND 关键词
   const filtered = useMemo(() => {
     let result = finishedBooks
     if (selectedTags.length > 0) {
@@ -341,11 +393,20 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
     if (selectedCountry) {
       result = result.filter((b) => b.tags?.includes(selectedCountry))
     }
+    const q = query.trim().toLowerCase()
+    if (q) {
+      result = result.filter((b) => {
+        const hay = [b.title, b.author, ...(b.tags || [])].join(' ').toLowerCase()
+        return hay.includes(q)
+      })
+    }
     return result
-  }, [finishedBooks, selectedTags, selectedCountry])
+  }, [finishedBooks, selectedTags, selectedCountry, query])
 
-  const visible = showAll ? filtered : filtered.slice(0, PAGE_SIZE)
-  const hasMore = filtered.length > PAGE_SIZE && !showAll
+  // 搜索态下直接展示全部匹配；普通态先显示 12 本，点按钮展开全部
+  const isSearching = query.trim().length > 0
+  const visible = isSearching || showAll ? filtered : filtered.slice(0, PAGE_SIZE)
+  const hasMore = !isSearching && !showAll && filtered.length > PAGE_SIZE
 
   const toggleTag = (tag) => {
     setSelectedTags((prev) =>
@@ -360,20 +421,21 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
     setShowAll(false)
   }
 
-  const addCustomTag = () => {
-    const trimmed = newTagInput.trim()
-    if (trimmed && !customTags.includes(trimmed)) {
-      setCustomTags((prev) => [...prev, trimmed])
-      setSelectedTags((prev) => [...prev, trimmed])
-    }
-    setNewTagInput('')
+  const runSearch = () => {
+    setQuery(term)
+    setShowAll(false)
+  }
+
+  const clearSearch = () => {
+    setTerm('')
+    setQuery('')
   }
 
   return (
     <section className="reading-finished-section">
       <h2 className="reading-section-label">已读</h2>
 
-      {/* 多维筛选栏 */}
+      {/* 多维筛选栏（类型 / 国家·地区）+ 右侧搜索 */}
       <div className="reading-filter-dimensions">
         {tagDimensions.map((dim) => (
           <div key={dim.key} className="reading-filter-dim">
@@ -387,6 +449,7 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
               return (
                 <button
                   key={opt}
+                  type="button"
                   className={`reading-filter-btn ${isActive ? 'reading-filter-btn--active' : ''}`}
                   onClick={() => {
                     if (isCountry) {
@@ -403,42 +466,38 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
           </div>
         ))}
 
-        {/* 用户自定义标签行 */}
-        <div className="reading-filter-dim">
-          <span className="reading-filter-dim-label">自定义</span>
-          {allCustomOptions.map((tag) => (
-            <button
-              key={tag}
-              className={`reading-filter-btn ${
-                selectedTags.includes(tag) ? 'reading-filter-btn--active' : ''
-              }`}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </button>
-          ))}
+        {/* 搜索框：输入完点 🔍 或回车才搜（同课程学习页） */}
+        <div className="reading-search-inline">
           <input
             type="text"
-            className="reading-filter-input"
-            placeholder="+ 新标签"
-            value={newTagInput}
-            style={{
-              fontSize: '0.78rem',
-              padding: '4px 12px',
-              borderRadius: '999px',
-              border: '1.5px dashed rgba(180, 160, 140, 0.35)',
-              background: 'transparent',
-              color: '#b0a090',
-              width: '90px',
-              outline: 'none',
-              fontFamily: 'inherit',
-            }}
-            onChange={(e) => setNewTagInput(e.target.value)}
+            className="reading-search-input"
+            placeholder="搜索书名 / 作者…"
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') addCustomTag()
+              if (e.key === 'Enter') runSearch()
+              if (e.key === 'Escape') clearSearch()
             }}
-            onBlur={addCustomTag}
+            aria-label="搜索已读书籍"
           />
+          {term && (
+            <button
+              type="button"
+              className="reading-search-clear"
+              aria-label="清除搜索"
+              onClick={clearSearch}
+            >
+              ✕
+            </button>
+          )}
+          <button
+            type="button"
+            className="reading-search-btn"
+            aria-label="搜索"
+            onClick={runSearch}
+          >
+            🔍
+          </button>
         </div>
       </div>
 
@@ -449,7 +508,7 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
             <article
               key={book.id}
               className="reading-gallery-card"
-              onClick={() => setSelectedId(book.id)}
+              onClick={() => onModalChange(book.id)}
             >
               <div className="reading-gallery-cover">
                 <PhotoArt src={book.coverUrl} alt={book.title} id={book.id} theme="journal" />
@@ -457,6 +516,11 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
               <div className="reading-gallery-body">
                 <h3 className="reading-gallery-title">{book.title}</h3>
                 <p className="reading-gallery-author">{book.author}</p>
+                <div className="reading-gallery-tags">
+                  {book.tags?.map((t) => (
+                    <span key={t} className="reading-gallery-tag">{t}</span>
+                  ))}
+                </div>
                 <div className="reading-gallery-footer">
                   <span className="reading-gallery-date">
                     {book.finishedDate}
@@ -475,15 +539,10 @@ function FinishedGallery({ books, tagDimensions, onFilesChange }) {
 
       {hasMore && (
         <button className="reading-more-btn" onClick={() => setShowAll(true)}>
-          查看更多（共 {filtered.length} 本）
+          显示全部 {filtered.length} 本 ↓
         </button>
       )}
 
-      <DetailModal
-        book={selectedBook}
-        onClose={() => setSelectedId(null)}
-        onFilesChange={onFilesChange}
-      />
     </section>
   )
 }
@@ -637,6 +696,25 @@ function Reading() {
     notes: seedNotes,
   }
 
+  // 弹窗状态提到主组件 —— 在读区块和已读区块都能打开同一本书的详情
+  const [modalId, setModalId] = useState(null)
+  const selectedBook = modalId ? readingData.books.find((b) => b.id === modalId) : null
+
+  // 四张统计卡点击后滚到对应区块
+  const finishedRef = useRef(null)
+  const currentRef = useRef(null)
+  const wantRef = useRef(null)
+  const notesRef = useRef(null)
+  const jump = (key) => {
+    const map = {
+      finished: finishedRef,
+      reading: currentRef,
+      want: wantRef,
+      notes: notesRef,
+    }
+    map[key]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   /** 上传 / 删除某本书的附件后，把整个 reading 文档存回后端 */
   async function handleBookFiles(bookId, files) {
     const next = {
@@ -652,17 +730,37 @@ function Reading() {
 
       <div className="reading-inner">
         <QuoteBanner dailyQuotes={readingData.dailyQuotes} />
-        <StatsRow profile={readingData.profile} />
-        <CurrentlyReading books={readingData.books} />
-        <FinishedGallery
-          books={readingData.books}
-          tagDimensions={readingData.tagDimensions}
-          onFilesChange={handleBookFiles}
+        <StatsRow
+          profile={readingData.profile}
+          notesCount={readingData.notes.length}
+          onJump={jump}
         />
-        <WantToRead books={readingData.books} />
-        <ReflectionsWall notes={readingData.notes} />
+        <div ref={currentRef}>
+          <CurrentlyReading books={readingData.books} onSelect={setModalId} />
+        </div>
+        <div ref={finishedRef}>
+          <FinishedGallery
+            books={readingData.books}
+            tagDimensions={readingData.tagDimensions}
+            modalId={modalId}
+            onModalChange={setModalId}
+          />
+        </div>
+        <div ref={wantRef}>
+          <WantToRead books={readingData.books} />
+        </div>
+        <div ref={notesRef}>
+          <ReflectionsWall notes={readingData.notes} />
+        </div>
         <EndMark />
       </div>
+
+      {/* 在读 / 已读共用同一个详情弹窗，由 modalId 决定展示哪本书 */}
+      <DetailModal
+        book={selectedBook}
+        onClose={() => setModalId(null)}
+        onFilesChange={handleBookFiles}
+      />
 
       <SiteFooter path="/reading" />
       <EditButton sectionKey="reading" label="读书笔记" />
