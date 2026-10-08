@@ -214,10 +214,17 @@
 
 .games-filter-row {
   display: flex;
-  justify-content: center;
+  /* 原来是 center：两排按钮都是居中的，第一排按钮少就偏右、
+     换行出来的第三排缩进更多，左边看着参差不齐。改成左对齐。 */
+  justify-content: flex-start;
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+}
+
+/* 状态那排要「标签靠左 + 搜索靠右」，所以单独覆盖成 space-between */
+.games-filter-row--split {
+  justify-content: space-between;
 }
 
 .games-filter-row:last-child {
@@ -265,13 +272,20 @@
    ============================================ */
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* 卡片改成竖排后变高，用 auto-fill 让宽屏自动排到 4 列，
+     否则 3 列时封面会撑到 335×502，大得压过页面 */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 20px;
 }
 
 .games-card {
   position: relative;
   display: flex;
+  /* 竖排：封面在上、信息在下。
+     原来是「左封面右信息」，封面盒子被拉成 92×323（比例 0.29），
+     而封面本身是 2:3（0.67），object-fit:cover 直接裁掉约 57% 的宽度，
+     "ZELDA BREATH OF WILD" 只剩半截。横排塞不下 2:3 的竖版封面。 */
+  flex-direction: column;
   overflow: hidden;
   border-radius: 12px;
   background: var(--vw-panel);
@@ -334,10 +348,30 @@
   transform: translateX(100%);
 }
 
-/* 左侧状态色条：整条霓虹发光 */
+/* 状态色条：卡片改成竖排后，色条从左侧竖线变成顶部横线 */
 .games-card-stripe {
   flex-shrink: 0;
-  width: 3px;
+  width: auto;
+  height: 3px;
+}
+
+/* 竖版封面（2:3）—— Steam 原生 600x900，占满卡片整宽。
+   盒子比例和图片比例一致，object-fit:cover 等于不裁，封面完整显示。 */
+.games-card-cover {
+  flex-shrink: 0;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: #150a24;
+  border-bottom: 1px solid var(--vw-line);
+}
+
+.games-card-cover img,
+.games-card-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .games-card-body {
@@ -405,13 +439,26 @@
   opacity: 0.9;
 }
 
-.games-card-rating {
-  display: block;
+/* 游玩时长 —— 取代了原来的星级评分（用户没给评分，不编）。
+   时长是截图里的真实数据，也是这个页面最有信息量的一项。
+   想去玩的没有时长，显示「还没开始」，用弱化色。 */
+.games-card-hours {
+  display: inline-block;
   margin-bottom: 10px;
-  font-size: 0.82rem;
-  letter-spacing: 0.14em;
+  padding: 2px 9px;
+  border: 1px solid rgba(252, 238, 10, 0.45);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
   color: var(--cp-yellow);
-  text-shadow: 0 0 10px rgba(252, 238, 10, 0.7);
+  text-shadow: 0 0 10px rgba(252, 238, 10, 0.6);
+}
+
+.games-card-hours--empty {
+  border-color: var(--vw-line);
+  color: var(--vw-ink-soft);
+  opacity: 0.7;
+  text-shadow: none;
 }
 
 .games-card-feeling {
@@ -547,6 +594,37 @@
   padding: 36px 34px 34px;
 }
 
+/* 弹窗头部：左封面右信息 */
+.games-modal-head {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.games-modal-cover {
+  flex-shrink: 0;
+  width: 132px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--vw-line);
+  background: #150a24;
+  box-shadow: 0 0 24px rgba(255, 113, 206, 0.28);
+}
+
+.games-modal-cover img,
+.games-modal-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.games-modal-headinfo {
+  flex: 1;
+  min-width: 0;
+}
+
 .games-modal-top {
   display: flex;
   align-items: center;
@@ -668,7 +746,7 @@
    ============================================ */
 @media (max-width: 900px) {
   .games-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 
   .vw-sun {
@@ -689,6 +767,16 @@
 
   .games-modal-body {
     padding: 30px 22px 26px;
+  }
+
+  /* 手机上封面转到上方，信息在下面 —— 132px 的竖图挤在窄屏里读不了 */
+  .games-modal-head {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .games-modal-cover {
+    width: 120px;
   }
 
   .games-modal-title {
@@ -735,4 +823,121 @@
   .games-card:hover .vw-sweep {
     transform: translateX(-100%);
   }
+}
+
+/* ============================================
+   类型标签 + 搜索栏（同一排，搜索靠右）
+   ============================================ */
+.games-filter-row--split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.games-filter-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.games-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.games-search-input {
+  width: 210px;
+  padding: 7px 12px;
+  border: 1px solid var(--vw-line);
+  border-radius: 0;
+  background: rgba(10, 2, 22, 0.75);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: var(--vw-ink);
+  outline: none;
+  transition: border-color var(--vw-base), box-shadow var(--vw-base);
+}
+
+.games-search-input::placeholder {
+  color: var(--vw-ink-soft);
+  opacity: 0.6;
+}
+
+.games-search-input:focus {
+  border-color: var(--cp-yellow);
+  box-shadow: 0 0 12px rgba(252, 238, 10, 0.35);
+}
+
+/* 搜索按钮：和筛选标签同一套斜切造型 */
+.games-search-btn {
+  padding: 7px 18px;
+  border: 1px solid var(--cp-yellow);
+  border-radius: 0;
+  clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  background: rgba(252, 238, 10, 0.14);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--cp-yellow);
+  cursor: pointer;
+  transition: background-color var(--vw-base), box-shadow var(--vw-base);
+}
+
+.games-search-btn:hover {
+  background: var(--cp-yellow);
+  color: #0a0216;
+  box-shadow: 0 0 18px rgba(252, 238, 10, 0.5);
+}
+
+.games-search-clear {
+  padding: 4px 9px;
+  border: 1px solid var(--vw-line);
+  background: transparent;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--vw-ink-soft);
+  cursor: pointer;
+  transition: color var(--vw-base), border-color var(--vw-base);
+}
+
+.games-search-clear:hover {
+  border-color: var(--vw-pink);
+  color: var(--vw-pink);
+}
+
+/* 结果条数 */
+.games-result-count {
+  margin: 14px 0 18px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--vw-ink-soft);
+}
+
+.games-result-num {
+  margin-left: 8px;
+  color: var(--cp-yellow);
+}
+
+.games-empty {
+  padding: 46px 20px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: var(--vw-ink-soft);
+}
+
+@media (max-width: 768px) {
+  .games-filter-row--split { flex-direction: column; align-items: stretch; }
+  .games-search { width: 100%; }
+  .games-search-input { flex: 1; width: auto; }
 }

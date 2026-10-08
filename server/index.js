@@ -43,7 +43,14 @@ app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d' }))
 
 // 生产：托管 dist/
 const distDir = path.join(__dirname, '..', 'dist')
-app.use(express.static(distDir))
+/* 静态资源。
+   ⚠️ redirect:false 是必须的：public/games、public/music、public/movies、public/food
+   这些图片目录会被 express.static 当成「同名路由是个目录」，于是把 /games 301 成 /games/。
+   地址栏一变，前端拿到的 pathname 就带尾斜杠，导航/页脚主题查表全部落空、
+   悄悄退回默认配色（深紫字压深底，几乎看不清）。
+   关掉这个跳转后，/games 会正常落到下面的 SPA 回退。
+   （前端 getNavTheme 也做了去尾斜杠兜底，两边都保险。） */
+app.use(express.static(distDir, { redirect: false }))
 
 // SPA 回退：非 /api 的 GET 一律发 index.html（Express 5 不能用 '*'）
 app.use((req, res, next) => {

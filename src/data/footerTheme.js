@@ -202,8 +202,14 @@ export const footerThemes = {
 }
 
 /** 按路径取页脚主题，取不到就走默认 */
+/** 同上：查表前去掉尾斜杠，避免 `/games/` 查不到 `/games` 的主题 */
+function normalizePath(pathname) {
+  const p = String(pathname ?? '/').split('?')[0].split('#')[0]
+  return p.length > 1 ? p.replace(/\/+$/, '') : p
+}
+
 export function getFooterTheme(pathname) {
-  return footerThemes[pathname] ?? DEFAULT_FOOTER_THEME
+  return footerThemes[normalizePath(pathname)] ?? DEFAULT_FOOTER_THEME
 }
 
 /** 把主题配置翻译成一组 CSS 自定义属性，交给 SiteFooter.css 消费 */

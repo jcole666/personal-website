@@ -112,15 +112,17 @@ export const navThemes = {
   },
   '/music': {
     // 音乐页是 Neo-Brutalist：白底 + 纯黑粗边 + 直角。
-    // 边框必须是纯黑且加粗 —— 这个风格明令「禁止灰色边框」，
-    // 而且底色不能用半透明（会破坏「诚实、不掩饰」的调子）。
+    // 原来导航是白底黑字，和纯白页面糊在一起、没有边界感 —— 改成实心黑条：
+    // 白底页面上一条黑横杠，是这个风格最典型的强对比，也把导航和内容分开了。
+    // 边框仍是纯黑加粗（风格明令「禁止灰色边框」），底色用实色不用半透明。
     tag: 'LISTENING ROOM',
-    bg: '#ffffff',
+    bg: '#000000',
     border: '#000000',
     borderWidth: '4px',
-    ink: '#000000',
-    accent: '#ff006e',
-    tagInk: '#000000',
+    ink: '#ffffff',
+    // 亮粉：黑底上对比度 5.9:1，过 WCAG AA；比原来的 #ff006e 更亮更清楚
+    accent: '#ff2d78',
+    tagInk: '#ffffff',
     logoFont: "'Space Grotesk', 'Noto Sans SC', sans-serif",
     logoSize: '1.35rem',
     logoSpacing: '0.02em',
@@ -173,8 +175,22 @@ export const navThemes = {
 }
 
 /** 按路径取主题，取不到就走默认 */
+/**
+ * 把路径规整成主题表的 key。
+ *
+ * ⚠️ 必须做这一步：`public/games/`、`public/music/` 这些图片目录会让
+ * express.static 把同名路由当成目录，于是 `/games` 被 301 成 `/games/`，
+ * `location.pathname` 就带上了尾斜杠 → 查表失败 → 悄悄回退到默认主题
+ * （深紫字压深底，几乎看不清）。/music、/movies、/food 都有同样的问题。
+ * 所以查表前统一去掉尾斜杠和查询串。
+ */
+function normalizePath(pathname) {
+  const p = String(pathname ?? '/').split('?')[0].split('#')[0]
+  return p.length > 1 ? p.replace(/\/+$/, '') : p
+}
+
 export function getNavTheme(pathname) {
-  return navThemes[pathname] ?? DEFAULT_NAV_THEME
+  return navThemes[normalizePath(pathname)] ?? DEFAULT_NAV_THEME
 }
 
 /** 把主题配置翻译成一组 CSS 自定义属性，交给 common.css 消费 */

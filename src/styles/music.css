@@ -355,8 +355,9 @@
   font-family: var(--font-body);
   font-size: 1.5rem;
   font-weight: 900;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  /* 原来是 -0.01em，中文挤成一坨（用户反馈「歌曲两个字凑太紧」）。
+     中文标题要正字距才透气。 */
+  letter-spacing: 0.1em;
   color: var(--nb-black);
 }
 
@@ -365,14 +366,18 @@
    ============================================ */
 .music-singles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 22px;
 }
 
+/* 卡片由「左图右文」改成「上图下文」——
+   原来的封面只有 76px，真专辑封面放进去完全认不出是谁。
+   现在封面是大方块（整张卡宽），标题信息在下方，唱片仍然从右下角露半截。 */
 .music-single-card {
   display: flex;
-  gap: 16px;
-  padding: 16px;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
   background: var(--nb-white);
   border: 3px solid var(--nb-black);
   box-shadow: 6px 6px 0 0 var(--nb-black);
@@ -394,32 +399,54 @@
 }
 
 /* 封面 + 叠在右下角的黑胶。
-   黑胶比封面大、故意被裁掉一部分 —— 像唱片从封套里抽出来半截，
-   这是音乐页的招牌细节，别删。 */
+   黑胶故意被裁掉一部分 —— 像唱片从封套里抽出来半截，这是音乐页的招牌细节。
+   ⚠️ 但黑胶必须压在封面「下面」（z-index 1 < 2）：
+   之前它盖在封面上，把专辑封面挡掉了三分之一，用户反馈「显示不完整」。
+   现在封面 100% 完整可见，黑胶只从右下角探出一小截。 */
 .music-single-cover-wrap {
   position: relative;
   flex-shrink: 0;
-  width: 76px;
-  height: 76px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+/* ⚠️ 这里必须同时选中 .music-single-cover 里的 img。
+   PhotoArt 渲染的是 <img>（真图）或 <svg>（占位），而 svg 是 .music-single-cover
+   的子元素、不是 wrap 的直接子元素 —— 原来的选择器 `> svg` 根本选不到，
+   结果 img 完全没有尺寸约束，按 600×600 原尺寸渲染，
+   被 overflow:hidden 裁得只剩左上角一小块（用户反馈「显示不完整」的真因）。 */
+.music-single-cover,
+.music-single-cover img,
+.music-single-cover svg,
+.music-single-cover-wrap > svg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-single-cover {
   border: 2px solid var(--nb-black);
   background: var(--nb-blue);
   overflow: hidden;
 }
 
-.music-single-cover,
-.music-single-cover-wrap > svg {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
+/* 黑胶按封面宽度等比缩放，从右下角探出一小截。
+   偏移量（-7%）小于卡片 padding（14px），所以不会溢出卡片外框，
+   同时封面本身一点都没被挡住。
+   ⚠️ .vinyl-disc 是 div（内联 width/height），写 height:auto 会塌成 4px，
+   必须用 aspect-ratio 撑成正方形。 */
 .music-single-cover-wrap .vinyl-disc {
   position: absolute;
-  right: -16px;
-  bottom: -16px;
-  z-index: 2;
+  right: -7%;
+  bottom: -7%;
+  width: 46% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
+  z-index: 1;
 }
 
 .music-single-body {
@@ -498,25 +525,37 @@
   flex-shrink: 0;
   width: 108px;
   height: 108px;
+}
+
+/* 同上：必须带上里面的 img，否则真封面会按原尺寸渲染只露左上角 */
+.music-albums-row-cover,
+.music-albums-row-cover img,
+.music-albums-row-cover svg,
+.music-albums-row-cover-wrap > svg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-albums-row-cover {
   border: 2px solid var(--nb-black);
   background: var(--nb-orange);
   overflow: hidden;
 }
 
-.music-albums-row-cover,
-.music-albums-row-cover-wrap > svg {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
+/* 黑胶压在封面下面，只从右下角探出来 —— 封面完整可见 */
 .music-albums-row-cover-wrap .vinyl-disc {
   position: absolute;
-  right: -18px;
-  bottom: -18px;
-  z-index: 2;
+  right: -7%;
+  bottom: -7%;
+  width: 46% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
+  z-index: 1;
 }
 
 .music-albums-row-info {
@@ -822,8 +861,16 @@
   box-shadow: none;
 }
 
+/* 弹窗封面：原来是 16/9 的横条 + object-fit:cover，
+   正方形专辑封面被裁掉上下各约 44%，用户反馈「显示不完整」。
+   改成「色板舞台 + 完整封面居中」（和书籍页弹窗同一套做法）：
+   图片用 contain 等比缩放，一张都不裁。 */
 .music-modal-cover {
-  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 320px;
+  padding: 26px;
   border-bottom: 4px solid var(--nb-black);
   background: var(--nb-blue);
   overflow: hidden;
@@ -832,9 +879,13 @@
 .music-modal-cover img,
 .music-modal-cover svg {
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 2px solid var(--nb-black);
+  box-shadow: 8px 8px 0 0 rgba(0, 0, 0, 0.3);
 }
 
 .music-modal-body {
@@ -984,8 +1035,9 @@
   font-family: var(--font-body);
   font-size: 1.5rem;
   font-weight: 900;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  /* 原来是 -0.01em，中文挤成一坨（用户反馈「歌曲两个字凑太紧」）。
+     中文标题要正字距才透气。 */
+  letter-spacing: 0.1em;
   color: var(--nb-black);
 }
 
@@ -1044,10 +1096,14 @@
     gap: 16px;
   }
 
+  /* 竖排后封面变宽 —— 必须补 aspect-ratio 并把固定 height 放开，
+     否则 160×108 的长方形会把正方形封面裁掉上下 */
   .music-albums-row-cover-wrap,
   .music-featured-album {
     width: 100%;
     max-width: 160px;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 
   .music-modal-title {
@@ -1076,8 +1132,9 @@
     grid-template-columns: 1fr;
   }
 
+  /* 手机上也保持「上图下文」—— 封面方块是这张卡的主角 */
   .music-single-card {
-    flex-direction: row;
+    flex-direction: column;
   }
 }
 
@@ -1108,4 +1165,528 @@
   .full-list-close:hover {
     transform: none;
   }
+}
+
+/* ============================================
+   曲目列表（替代原来的单曲卡片网格）
+   用户的歌单有 193 首，且其中 87 首没有封面（华语歌 iTunes 没收录）。
+   卡片网格会把「缺封面」放大成满屏占位图，改成一行一首更合适：
+   有封面显示 40px 缩略图，没有就留同尺寸空位（不是占位插画）。
+   ============================================ */
+.music-tracklist {
+  display: flex;
+  flex-direction: column;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-white);
+  box-shadow: 6px 6px 0 0 var(--nb-black);
+}
+
+.music-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: background-color 0ms, transform var(--nb-t);
+}
+
+.music-track:last-child { border-bottom: none; }
+
+/* Brutal Snap：hover 背景硬切，只有位移走过渡 */
+.music-track:hover {
+  background: var(--nb-green);
+  transform: translateX(4px);
+}
+
+.music-track-index {
+  flex-shrink: 0;
+  width: 26px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--nb-black);
+  opacity: 0.45;
+}
+
+.music-track-thumb {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border: 2px solid var(--nb-black);
+  background: var(--nb-blue);
+}
+
+.music-track-thumb img,
+.music-track-thumb svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 没有封面：留一个同尺寸的浅色格子，不用插画（193 首里有一半没封面） */
+.music-track-thumb--empty {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.05) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.music-track-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.music-track-title {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--nb-black);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.music-track-artist {
+  font-size: 0.78rem;
+  color: #55504a;
+}
+
+.music-track-badges {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+}
+
+.music-track-badge {
+  padding: 1px 7px;
+  border: 2px solid var(--nb-black);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* 红心：粉底黑字；播放排名：蓝底白字（对比度都够） */
+.music-track-badge--heart {
+  background: var(--nb-pink);
+  color: var(--nb-black);
+}
+
+.music-track-badge--plays {
+  background: var(--nb-blue);
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .music-track { gap: 8px; padding: 7px 10px; }
+  .music-track-body { flex-direction: column; align-items: flex-start; gap: 1px; }
+  .music-track-title { white-space: normal; }
+}
+
+/* ============================================
+   板块容器 + 「最近所听 / 历史记录」两栏切换
+   ============================================ */
+.music-block { margin-bottom: 56px; }
+
+.music-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+/* 标题和切换器同一行，标题不再自带下边距 */
+.music-block-head .music-section-label { margin-bottom: 0; }
+
+.music-tabs {
+  display: flex;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-white);
+  box-shadow: 4px 4px 0 0 var(--nb-black);
+}
+
+.music-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border: none;
+  border-right: 3px solid var(--nb-black);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: var(--nb-black);
+  cursor: pointer;
+  /* Brutal Snap：切换是硬切，不给过渡 */
+  transition: none;
+}
+
+.music-tab:last-child { border-right: none; }
+
+.music-tab:hover { background: rgba(0, 0, 0, 0.06); }
+
+.music-tab--active {
+  background: var(--nb-black);
+  color: var(--nb-white);
+}
+
+.music-tab-count {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+/* ============================================
+   感想：本期推荐 + 每张专辑的感想文字
+   ============================================ */
+.music-thoughts-section { margin-bottom: 40px; }
+
+.music-thought-pick {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  padding: 20px;
+  margin-bottom: 26px;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-yellow, #fcee0a);
+  box-shadow: 6px 6px 0 0 var(--nb-black);
+}
+
+.music-thought-pick-cover {
+  position: relative;
+  flex-shrink: 0;
+  width: 150px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-blue);
+}
+
+.music-thought-pick-cover img,
+.music-thought-pick-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-thought-pick-body { flex: 1; min-width: 0; }
+
+.music-thought-pick-label {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 2px 9px;
+  border: 2px solid var(--nb-black);
+  background: var(--nb-white);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.music-thought-pick-title {
+  margin: 0 0 3px;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--nb-black);
+}
+
+.music-thought-pick-artist {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #4a453f;
+}
+
+.music-thought-pick-text p,
+.music-thought-text p {
+  margin: 0 0 9px;
+  font-size: 0.88rem;
+  line-height: 1.85;
+  color: #3a3630;
+}
+
+.music-thought-pick-text p:last-child,
+.music-thought-text p:last-child { margin-bottom: 0; }
+
+.music-thought-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.music-thought-item {
+  padding: 18px 20px;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-white);
+  box-shadow: 5px 5px 0 0 var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t);
+}
+
+.music-thought-item:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 0 var(--nb-black);
+}
+
+.music-thought-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--nb-black);
+}
+
+.music-thought-album {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--nb-black);
+}
+
+.music-thought-artist {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #55504a;
+}
+
+.music-thought-year {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #55504a;
+}
+
+@media (max-width: 768px) {
+  .music-block { margin-bottom: 40px; }
+  .music-block-head { flex-direction: column; align-items: flex-start; }
+  .music-tab { padding: 6px 12px; font-size: 0.8rem; }
+  .music-thought-pick { flex-direction: column; gap: 16px; padding: 16px; }
+  .music-thought-pick-cover { width: 120px; }
+  .music-thought-pick-title { font-size: 1.25rem; }
+}
+
+/* ============================================
+   音乐页的「查看更多」弹窗
+   原来复用了电影页的 .full-list-panel —— 深色圆角面板，和 Neo-Brutalist 不搭；
+   而且 body 用的是 .full-list-body--grid（三列网格，给电影海报卡用的），
+   把曲目行塞进去直接散架（左半边有内容、右半边空一块）。
+   这里用 .music-world 提权，改成白底 + 黑粗边 + 直角，body 改单列。
+   ============================================ */
+.music-world .full-list-overlay {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.music-world .full-list-panel {
+  background: var(--nb-white);
+  border: 4px solid var(--nb-black);
+  border-radius: 0;
+  box-shadow: 12px 12px 0 0 var(--nb-black);
+  max-width: 900px;
+  padding: 28px 30px 34px;
+}
+
+.music-world .full-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 4px solid var(--nb-black);
+}
+
+.music-world .full-list-head-title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--nb-black);
+}
+
+.music-world .full-list-close {
+  position: static;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 3px solid var(--nb-black);
+  border-radius: 0;
+  background: var(--nb-yellow);
+  color: var(--nb-black);
+  font-size: 1rem;
+  font-weight: 900;
+  transition: background-color 0ms, transform var(--nb-t);
+}
+
+.music-world .full-list-close:hover {
+  background: var(--nb-pink);
+  transform: rotate(90deg);
+}
+
+/* 曲目列表：单列，占满宽度（原来掉进三列网格里） */
+.music-world .full-list-body--tracks,
+.music-world .full-list-body--thoughts {
+  display: block;
+}
+
+.music-world .full-list-body--tracks .music-tracklist {
+  box-shadow: none;
+}
+
+.music-world .full-list-body--thoughts .music-thought-list {
+  gap: 14px;
+}
+
+/* ============================================
+   Hero：左边「流前音乐」四字两排，右边黑胶唱机
+   ============================================ */
+.music-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  margin: 8px 0 46px;
+}
+
+/* 四个大字：两字一排、共两排。用 grid 排最稳，不依赖换行时机 */
+.music-hero-title {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 0;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(3.4rem, 9vw, 6.2rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: 0.06em;
+  color: var(--nb-black);
+}
+
+/* 每排两字，第二排换成强调粉（Neo-Brutalist 的高饱和撞色） */
+.music-hero-title span { display: block; }
+.music-hero-title span:last-child {
+  color: var(--nb-pink);
+  /* 硬投影：新野兽派不做柔和阴影 */
+  text-shadow: 5px 5px 0 var(--nb-black);
+}
+.music-hero-title span:first-child {
+  text-shadow: 5px 5px 0 var(--nb-yellow);
+}
+
+.music-hero-deck {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.turntable-svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================
+   推歌区
+   ============================================ */
+.music-block--pick { margin-bottom: 60px; }
+
+.music-block-note {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: #6b6660;
+}
+
+/* 推歌卡片放大：原来只有 820 封顶，文字挤在右边一小块 */
+.music-block--pick .music-latest-pick,
+.music-block--pick .music-latest-pick-banner {
+  min-height: 260px;
+}
+
+/* ============================================
+   感想
+   ============================================ */
+.music-thought-intro {
+  margin: 0 0 26px;
+  padding: 18px 22px;
+  border: 3px solid var(--nb-black);
+  border-left-width: 12px;
+  background: var(--nb-white);
+  font-size: 0.92rem;
+  line-height: 1.95;
+  color: #3a3630;
+}
+
+.music-thought-cover {
+  flex-shrink: 0;
+  width: 104px;
+  height: 104px;
+  overflow: hidden;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-blue);
+}
+
+.music-thought-cover img,
+.music-thought-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-thought-body { flex: 1; min-width: 0; }
+
+/* 卡片改成「封面 + 文字」横排 */
+.music-thought-item {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.music-thought-head {
+  margin-bottom: 9px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--nb-black);
+}
+
+.music-thought-artist { margin-left: 10px; }
+
+/* 查看更多按钮：行内小尺寸，别抢标题 */
+.music-more-btn--inline {
+  margin: 0;
+  padding: 8px 18px;
+  font-size: 0.76rem;
+}
+
+@media (max-width: 900px) {
+  .music-hero { gap: 24px; }
+  .music-hero-title { font-size: clamp(2.6rem, 12vw, 4rem); }
+}
+
+@media (max-width: 768px) {
+  .music-hero { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .music-hero-deck { align-self: center; }
+  .music-thought-item { flex-direction: column; gap: 12px; }
+  .music-thought-cover { width: 84px; height: 84px; }
 }
