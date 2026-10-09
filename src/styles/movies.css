@@ -1362,3 +1362,663 @@
     opacity: 0.6;
   }
 }
+
+/* ============================================
+   真实数据改版（2026-10-09）
+   原来那套（今夜放映 / 放映排期 / 关注人物）用的是编的数据，
+   换成用户豆瓣「看过」清单后，结构简化成：
+   统计条 → 胶片 banner → 最近看过 → 观影画廊（竖排海报卡）→ 观影日历
+   下面这些 .mv-* 是新加的，页面里旧的 .signboard / .watchlist / .people 保留不动
+   （万一以后要用），只是不再渲染。
+   ============================================ */
+
+/* ----- 观影统计条 ----- */
+.mv-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 34px;
+}
+
+.mv-stat {
+  flex: 1 1 120px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(228, 192, 99, 0.18);
+  background: rgba(20, 24, 33, 0.72);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mv-stat--wide { flex: 1 1 220px; }
+
+.mv-stat-num {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #E4C063;
+}
+
+.mv-stat-num--sm { font-size: 1.05rem; letter-spacing: 0.01em; }
+
+.mv-stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: #8D98AA;
+}
+
+/* ----- 星级（我的评分）----- */
+.mv-stars { display: inline-flex; align-items: center; gap: 2px; }
+
+.mv-star {
+  font-size: 0.82rem;
+  line-height: 1;
+  color: rgba(228, 192, 99, 0.25);
+}
+
+.mv-star--on { color: #E4C063; }
+
+.mv-stars--lg .mv-star { font-size: 1.05rem; }
+
+.mv-stars-label {
+  margin-left: 7px;
+  font-style: normal;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: #C9B47A;
+}
+
+/* ----- 通用小节 ----- */
+.mv-section { margin-bottom: 52px; }
+
+/* ----- 最近看过 ----- */
+.mv-featured {
+  display: flex;
+  gap: 26px;
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(228, 192, 99, 0.22);
+  background: linear-gradient(140deg, rgba(28, 33, 45, 0.95), rgba(16, 20, 28, 0.95));
+  cursor: pointer;
+  transition: border-color 0.35s, transform 0.35s;
+}
+
+.mv-featured:hover {
+  border-color: rgba(228, 192, 99, 0.5);
+  transform: translateY(-3px);
+}
+
+/* ⚠️ PhotoArt 渲染的是 <img>，容器和里面的 img 都要给尺寸，
+   只给容器会被 overflow:hidden 裁掉一块（见 MEMORY.md 第 9 条） */
+.mv-featured-poster {
+  position: relative;
+  flex-shrink: 0;
+  width: 168px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #0d1017;
+}
+
+.mv-featured-poster img,
+.mv-featured-poster svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mv-featured-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mv-featured-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: #8D98AA;
+  margin-bottom: 10px;
+}
+
+.mv-featured-title {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #F3EFE8;
+  margin: 0 0 4px;
+  letter-spacing: 0.02em;
+}
+
+.mv-featured-original {
+  font-size: 0.8rem;
+  color: #8D98AA;
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+}
+
+.mv-featured-meta {
+  font-size: 0.78rem;
+  color: #9AA6B8;
+  margin: 0 0 14px;
+}
+
+.mv-featured-ratings {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.mv-featured-douban {
+  font-size: 0.78rem;
+  color: #E4C063;
+  letter-spacing: 0.04em;
+}
+
+.mv-featured-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.mv-genre-pill {
+  padding: 3px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(228, 192, 99, 0.28);
+  font-size: 0.7rem;
+  color: #C9B47A;
+  letter-spacing: 0.04em;
+}
+
+.mv-featured-credits {
+  font-size: 0.76rem;
+  color: #8D98AA;
+  margin: 0;
+}
+
+/* ----- 观影画廊：改成竖排海报卡（封面在上、信息在下）-----
+   ⚠️ 横排卡片塞不下 2:3 的竖版海报（正文会被挤到只剩几十 px），
+   这是 MEMORY.md 里记过的坑，竖版封面一律用竖排卡。 */
+.movie-gallery {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.movie-gallery-card {
+  flex-direction: column;
+  border: 1px solid rgba(228, 192, 99, 0.14);
+}
+
+.movie-gallery-card:hover {
+  border-color: rgba(228, 192, 99, 0.45);
+}
+
+.movie-gallery-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: #0d1017;
+}
+
+.movie-gallery-poster img,
+.movie-gallery-poster svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 海报右下角的豆瓣评分角标 */
+.mv-card-douban {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(8, 10, 15, 0.82);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #E4C063;
+  letter-spacing: 0.04em;
+}
+
+.movie-gallery-info { padding: 12px 14px 14px; }
+
+.movie-gallery-title {
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-gallery-director { margin-bottom: 8px; }
+
+.mv-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mv-card-date {
+  font-size: 0.68rem;
+  color: #6E7A8C;
+  letter-spacing: 0.04em;
+}
+
+/* ----- 弹窗新增部分 ----- */
+.mv-modal-original {
+  font-size: 0.78rem;
+  color: #8D98AA;
+  margin: 4px 0 0;
+}
+
+.mv-modal-ratings {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin: 16px 0 18px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(228, 192, 99, 0.14);
+  border-bottom: 1px solid rgba(228, 192, 99, 0.14);
+}
+
+.mv-modal-rating { display: flex; align-items: center; gap: 10px; }
+
+.mv-modal-rating-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: #8D98AA;
+}
+
+.mv-douban-score {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #E4C063;
+}
+
+.mv-modal-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 14px;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.mv-modal-facts dt {
+  color: #6E7A8C;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.mv-modal-facts dd {
+  margin: 0;
+  color: #C6CEDC;
+  line-height: 1.6;
+}
+
+/* 弹窗海报：原来压了一层 sepia 做旧滤镜，真实海报看不清，
+   这里去掉（外面已经够暗了，不需要再压） */
+.movie-modal-cover { filter: none; }
+
+@media (max-width: 768px) {
+  .mv-featured { flex-direction: column; gap: 18px; padding: 16px; }
+  .mv-featured-poster { width: 130px; }
+  .mv-featured-title { font-size: 1.35rem; }
+  .movie-gallery { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+  .mv-stat { flex: 1 1 45%; }
+}
+
+/* ============================================
+   真实数据改版（2026-10-09）
+   原来那套（今夜放映 / 放映排期 / 关注人物）用的是编的数据，
+   换成用户豆瓣「看过」清单后，结构简化成：
+   统计条 → 胶片 banner → 最近看过 → 观影画廊（竖排海报卡）→ 观影日历
+   下面这些 .mv-* 是新加的，页面里旧的 .signboard / .watchlist / .people 保留不动
+   （万一以后要用），只是不再渲染。
+   ============================================ */
+
+/* ----- 观影统计条 ----- */
+.mv-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 34px;
+}
+
+.mv-stat {
+  flex: 1 1 120px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(228, 192, 99, 0.18);
+  background: rgba(20, 24, 33, 0.72);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mv-stat--wide { flex: 1 1 220px; }
+
+.mv-stat-num {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #E4C063;
+}
+
+.mv-stat-num--sm { font-size: 1.05rem; letter-spacing: 0.01em; }
+
+.mv-stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: #8D98AA;
+}
+
+/* ----- 星级（我的评分）----- */
+.mv-stars { display: inline-flex; align-items: center; gap: 2px; }
+
+.mv-star {
+  font-size: 0.82rem;
+  line-height: 1;
+  color: rgba(228, 192, 99, 0.25);
+}
+
+.mv-star--on { color: #E4C063; }
+
+.mv-stars--lg .mv-star { font-size: 1.05rem; }
+
+.mv-stars-label {
+  margin-left: 7px;
+  font-style: normal;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: #C9B47A;
+}
+
+/* ----- 通用小节 ----- */
+.mv-section { margin-bottom: 52px; }
+
+/* ----- 最近看过 ----- */
+.mv-featured {
+  display: flex;
+  gap: 26px;
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(228, 192, 99, 0.22);
+  background: linear-gradient(140deg, rgba(28, 33, 45, 0.95), rgba(16, 20, 28, 0.95));
+  cursor: pointer;
+  transition: border-color 0.35s, transform 0.35s;
+}
+
+.mv-featured:hover {
+  border-color: rgba(228, 192, 99, 0.5);
+  transform: translateY(-3px);
+}
+
+/* ⚠️ PhotoArt 渲染的是 <img>，容器和里面的 img 都要给尺寸，
+   只给容器会被 overflow:hidden 裁掉一块（见 MEMORY.md 第 9 条） */
+.mv-featured-poster {
+  position: relative;
+  flex-shrink: 0;
+  width: 168px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #0d1017;
+}
+
+.mv-featured-poster img,
+.mv-featured-poster svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mv-featured-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mv-featured-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: #8D98AA;
+  margin-bottom: 10px;
+}
+
+.mv-featured-title {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #F3EFE8;
+  margin: 0 0 4px;
+  letter-spacing: 0.02em;
+}
+
+.mv-featured-original {
+  font-size: 0.8rem;
+  color: #8D98AA;
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+}
+
+.mv-featured-meta {
+  font-size: 0.78rem;
+  color: #9AA6B8;
+  margin: 0 0 14px;
+}
+
+.mv-featured-ratings {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.mv-featured-douban {
+  font-size: 0.78rem;
+  color: #E4C063;
+  letter-spacing: 0.04em;
+}
+
+.mv-featured-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.mv-genre-pill {
+  padding: 3px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(228, 192, 99, 0.28);
+  font-size: 0.7rem;
+  color: #C9B47A;
+  letter-spacing: 0.04em;
+}
+
+.mv-featured-credits {
+  font-size: 0.76rem;
+  color: #8D98AA;
+  margin: 0;
+}
+
+/* ----- 观影画廊：改成竖排海报卡（封面在上、信息在下）-----
+   ⚠️ 横排卡片塞不下 2:3 的竖版海报（正文会被挤到只剩几十 px），
+   这是 MEMORY.md 里记过的坑，竖版封面一律用竖排卡。 */
+.movie-gallery {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.movie-gallery-card {
+  flex-direction: column;
+  border: 1px solid rgba(228, 192, 99, 0.14);
+}
+
+.movie-gallery-card:hover {
+  border-color: rgba(228, 192, 99, 0.45);
+}
+
+.movie-gallery-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: #0d1017;
+}
+
+.movie-gallery-poster img,
+.movie-gallery-poster svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 海报右下角的豆瓣评分角标 */
+.mv-card-douban {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(8, 10, 15, 0.82);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #E4C063;
+  letter-spacing: 0.04em;
+}
+
+.movie-gallery-info { padding: 12px 14px 14px; }
+
+.movie-gallery-title {
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-gallery-director { margin-bottom: 8px; }
+
+.mv-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mv-card-date {
+  font-size: 0.68rem;
+  color: #6E7A8C;
+  letter-spacing: 0.04em;
+}
+
+/* ----- 弹窗新增部分 ----- */
+.mv-modal-original {
+  font-size: 0.78rem;
+  color: #8D98AA;
+  margin: 4px 0 0;
+}
+
+.mv-modal-ratings {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin: 16px 0 18px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(228, 192, 99, 0.14);
+  border-bottom: 1px solid rgba(228, 192, 99, 0.14);
+}
+
+.mv-modal-rating { display: flex; align-items: center; gap: 10px; }
+
+.mv-modal-rating-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: #8D98AA;
+}
+
+.mv-douban-score {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #E4C063;
+}
+
+.mv-modal-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 14px;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.mv-modal-facts dt {
+  color: #6E7A8C;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.mv-modal-facts dd {
+  margin: 0;
+  color: #C6CEDC;
+  line-height: 1.6;
+}
+
+/* 弹窗海报：原来压了一层 sepia 做旧滤镜，真实海报看不清，
+   这里去掉（外面已经够暗了，不需要再压） */
+.movie-modal-cover { filter: none; }
+
+@media (max-width: 768px) {
+  .mv-featured { flex-direction: column; gap: 18px; padding: 16px; }
+  .mv-featured-poster { width: 130px; }
+  .mv-featured-title { font-size: 1.35rem; }
+  .movie-gallery { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+  .mv-stat { flex: 1 1 45%; }
+}
+
+/* 小卡片文字不要换行（移动端「2026 · 克里斯托弗·诺兰」会折成两行，
+   「2026-09」也会断行，很难看） */
+.movie-gallery-director {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mv-card-date { white-space: nowrap; }
+
+/* 小卡片文字不要换行（移动端「2026 · 克里斯托弗·诺兰」会折成两行，
+   「2026-09」也会断行，很难看） */
+.movie-gallery-director {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mv-card-date { white-space: nowrap; }
