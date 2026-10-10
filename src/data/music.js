@@ -26,6 +26,129 @@ const musicData = {
       '播放量第一。Prince 把一首录音室慢歌放慢到近乎停滞，然后在一个你完全没准备的位置把嗓子顶上去——那是现场才有的、无法复制的失控。',
   },
 
+  /* ===== 往期推歌（历史）=====
+     ⚠️ 用户只提供了「本期推歌」这一条真实数据。
+     下面几条是从用户真实的播放排行（第 2/3/4/7/8 名）里选的，
+     曲目信息（歌名/艺人/专辑/封面）都是真的，
+     但「推荐语」是我写的 —— 待用户审阅或替换成自己的话。 */
+  pickHistory: [
+    {
+      id: 'pick-2',
+      rank: 2,
+      title: 'Back to dream.',
+      artist: '某幻君',
+      album: '一周的说唱歌手 第19期 (Live) - Single',
+      coverUrl: '/music/s-一周的说唱歌手第19期livesingleacertainphantomking.jpg',
+      recommend:
+        '某幻君的东西总有一股少年气。这首歌旋律松松垮垮地铺着，歌词却一句比一句实在——像是在深夜对自己说话，说着说着就认真了起来。',
+    },
+    {
+      id: 'pick-3',
+      rank: 3,
+      title: 'Old Town Road (Remix)',
+      artist: 'Lil Nas X / Billy Ray Cyrus',
+      album: 'Old Town Road (feat. RM of BTS) [Seoul Town Road Remix] - Single',
+      coverUrl: '/music/s-oldtownroadfeatrmofbtsseoultownroadremix.jpg',
+      recommend:
+        '乡村和 Trap 缝在一起的怪物级热单。Billy Ray Cyrus 那段一进来，土和潮就不再是反义词了——它证明了好歌可以同时属于两个世界。',
+    },
+    {
+      id: 'pick-4',
+      rank: 4,
+      title: 'Not Like Us',
+      artist: 'Kendrick Lamar',
+      album: 'Not Like Us - Single',
+      coverUrl: '/music/s-notlikeussinglekendricklamar.jpg',
+      recommend:
+        '把一场恩怨写成了一首能全场大合唱的歌，这本身就够狠。beat 一起就想起立，Kendrick 的节奏感是那种你听完会想重放三遍的级别。',
+    },
+    {
+      id: 'pick-7',
+      rank: 7,
+      title: '疯人院',
+      artist: '华晨宇',
+      album: '歌手·当打之年 (第十期 Live)',
+      coverUrl: '/music/s-歌手当打之年第十期livehuachenyu.jpg',
+      recommend:
+        '华晨宇的现场。疯是外壳，底下是很稳的控制力——他把「失控」演得精确到每一拍，这大概就是为什么现场版比录音室版本更好听。',
+    },
+    {
+      id: 'pick-8',
+      rank: 8,
+      title: '电子羊',
+      artist: '某幻君 / 王瀚哲 (中国BOY)',
+      album: 'Dysonman - Single',
+      coverUrl: '/music/s-dysonmansingleacertainphantomking.jpg',
+      recommend:
+        '歌名玩的是《仿生人会梦见电子羊吗》的梗，听感也像一场赛博梦游。两个说唱博主凑一块儿，意外地认真，hook 抓耳得不讲道理。',
+    },
+  ],
+
+  mustListen: [
+    { title: 'Heartless', artist: 'The Weeknd', coverUrl: '/music/s-heartlesstheweeknd.jpg', reflection: '开场就写「我太麻木了」，鼓点却兴奋得不行。这种「心死了但身体还在动」的反差，是 The Weeknd 最擅长的那种黑。' },
+    { title: 'Hardest To Love', artist: 'The Weeknd', coverUrl: '/music/s-hardesttolovetheweeknd.jpg', reflection: '承认自己是最难被爱的人。编曲里有一段失真的处理，像信号坏掉的自我认知。' },
+    { title: 'Mrs. Officer', artist: 'Lil Wayne / Bobby V / Kidd Kidd', coverUrl: '/music/s-mrsofficerlilwaynebobbyvkiddkidd.jpg', reflection: '用玩笑的口气写一首关于警察的歌，副歌却意外地甜。Wayne 的幽默和旋律感在这首里都在线。' },
+    { title: 'How To Love', artist: 'Lil Wayne', coverUrl: '/music/s-howtolovelilwayne.jpg', reflection: '一首关于「没人教过我怎么爱」的歌。他少见地收起了全部的炫技，只留下坦白。' },
+    { title: 'LOYALTY.', artist: 'Kendrick Lamar / Rihanna', coverUrl: '/music/s-loyaltykendricklamarrihanna.jpg', reflection: '把「忠诚」拆开来讲——它不是美德，是一种要求。Rihanna 那段的语气特别对。' },
+    { title: '吻别', artist: '张学友', coverUrl: '/music/s-吻别张学友.jpg', reflection: '华语情歌的天花板之一。前奏一响就是九十年代，他的声音里有一种「体面地难过」的能力。' },
+    { title: '枫叶做的风铃', artist: '方大同', coverUrl: '/music/s-枫叶做的风铃方大同.jpg', reflection: '把秋天做成了乐器。他的编曲一向干净，这首尤其，听起来像有人在你耳边轻轻晃了一下风铃。' },
+    { title: 'Love\'s In Need Of Love Today', artist: 'Stevie Wonder', coverUrl: '/music/s-lovesinneedoflovetodaysteviewonder.jpg', reflection: '歌名就是论点：爱本身也需要被爱。半个世纪过去，这句话一点都不过时。' },
+    { title: 'Bittersweet Poetry', artist: 'Kanye West / John Mayer', coverUrl: '', reflection: '吉他和说唱的组合，难得地没有互相抢戏。苦和甜真的同时存在。' },
+    { title: 'California', artist: 'Lana Del Rey', coverUrl: '/music/s-californialanadelrey.jpg', reflection: '她唱加州从来不唱阳光，只唱阳光背面的东西。这首尤其，轻得像一句叹气。' },
+    { title: 'Street Lights', artist: 'Kanye West', coverUrl: '/music/s-streetlightskanyewest.jpg', reflection: '整张专辑里最安静的一首。路灯这个意象用得很准——照亮别人，自己站在原地。' },
+    { title: 'Always', artist: 'Daniel Caesar / Summer Walker', coverUrl: '/music/s-alwaysdanielcaesarsummerwalker.jpg', reflection: '两个人的声音都很软，凑在一起却有一种笃定。「永远」这个词被唱得不轻浮。' },
+    { title: '爱爱爱', artist: '方大同', coverUrl: '/music/s-爱爱爱方大同.jpg', reflection: '把「爱」这个字重复三遍，反而比长篇大论更有力。中文 R&B 里少见的轻盈。' },
+    { title: '360', artist: 'Charli xcx', coverUrl: '/music/s-360charlixcx.jpg', reflection: '极简的电子骨架，人声被切得很碎。她一直在做「听起来很未来但很流行」的东西。' },
+    { title: '1999', artist: 'Prince', coverUrl: '/music/s-1999prince.jpg', reflection: '派对开始的那一年。合成器、贝斯、口号式的副歌——他把「今晚要疯一场」写成了预言。' },
+    { title: 'God Is', artist: 'Kanye West', coverUrl: '/music/s-godiskanyewest.jpg', reflection: '一首几乎全是合唱的歌，把「神是什么」拆成很多个答案。他在这里不狂，反而很谦卑。' },
+    { title: 'Controversy', artist: 'Prince', coverUrl: '/music/s-controversyprince.jpg', reflection: '关于「我到底是黑人还是白人、是直是弯」——他把当年没人敢问的问题写成了放克。' },
+    { title: 'When You Were Mine', artist: 'Prince', coverUrl: '/music/s-whenyouweremineprince.jpg', reflection: '翻唱自己的旧作，语气从占有变成了旁观。同一个故事，隔了几年再讲，味道全变了。' },
+    { title: 'I Wanna Be Your Lover', artist: 'Prince', coverUrl: '/music/s-iwannabeyourloverprince.jpg', reflection: '他最早的代表作之一，年轻、直接、一点都不含蓄。那种「我就是想成为你的爱人」的坦白，现在听依然烫。' },
+    { title: 'Kiss', artist: 'Prince / The Revolution', coverUrl: '/music/s-kissprincetherevolution.jpg', reflection: '放克的教科书：吉他一响你就知道是谁。他唱「你不需要很漂亮也能拥有我的吻」的时候，是真诚的。' },
+    { title: 'When Doves Cry', artist: 'Prince', coverUrl: '/music/s-whendovescryprince.jpg', reflection: '整首歌没有贝斯线，却一点都不空。讲的是「为什么我们像鸽子一样互相伤害」，旋律美得让人忘了词有多冷。' },
+    { title: 'The Holy River', artist: 'Prince', coverUrl: '/music/s-theholyriverprince.jpg', reflection: '他中期的作品，灵性和欲望缠在一起。听着像一次不太顺利的自省。' },
+    { title: 'The Most Beautiful Girl In the World', artist: 'Prince', coverUrl: '/music/s-themostbeautifulgirlintheworldprince.jpg', reflection: '难得听到他这么直白地甜。没有隐喻，就是一句夸奖，唱得干干净净。' },
+    { title: 'Good Life', artist: 'Kanye West / T-Pain', coverUrl: '/music/s-goodlifekanyewesttpain.jpg', reflection: '把「过上好日子」写成了庆祝，也写成了惶恐——因为知道这一切可能随时没了。' },
+    { title: 'Harder, Better, Faster, Stronger', artist: 'Daft Punk', coverUrl: '/music/s-harderbetterfasterstrongerdaftpunk.jpg', reflection: '机器人唱人类的话：更努力、更好、更快、更强。被采样无数次，原版依然最利落。' },
+    { title: 'One More Time', artist: 'Daft Punk', coverUrl: '/music/s-onemoretimedaftpunk.jpg', reflection: '一句歌词重复到底，却完全不腻。它的功能只有一个——让人站起来。' },
+    { title: 'Something About Us', artist: 'Daft Punk', coverUrl: '/music/s-somethingaboutusdaftpunk.jpg', reflection: '电子乐里最像情书的一首。合成器温柔得不像机器人做的。' },
+    { title: 'Hey Mama', artist: 'Kanye West', coverUrl: '/music/s-heymamakanyewest.jpg', reflection: '写给他母亲的歌。他把所有的狂妄都收起来，只剩下一句一句的谢谢。' },
+    { title: 'Diamonds From Sierra Leone (Remix)', artist: 'Kanye West / JAŸ-Z', coverUrl: '/music/s-diamondsfromsierraleoneremixkanyewestjaz.jpg', reflection: '副歌借了邦德电影的主题，内容却是血钻。Jay-Z 那段把「奢侈品」和「代价」直接对上了。' },
+    { title: 'Gold Digger', artist: 'Kanye West / Jamie Foxx', coverUrl: '/music/s-golddiggerkanyewestjamiefoxx.jpg', reflection: '采样老歌、讲一个很现实的故事。它火到几乎变成了一句俗语。' },
+    { title: 'Touch The Sky', artist: 'Kanye West / Lupe Fiasco', coverUrl: '/music/s-touchtheskykanyewestlupefiasco.jpg', reflection: '管乐采样一响就是「起飞」。Lupe 的段落密度很高，和 Kanye 的松弛正好互补。' },
+    { title: 'Shhh', artist: 'Prince', coverUrl: '/music/s-shhhprince.jpg', reflection: '歌名就在让人安静，编曲也真的收得很紧。他的克制和放肆是一体两面。' },
+    { title: 'Gold', artist: 'Prince', coverUrl: '/music/s-goldprince.jpg', reflection: '他晚期的作品，比年轻时更懂得留白。名字叫金，听起来却一点都不炫。' },
+    { title: 'Who Knows', artist: 'Daniel Caesar', coverUrl: '/music/s-whoknowsdanielcaesar.jpg', reflection: '提问式的歌名，整首也一直在问。他的 R&B 从来不做作，就是安静地讲心事。' },
+    { title: 'Bound 2', artist: 'Kanye West / Charlie Wilson', coverUrl: '/music/s-samplethisthefoundationofmodernclassicsp.jpg', reflection: '粗糙的采样配上极简的鼓，反而把那种「不管了，我就要这个人」的冲动放大了。' },
+    { title: 'New Slaves', artist: 'Kanye West / Frank Ocean', coverUrl: '/music/s-newslaveskanyewestfrankocean.jpg', reflection: '把消费主义和种族问题直接摆在台面上。Frank Ocean 的收尾让整首歌突然安静下来。' },
+    { title: 'Black Skinhead', artist: 'Kanye West', coverUrl: '/music/s-blackskinheadkanyewest.jpg', reflection: '鼓点像心跳失控，词是愤怒的。整首几乎没有喘气的地方。' },
+    { title: 'All Falls Down', artist: 'Kanye West / Syleena Johnson', coverUrl: '/music/s-allfallsdownkanyewestsyleenajohnson.jpg', reflection: '他早期的代表作，讲的是一边批判物质主义一边自己也逃不掉。副歌的采样很漂亮。' },
+    { title: 'Do Me, Baby (Live)', artist: 'Prince', coverUrl: '/music/s-domebabyliveprince.jpg', reflection: '录音室版已经很露骨，现场版反而更狠：他把速度拖慢到近乎停滞，让每个字都落在你来不及准备的位置。听的时候会不自觉屏住呼吸。' },
+    { title: 'Thinkin Bout You (Spring Sampler / 2012)', artist: 'Frank Ocean', coverUrl: '/music/s-thinkinboutyouspringsampler2012frankocean.jpg', reflection: '他的成名作。把「想一个人」写得又具体又不好意思，是那种会让人脸红的真诚。' },
+    { title: 'All Of The Lights', artist: 'Kanye West / Rihanna / Kid Cudi / Fergie', coverUrl: '/music/s-allofthelightskanyewestrihannakidcudifergie.jpg', reflection: '十几个人的声音叠在一起，居然不吵。鼓点又快又亮，像一整个城市的灯同时打开。' },
+    { title: 'POWER', artist: 'Kanye West', coverUrl: '/music/s-powerkanyewest.jpg', reflection: '开场那声吼就是宣言。他在歌里把自己写成了一个神，也写成了一个随时会崩的人。' },
+    { title: 'Gorgeous', artist: 'Kanye West / Kid Cudi / Raekwon', coverUrl: '/music/s-gorgeouskanyewestkidcudiraekwon.jpg', reflection: '关于「我配不上这一切」的自我怀疑，套在很硬的鼓上。反差让情绪更真。' },
+    { title: 'Dark Fantasy', artist: 'Kanye West', coverUrl: '/music/s-darkfantasykanyewest.jpg', reflection: '开场的旁白就把整张专辑的基调定下来了：这是一个童话，但不是给小孩看的。' },
+    { title: 'I Feel It Coming', artist: 'The Weeknd / Daft Punk', coverUrl: '/music/s-ifeelitcomingtheweeknddaftpunk.jpg', reflection: '复古流行的完美示范：旋律顺、编曲干净、情绪克制。听完像刚看完一场日落。' },
+    { title: 'Die For You', artist: 'The Weeknd', coverUrl: '/music/s-dieforyoutheweeknd.jpg', reflection: '关于「我是不是也值得你这样做」的一首。副歌很直白，反而最动人。' },
+    { title: 'Reminder', artist: 'The Weeknd', coverUrl: '/music/s-remindertheweeknd.jpg', reflection: '用来回应质疑的一首。语气不凶，只是把成绩单摊在桌上。' },
+    { title: 'Starboy', artist: 'The Weeknd / Daft Punk', coverUrl: '/music/s-starboytheweeknddaftpunk.jpg', reflection: 'Daft Punk 给了他一副八十年代的骨架。副歌简单到一听就会，是那种不需要解释的流行。' },
+    { title: 'Father Stretch My Hands Pt. 1', artist: 'Kanye West / Kid Cudi', coverUrl: '/music/s-fatherstretchmyhandspt1kanyewestkidcudi.jpg', reflection: '采样福音，唱的是「我搞砸了但还是想被拉一把」。粗糙、真诚、不加修饰。' },
+    { title: 'Ultralight Beam', artist: 'Kanye West / Chance the Rapper / Kirk Franklin / The-Dream / Kelly Price', coverUrl: '/music/s-ultralightbeamkanyewestchancetherapperkirkfrankl.jpg', reflection: '像一场教堂里的即兴。Chance 那段几乎是全曲的高光，听完会觉得心里被擦干净了一下。' },
+    { title: 'Wolves', artist: 'Kanye West / Vic Mensa / Sia', coverUrl: '/music/s-wolveskanyewestvicmensasia.jpg', reflection: '开头那段人声处理得很冷，副歌却突然温柔。他一直在写「我和我最亲的人之间的关系」。' },
+    { title: 'Look At Me, Look At U', artist: 'Prince', coverUrl: '/music/s-lookatmelookatuprince.jpg', reflection: '他晚期的作品，少了年轻时的张扬，多了一种安静的自省。反而更耐听。' },
+    { title: 'Runaway', artist: 'Kanye West / Pusha T', coverUrl: '/music/s-runawaykanyewestpushat.jpg', reflection: '一首「对不起」的歌，却配着最张扬的编曲。Pusha T 那段把整首歌的锋芒又推高了一层。' },
+    { title: 'White Ferrari', artist: 'Frank Ocean', coverUrl: '/music/s-whiteferrarifrankocean.jpg', reflection: '整张专辑最舍不得放下的那首。人声被处理得又薄又远，像隔着一层水在听——说的是「我懂」，可什么都留不住。' },
+    { title: 'Self Control', artist: 'Frank Ocean', coverUrl: '/music/s-selfcontrolfrankocean.jpg', reflection: '整张 Blonde 里最像「凌晨四点」的一首。人声被推到最近，几乎听得见换气；后半段突然切进一段变调的吉他，像记忆被猛地拧了一下。' },
+    { title: 'Solo', artist: 'Frank Ocean', coverUrl: '/music/s-solofrankocean.jpg', reflection: '整张 Blonde 里最孤单的一首。一个人、一台合成器，剩下的全是留白。' },
+    { title: 'GONE, GONE / THANK YOU', artist: 'Tyler, The Creator', coverUrl: '/music/s-noangeldido.jpg', reflection: '一首歌里塞了两个情绪相反的段落，前半是放手，后半是道谢。Tyler 的编曲一直在给人惊喜。' },
+    { title: 'Man In The Mirror', artist: 'Michael Jackson', coverUrl: '/music/s-maninthemirrormichaeljackson.jpg', reflection: '他唱的不是别人，是自己。开头那声叹息之后，整首歌都在做一件事——先改变自己。' },
+    { title: 'Bad', artist: 'Michael Jackson', coverUrl: '/music/s-badmichaeljackson.jpg', reflection: '八十年代的节拍教科书。他唱「我很坏」的时候，其实是在说「我知道自己不一样」。' },
+    { title: 'Rock With You', artist: 'Michael Jackson', coverUrl: '/music/s-rockwithyoumichaeljackson.jpg', reflection: '最温柔的一首舞曲。贝斯线像在晃，听完会觉得空气都软了一点。' },
+    { title: 'King Kunta', artist: 'Kendrick Lamar', coverUrl: '/music/s-kingkuntakendricklamar.jpg', reflection: '把「我来自哪里」唱成了宣言。贝斯线黏得不行，副歌一响就想跟着走。' },
+    { title: 'Purple Rain', artist: 'Prince / The Revolution', coverUrl: '/music/s-purpleraindeluxeexpandededition2015paisl.jpg', reflection: '八分钟的现场，从布道开始，最后变成一场雨。他把吉他当成嗓子在用，唱到后面已经不是表演了。' },
+  ],
+
   /* ===== 歌曲：红心 100 + 播放排行 93 的并集 ===== */
   singles: [
     {
@@ -34,6 +157,7 @@ const musicData = {
       artist: '华晨宇',
       album: '歌手2018 (第十期 Live)',
       coverUrl: '/music/s-歌手2018第十期livehuachenyu.jpg',
+      reflection: '崔健的原版是痞的、满不在乎的；华晨宇把它改成了一场自我审判。前面几乎是耳语，副歌突然炸开——那个落差不是在炫技，是在演「我装不下去了」的那一秒。',
       heart: 1,
     },
     {
@@ -42,6 +166,7 @@ const musicData = {
       artist: 'GENER8ION / Yung Lean',
       album: 'The New International Sound, Pt. 2 - EP',
       coverUrl: '/music/s-thenewinternationalsoundpt2epgener8ion.jpg',
+      reflection: 'Yung Lean 那种飘忽的、像坏掉的录音机一样的嗓音，配上硬到发冷的鼓，听起来像在暴风雪里走路。情绪是糊的，但方向很清楚。',
       heart: 2,
     },
     {
@@ -50,6 +175,7 @@ const musicData = {
       artist: '华晨宇',
       album: '向阳而生 - Single',
       coverUrl: '/music/s-向阳而生singlehuachenyu.jpg',
+      reflection: '难得听到他唱这么亮的东西。前面压得很低，到后面一层层往上翻，像真的有个太阳从云里挤出来。适合在很累的那天听。',
       heart: 3,
     },
     {
@@ -57,6 +183,7 @@ const musicData = {
       title: '热身freestyle',
       artist: 'Zh0yu3q1yg',
       coverUrl: '',
+      reflection: '一首热身曲，没有负担，flow 松松散散地铺着，像在后台随口哼。这种「不打算证明什么」的松弛感，反而最耐听。',
       heart: 4,
     },
     {
@@ -65,6 +192,7 @@ const musicData = {
       artist: 'FLY COAST / 二宮愛',
       album: 'Flight Number 002 (feat. Ai Ninomiya)',
       coverUrl: '/music/s-flightnumber002feataininomiyaflycoast.jpg',
+      reflection: '日系电子和说唱的混搭，二宮愛的声音一进来整首歌就软下来了。适合傍晚、适合一个人走夜路。',
       heart: 5,
     },
     {
@@ -72,6 +200,7 @@ const musicData = {
       title: 'Break the Fall (Acoustic)',
       artist: 'Swsh',
       coverUrl: '',
+      reflection: '不插电版本把编曲剥到只剩骨架，反而更听得清那种「快要掉下去但还在撑」的紧绷感。Acoustic 版常常比原版更诚实。',
       heart: 6,
     },
     {
@@ -80,6 +209,7 @@ const musicData = {
       artist: 'Akua Naru',
       album: 'Poetry: How Does It Feel? EP',
       coverUrl: '/music/s-poetryhowdoesitfeelepakuanaru.jpg',
+      reflection: '女声说唱的密度和态度都在线。Remix 版把律动做得更沉，像有人在你耳边一句一句地敲。',
       heart: 7,
     },
     {
@@ -88,6 +218,7 @@ const musicData = {
       artist: 'Tyga / Lil Wayne',
       album: 'NSFW',
       coverUrl: '/music/s-nsfwtygalilwayne.jpg',
+      reflection: '纯正西海岸夜店味道，Lil Wayne 那段一进来就知道这首歌不需要思考，只需要音量。',
       heart: 8,
     },
     {
@@ -96,6 +227,7 @@ const musicData = {
       artist: 'Gunna',
       album: 'Drip or Drown 2',
       coverUrl: '/music/s-dripordrown2gunna.jpg',
+      reflection: 'Gunna 的唱法就是那种「什么都不说，但你就是听懂了」的飘。旋律没有棱角，却意外地黏人。',
       heart: 9,
     },
     {
@@ -104,6 +236,7 @@ const musicData = {
       artist: 'Playboi Carti / Ty Dolla $ign / Young Thug',
       album: 'ALL RED - Single',
       coverUrl: '/music/s-allredsingleplayboicarti.jpg',
+      reflection: '三个人的声音叠在一起，谁也没在抢，就是一起把气氛拉满。这种歌不需要歌词本，需要的是音箱。',
       heart: 10,
     },
     {
@@ -112,6 +245,7 @@ const musicData = {
       artist: 'Young Thug',
       album: 'Slime & B',
       coverUrl: '/music/s-slimebchrisbrownyoungthug.jpg',
+      reflection: 'Thug 的咬字是故意含混的，但节奏的推进一点都不含糊。听久了会发现，他其实是在用声音当打击乐。',
       heart: 11,
     },
     {
@@ -120,6 +254,7 @@ const musicData = {
       artist: 'Kanye West / Ye',
       album: 'BULLY',
       coverUrl: '/music/s-bullykanyewest.jpg',
+      reflection: '标题就是他的态度：不解释，先做出来。编曲留白很多，人声几乎是贴着耳朵说的。',
       heart: 12,
     },
     {
@@ -128,6 +263,7 @@ const musicData = {
       artist: 'Kanye West / Ye',
       album: 'BULLY',
       coverUrl: '/music/s-bullykanyewest.jpg',
+      reflection: '被打懵了还要继续走的那种状态。鼓点钝而重，听感上像一直在挨打又一直没倒下。',
       heart: 13,
     },
     {
@@ -136,6 +272,7 @@ const musicData = {
       artist: 'Kanye West / Ye',
       album: 'BULLY',
       coverUrl: '/music/s-bullykanyewest.jpg',
+      reflection: '一首关于绕圈子的歌——说过的话再说一遍，走过的路再走一遍。旋律平，但那种「明明知道还停不下来」的无力感很足。',
       heart: 14,
     },
     {
@@ -144,6 +281,7 @@ const musicData = {
       artist: 'Kanye West / Ye',
       album: '808s & Heartbreak (Exclusive Edition)',
       coverUrl: '/music/s-808sheartbreakexclusiveeditionkanyewest.jpg',
+      reflection: '等不及的语气从头贯到尾，采样切得又快又碎，像脑子里同时开着五个窗口。',
       heart: 15,
     },
     {
@@ -152,6 +290,7 @@ const musicData = {
       artist: 'Kanye West / Ye',
       album: 'BULLY',
       coverUrl: '/music/s-bullykanyewest.jpg',
+      reflection: '合唱式的编排，把个人的话放大成一群人的话。适合在车上开大音量。',
       heart: 16,
     },
     {
@@ -160,6 +299,7 @@ const musicData = {
       artist: 'Kanye West / Ye',
       album: '808s & Heartbreak',
       coverUrl: '/music/s-808sheartbreakkanyewest.jpg',
+      reflection: '短、硬、不留情面。这种曲子在专辑里像一句插话，但听过就忘不掉。',
       heart: 17,
     },
     {
@@ -168,6 +308,7 @@ const musicData = {
       artist: 'Kanye West / Ye',
       album: 'JESUS IS KING',
       coverUrl: '/music/s-jesusiskingkanyewest.jpg',
+      reflection: '他自己封的王。管乐和鼓铺得很开，气势是硬撑出来的，可你就是会被那股倔劲带着走。',
       heart: 18,
     },
     {
@@ -176,6 +317,7 @@ const musicData = {
       artist: 'KNA Connected',
       album: 'Uno',
       coverUrl: '/music/s-unoknaconnected.jpg',
+      reflection: '名字叫 China，听感却是很国际的一支律动。像一首在异乡写的歌，节奏记得住家乡，语言已经换了。',
       heart: 19,
     },
     {
@@ -184,6 +326,7 @@ const musicData = {
       artist: '张方钊',
       album: '2020 wasted',
       coverUrl: '/music/s-2020wasted河南說唱之神.jpg',
+      reflection: '把叹气写成了歌名，整首也就一直悬在那口气里。新人的好处是不装，情绪是生涩但真实的。',
       heart: 20,
     },
     {
@@ -192,6 +335,7 @@ const musicData = {
       artist: 'The Weeknd',
       album: 'Hurry Up Tomorrow',
       coverUrl: '/music/s-hurryuptomorrowtheweeknd.jpg',
+      reflection: '瀑布这个意象用得很准——感情到了某个点就是收不住地往下冲。合成器湿漉漉的，像水汽。',
       heart: 21,
     },
     {
@@ -200,6 +344,7 @@ const musicData = {
       artist: 'BwO',
       album: 'Sunshine In The Rain - Single',
       coverUrl: '/music/s-sunshineintherainsinglemadelineedwards.jpg',
+      reflection: '歌名就是整首的画面：雨里出太阳。旋律是旧派的、温柔的，适合当作一整天的背景音。',
       heart: 22,
     },
     {
@@ -208,6 +353,7 @@ const musicData = {
       artist: 'Bobby Brown',
       album: 'Don\'t Be Cruel',
       coverUrl: '/music/s-dontbecruelbobbybrown.jpg',
+      reflection: '八十年代 R&B 的标准答案：鼓机、贝斯、干干净净的副歌。放到今天听，律动依然不过时。',
       heart: 23,
     },
     {
@@ -216,6 +362,7 @@ const musicData = {
       artist: '2Pac',
       album: 'Better Dayz',
       coverUrl: '/music/s-betterdayz2pac.jpg',
+      reflection: '2Pac 少见的温柔一首。他在歌里给自己造了一个死后能安身的地方，听起来像祈祷。',
       heart: 24,
     },
     {
@@ -224,6 +371,7 @@ const musicData = {
       artist: '陳嫺靜',
       album: 'If we can be happy happy every day, who wants to be sad: *',
       coverUrl: '/music/s-ifwecanbehappyhappyeverydaywhowantstobes.jpg',
+      reflection: '编曲像旧科幻片的配乐，女声却贴得很近。这种「未来感的壳 + 很私人的里子」的反差是她的招牌。',
       heart: 25,
     },
     {
@@ -232,6 +380,7 @@ const musicData = {
       artist: 'Patricia Kaas',
       album: 'Carnets de scène',
       coverUrl: '/music/s-carnetsdescne派翠西亞凱絲.jpg',
+      reflection: '法语香颂的质感，声音里有烟和旧地毯的味道。适合在冬天的房间里放。',
       heart: 26,
     },
     {
@@ -240,6 +389,7 @@ const musicData = {
       artist: 'McKinley Dixon',
       album: 'Run, Run, Run - Single',
       coverUrl: '/music/s-runrunrunsinglemckinleydixon.jpg',
+      reflection: '爵士说唱，器乐是真录的，鼓刷和贝斯都在呼吸。听着像一间小酒馆，人不多但都懂。',
       heart: 27,
     },
     {
@@ -248,6 +398,7 @@ const musicData = {
       artist: '汪川',
       album: 'Hint Notes',
       coverUrl: '/music/s-hintnoteswangchuan.jpg',
+      reflection: '名字就叫秋千，整首也真的在前后摆——不往前冲，只是来回。适合发呆。',
       heart: 28,
     },
     {
@@ -256,6 +407,7 @@ const musicData = {
       artist: 'J. Cole',
       album: 'Oxnard',
       coverUrl: '/music/s-oxnardandersonpaak.jpg',
+      reflection: 'Cole 少见的、把「我错了」说得这么直白的一首。没有辩解，只有复盘。',
       heart: 29,
     },
     {
@@ -264,6 +416,7 @@ const musicData = {
       artist: 'J Dilla',
       album: 'Donuts',
       coverUrl: '/music/s-donutsjdilla.jpg',
+      reflection: 'Dilla 的采样永远像从旧磁带上撕下来的。这首几乎没有人声，却比很多人声更会说话。',
       heart: 30,
     },
     {
@@ -272,6 +425,7 @@ const musicData = {
       artist: 'Prince',
       album: 'Timeless',
       coverUrl: '/music/s-timelessprince.jpg',
+      reflection: 'Prince 唱这种柔软的歌时最不讲道理——明明是他，听起来却像你在对自己说话。',
       heart: 31,
     },
     {
@@ -280,6 +434,7 @@ const musicData = {
       artist: '亜蘭知子',
       album: 'Sounds From the Den EP, Vol. 3: City Pop Covers',
       coverUrl: '/music/s-soundsfromthedenepvol3citypopcoversmicha.jpg',
+      reflection: '城市流行（City Pop）的深夜版本，贝斯线懒洋洋地晃。是那种「下班后一个人在车里」的歌。',
       heart: 32,
     },
     {
@@ -288,6 +443,7 @@ const musicData = {
       artist: 'The Weeknd / 亜蘭知子',
       album: 'Out of Time (Japanese Version) - Single',
       coverUrl: '/music/s-outoftimejapaneseversionsingleshayneorok.jpg',
+      reflection: '把日式 City Pop 采样进自己的宇宙，The Weeknd 一直在做这件事。两个时代的声音叠在一起，居然不违和。',
       heart: 33,
     },
     {
@@ -296,6 +452,7 @@ const musicData = {
       artist: '坂本龍一',
       album: '1996 (Re-Mastered)',
       coverUrl: '/music/s-1996remasteredryuichisakamoto.jpg',
+      reflection: '就算不记得电影，也一定听过这段旋律。坂本龙一把「不能说出口的东西」全写进了那几个音里。',
       heart: 34,
     },
     {
@@ -303,6 +460,7 @@ const musicData = {
       title: 'Logic - Dear god (remix)',
       artist: '法老',
       coverUrl: '',
+      reflection: '把 Logic 的《Dear God》拿来重写，法老的版本更贴身、更像写给自己的信。Remix 能做到「换个人就换一口气」的不多。',
       heart: 35,
     },
     {
@@ -311,6 +469,7 @@ const musicData = {
       artist: '宋岳庭',
       album: '宋岳庭的羽毛',
       coverUrl: '/music/s-宋岳庭的羽毛宋岳庭.jpg',
+      reflection: '他的录音条件很差，但那句句子的重量盖过了所有技术缺陷。听他的歌会明白，有些表达是不需要音质的。',
       heart: 36,
     },
     {
@@ -319,6 +478,7 @@ const musicData = {
       artist: 'Logic',
       album: 'Dear God - EP',
       coverUrl: '/music/s-deargodepxtc.jpg',
+      reflection: '一封写给上帝的信，问的全是没有答案的问题。钢琴和鼓都很朴素，因为他要的是那句话本身被听见。',
       heart: 37,
     },
     {
@@ -327,6 +487,7 @@ const musicData = {
       artist: 'The Rembrandts',
       album: 'The Rembrandts: L.P.',
       coverUrl: '/music/s-therembrandtslptherembrandts.jpg',
+      reflection: '《老友记》一响起来，脑子里就是那张沙发。它已经不是一首歌了，是一段集体记忆的开关。',
       heart: 38,
     },
     {
@@ -335,6 +496,7 @@ const musicData = {
       artist: '张震岳',
       album: 'OK',
       coverUrl: '/music/s-okayuechang.jpg',
+      reflection: '阿岳写小情小爱的时候最动人——不煽情，也不装酷，就是老老实实说「我有点喜欢你」。',
       heart: 39,
     },
     {
@@ -343,6 +505,7 @@ const musicData = {
       artist: '张震岳',
       album: 'OK',
       coverUrl: '/music/s-okayuechang.jpg',
+      reflection: '一个人站在路口的那种状态：不是不知道该去哪，是暂时不想去。旋律松，词却很准。',
       heart: 40,
     },
     {
@@ -351,6 +514,7 @@ const musicData = {
       artist: '张震岳',
       album: 'OK',
       coverUrl: '/music/s-okayuechang.jpg',
+      reflection: '歌名就叫「很难」，通篇也确实没打算给出解法。这种不劝人坚强的情歌，反而更让人松一口气。',
       heart: 41,
     },
     {
@@ -359,6 +523,7 @@ const musicData = {
       artist: '蔡依林',
       album: 'J女神 (典藏精選)',
       coverUrl: '/music/s-j女神典藏精選jolin蔡依林.jpg',
+      reflection: '千禧年前后华语舞曲的代表作之一。它的野心写在了编曲里——那时候大家真的想做出「国际感」。',
       heart: 42,
     },
     {
@@ -367,6 +532,7 @@ const musicData = {
       artist: '陈绮贞',
       album: 'Groupies',
       coverUrl: '/music/s-groupiescheerchen.jpg',
+      reflection: '钢琴版把编曲剥光，只剩下那点偷偷藏起来的、不太体面的心思。绮贞写暗恋从不美化它。',
       heart: 43,
     },
     {
@@ -375,6 +541,7 @@ const musicData = {
       artist: '陈绮贞',
       album: 'Cheer',
       coverUrl: '/music/s-cheercheerchen.jpg',
+      reflection: '关于「喜欢一个舞台上的人」这件事，她写得又甜又清醒——知道那是距离产生的光，但还是想靠近。',
       heart: 44,
     },
     {
@@ -383,6 +550,7 @@ const musicData = {
       artist: '陈绮贞',
       album: 'Cheer',
       coverUrl: '/music/s-cheercheerchen.jpg',
+      reflection: '轻快得像真的在跳三步。她最擅长的就是把很轻的东西写得让人记住很久。',
       heart: 45,
     },
     {
@@ -391,6 +559,7 @@ const musicData = {
       artist: '陈绮贞',
       album: '吉他手',
       coverUrl: '/music/s-吉他手陳綺貞.jpg',
+      reflection: '「太聪明」在这里不是夸，是自嘲。想得太多、算得太清，最后反而把自己绕进去了。',
       heart: 46,
     },
     {
@@ -399,6 +568,7 @@ const musicData = {
       artist: 'Florence + The Machine',
       album: 'Lungs (Digital Deluxe Version)',
       coverUrl: '/music/s-lungsdigitaldeluxeversionflorencethemach.jpg',
+      reflection: '开头那阵鼓一响，情绪就被推着往前跑。适合在特别需要「重启一下」的时候听。',
       heart: 47,
     },
     {
@@ -407,6 +577,7 @@ const musicData = {
       artist: 'Brasstracks',
       album: 'Welcome Back - Single',
       coverUrl: '/music/s-welcomebacksinglebrasstracks.jpg',
+      reflection: '铜管铺得亮堂又暖和，像推门进来一屋子人跟你说「回来啦」。纯器乐也能有情绪，这首就是证明。',
       heart: 48,
     },
     {
@@ -415,6 +586,7 @@ const musicData = {
       artist: '张学友',
       album: '黑與白',
       coverUrl: '/music/s-黑與白.jpg',
+      reflection: '歌神唱苦情歌从来不用力，就是稳稳地把每个字放到位。听完会觉得，难过也可以是很体面的事。',
       heart: 49,
     },
     {
@@ -422,6 +594,7 @@ const musicData = {
       title: 'I.D.W.G.A.J',
       artist: 'LAUSSE THE CAT',
       coverUrl: '',
+      reflection: '念白式的说唱，像在跟你聊天。这种「不表演」的唱法，在说唱里反而最难做到。',
       heart: 50,
     },
     {
@@ -430,6 +603,7 @@ const musicData = {
       artist: 'nomi.',
       album: 'what u want - Single',
       coverUrl: '/music/s-whatuwantsinglenomi.jpg',
+      reflection: '气声很多，咬字很轻，像隔着一层纱在说话。适合夜里戴耳机听，音量不用大。',
       heart: 51,
     },
     {
@@ -438,6 +612,7 @@ const musicData = {
       artist: 'The Cure',
       album: 'Wish',
       coverUrl: '/music/s-wishthecure.jpg',
+      reflection: '关于「星期五」最快乐的一首歌，却写在一个一直不太快乐的人手里。它的明亮是挣来的。',
       heart: 52,
     },
     {
@@ -446,6 +621,7 @@ const musicData = {
       artist: '蔡依林',
       album: 'Agent J',
       coverUrl: '/music/s-agentjjolin.jpg',
+      reflection: '歌名中间那个空格就是态度：把「冷暴力」拆开，让人看见那种不动手的伤害。编曲冷得刚好。',
       heart: 53,
     },
     {
@@ -454,6 +630,7 @@ const musicData = {
       artist: 'Prince / The Revolution',
       album: 'Around The World In A Day',
       coverUrl: '/music/s-aroundtheworldinadayprincetherevolution.jpg',
+      reflection: '他给自己造了一个可以躲进去的世界，还邀请所有人来做客。放克、流行、迷幻全搅在一起，却只有一个主人。',
       heart: 54,
     },
     {
@@ -462,6 +639,7 @@ const musicData = {
       artist: '蔡依林',
       album: '野蠻遊戲',
       coverUrl: '/music/s-野蠻遊戲jolintsai.jpg',
+      reflection: '东方元素混进流行舞曲，编曲里有二胡和电子鼓在打架。放在当年是很敢的做法。',
       heart: 55,
     },
     {
@@ -470,6 +648,7 @@ const musicData = {
       artist: 'The Honey Drippers',
       album: 'Impeach the President - Single',
       coverUrl: '/music/s-impeachthepresidentsinglethehoneydripper.jpg',
+      reflection: '后来被无数嘻哈采样过的鼓点源头。听原曲才明白，为什么这段鼓能撑起半个说唱史。',
       heart: 56,
     },
     {
@@ -478,6 +657,7 @@ const musicData = {
       artist: 'Minnie Riperton',
       album: 'Perfect Angel',
       coverUrl: '/music/s-perfectangelminnieriperton.jpg',
+      reflection: '那几声高音不是炫技，是把「喜欢」这件事推到了语言到不了的地方。听完会安静一会儿。',
       heart: 57,
     },
     {
@@ -486,6 +666,7 @@ const musicData = {
       artist: 'Nas / Amerie',
       album: 'Like Mike (Music from the Motion Picture)',
       coverUrl: '/music/s-likemikemusicfromthemotionpicturenas.jpg',
+      reflection: 'Nas 的叙事依旧稳，Amerie 的副歌给了它一层流行光泽。硬的和软的咬合得很好。',
       heart: 58,
     },
     {
@@ -494,6 +675,7 @@ const musicData = {
       artist: 'Kanye West',
       album: 'The Man with the Iron Fists: Soundtrack Instrumental',
       coverUrl: '/music/s-themanwiththeironfistssoundtrackinstrume.jpg',
+      reflection: '少见的、几乎没有鼓的一首。像婚礼前一个人在房间里换衣服的那几分钟，安静到能听见自己。',
       heart: 59,
     },
     {
@@ -502,6 +684,7 @@ const musicData = {
       artist: 'Alicia Keys',
       album: '原音重現 (現場演唱專輯)',
       coverUrl: '/music/s-原音重現現場演唱專輯aliciakeys.jpg',
+      reflection: '一首把「你值得被好好对待」说得很郑重的情歌。钢琴和人声就够撑起全部了。',
       heart: 60,
     },
     {
@@ -510,6 +693,7 @@ const musicData = {
       artist: 'Beyoncé',
       album: '16 CARRIAGES - Single',
       coverUrl: '/music/s-16carriagessinglebeyonc.jpg',
+      reflection: '把乡村、福音和自传体叙事缝在一起，唱的是很重的成长代价。她的声音像在扛东西。',
       heart: 61,
     },
     {
@@ -518,6 +702,7 @@ const musicData = {
       artist: 'Chaka Khan',
       album: 'Epiphany: The Best of Chaka Khan, Vol. 1',
       coverUrl: '/music/s-epiphanythebestofchakakhanvol1chakakhan.jpg',
+      reflection: '教科书级的灵魂唱腔，副歌那一下是真的在「穿过火」。翻唱的人很多，没有人真的跨过去。',
       heart: 62,
     },
     {
@@ -526,6 +711,7 @@ const musicData = {
       artist: 'Magdalena Bay',
       album: 'Imaginal Disk',
       coverUrl: '/music/s-imaginaldiskmagdalenabay.jpg',
+      reflection: '两个名字，一段小叙事，合成器甜得有点失真。像在看一盘画质很好的旧录像带。',
       heart: 63,
     },
     {
@@ -534,6 +720,7 @@ const musicData = {
       artist: 'B.B. King',
       album: 'Completely Well',
       coverUrl: '/music/s-completelywellbbking.jpg',
+      reflection: '「刺激没了」——蓝调最经典的一句叹息。吉他每一下都在往回收，像在跟什么告别。',
       heart: 64,
     },
     {
@@ -541,6 +728,7 @@ const musicData = {
       title: '山沟沟的作家',
       artist: 'FLOOD芙拉得 / yama亚麻',
       coverUrl: '',
+      reflection: '名字很土，内容不土。两个人像是把老家的口音和城市的节拍硬缝在了一起，粗糙但有生气。',
       heart: 65,
     },
     {
@@ -549,6 +737,7 @@ const musicData = {
       artist: 'Lana Del Rey',
       album: 'Born to Die (Deluxe Version)',
       coverUrl: '/music/s-borntodiedeluxeversionlanadelrey.jpg',
+      reflection: '夏天和抑郁被放在同一个句子里，这是 Lana 的专利。副歌很慢，慢到情绪有时间发酵。',
       heart: 66,
     },
     {
@@ -557,6 +746,7 @@ const musicData = {
       artist: 'Marvin Gaye',
       album: 'What\'s Going On',
       coverUrl: '/music/s-whatsgoingonmarvingaye.jpg',
+      reflection: '半个世纪前写的环保歌，现在听每一句都还在应验。灵魂乐的底色，唱的是很硬的内容。',
       heart: 67,
     },
     {
@@ -565,6 +755,7 @@ const musicData = {
       artist: 'Lady Gaga',
       album: 'Harlequin',
       coverUrl: '/music/s-harlequinladygaga.jpg',
+      reflection: '一首被翻唱过无数次的经典，她唱出了自己的版本——不再是想念，而是一种更笃定的靠近。',
       heart: 68,
     },
     {
@@ -573,6 +764,7 @@ const musicData = {
       artist: 'Travis Scott',
       album: 'ASTROWORLD',
       coverUrl: '/music/s-astroworldtravisscott.jpg',
+      reflection: '献给休斯顿的 DJ Screw，慢放的人声像磁带被拉长。Trap 也可以是一种悼念。',
       heart: 69,
     },
     {
@@ -581,6 +773,7 @@ const musicData = {
       artist: 'Ray Charles',
       album: 'Pure Genius: The Complete Atlantic Recordings (1952-1959) [Remastered]',
       coverUrl: '/music/s-puregeniusthecompleteatlanticrecordings1.jpg',
+      reflection: '福音和世俗被他一脚踢到同一间屋子里，节奏一起你就不可能坐着。这是 R&B 的起点之一。',
       heart: 70,
     },
     {
@@ -589,6 +782,7 @@ const musicData = {
       artist: 'Lauryn Hill',
       album: 'MTV Unplugged No. 2.0',
       coverUrl: '/music/s-mtvunpluggedno20laurynhill.jpg',
+      reflection: '现场版比录音室更疯，她在歌里一边唱一边说，像同时进行一场布道和一场审判。',
       heart: 71,
     },
     {
@@ -597,6 +791,7 @@ const musicData = {
       artist: 'The Beatles',
       album: 'Let It Be (Remastered)',
       coverUrl: '/music/s-letitberemasteredthebeatles.jpg',
+      reflection: '最不需要介绍的一首。每次听到那句「顺其自然」，还是会被按住一会儿。',
       heart: 72,
     },
     {
@@ -605,6 +800,7 @@ const musicData = {
       artist: 'John Lennon',
       album: 'Double Fantasy (Stripped Down)',
       coverUrl: '/music/s-doublefantasystrippeddownjohnlennon.jpg',
+      reflection: '写给儿子的歌，温柔得几乎不像他。所有锋利的东西都被收起来了。',
       heart: 73,
     },
     {
@@ -613,6 +809,7 @@ const musicData = {
       artist: 'Mark Ronson / Bruno Mars',
       album: 'Uptown Special',
       coverUrl: '/music/s-uptownspecialmarkronson.jpg',
+      reflection: '把七十年代的放克拆开重新组装，做得又亮又准。它的功能很单纯——让所有人站起来。',
       heart: 74,
     },
     {
@@ -621,6 +818,7 @@ const musicData = {
       artist: 'Betty Wright',
       album: 'Mother Wit',
       coverUrl: '/music/s-motherwitbettywright.jpg',
+      reflection: '嗓子一开口就是老派的质感。这种歌不需要复杂的编曲，人声本身就是乐器。',
       heart: 75,
     },
     {
@@ -629,6 +827,7 @@ const musicData = {
       artist: '陳嫺靜',
       album: 'If we can be happy happy every day, who wants to be sad:))',
       coverUrl: '/music/s-ifwecanbehappyhappyeverydaywhowantstobes.jpg',
+      reflection: '数字式的歌名，内容却很具体。她的东西总像日记，只是用合成器写的。',
       heart: 76,
     },
     {
@@ -637,6 +836,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       album: 'untitled unmastered.',
       coverUrl: '/music/s-untitledunmasteredkendricklamar.jpg',
+      reflection: '连名字都懒得取，音乐却一点都不随便。那段贝斯一直在往下坠，人声浮在上面。',
       heart: 77,
     },
     {
@@ -645,6 +845,7 @@ const musicData = {
       artist: 'Drake',
       album: 'ICEMAN',
       coverUrl: '/music/s-icemandrake.jpg',
+      reflection: 'Drake 惯用的那种「半唱半说」，配上很轻的鼓。适合在开车的路上随便听。',
       heart: 78,
     },
     {
@@ -653,6 +854,7 @@ const musicData = {
       artist: 'East Of Underground',
       album: 'East of Underground',
       coverUrl: '/music/s-eastofundergroundeastofunderground.jpg',
+      reflection: '一支当年在美军电台里活动的乐队，留下的录音粗糙却滚烫。这首歌的「我爱你」是喊出来的。',
       heart: 79,
     },
     {
@@ -661,6 +863,7 @@ const musicData = {
       artist: 'Ed Calle',
       album: 'Twilight',
       coverUrl: '/music/s-twilightedcalle.jpg',
+      reflection: '器乐版把原曲的甜拆成了更温柔的形状，萨克斯像在替人说话。适合安静的下午。',
       heart: 80,
     },
     {
@@ -669,6 +872,7 @@ const musicData = {
       artist: 'Kanye West / Ye / Lauryn Hill',
       album: 'I Can’t Wait (feat. Poppy Baskcomb) - Single',
       coverUrl: '/music/s-icantwaitfeatpoppybaskcombsingletistosol.jpg',
+      reflection: 'Lauryn Hill 一开口，整首歌的重心就换了。她的段落里没有一句是多余的。',
       heart: 81,
     },
     {
@@ -677,6 +881,7 @@ const musicData = {
       artist: 'Bobby Hebb',
       album: 'Sunny',
       coverUrl: '/music/s-sunnybobbyhebb.jpg',
+      reflection: '1966 年的老歌，旋律简单到像童谣，却唱得人心里发亮。被采样、被翻唱了几十年。',
       heart: 82,
     },
     {
@@ -685,6 +890,7 @@ const musicData = {
       artist: '2Pac / Michel\'le / Storm / Mutah',
       album: 'All Eyez On Me',
       coverUrl: '/music/s-alleyezonme2pac.jpg',
+      reflection: '2Pac 的街头叙事从来不只是狠，还有一层对身边人的照顾。Michel\'le 的副歌把硬壳撬开了一条缝。',
       heart: 83,
     },
     {
@@ -693,6 +899,7 @@ const musicData = {
       artist: 'John Lennon',
       album: 'Imagine',
       coverUrl: '/music/s-imaginejohnlennon.jpg',
+      reflection: '一首被唱到几乎失去重量的歌，但每次认真听，还是会被那句「想象所有人」绊住。',
       heart: 84,
     },
     {
@@ -701,6 +908,7 @@ const musicData = {
       artist: '陳嫺靜',
       album: 'If we can be happy happy every day, who wants to be sad:))',
       coverUrl: '/music/s-ifwecanbehappyhappyeverydaywhowantstobes.jpg',
+      reflection: '像随手记下的东西被做成了歌，结构松散、情绪真实。她的魅力就在于不把话说完。',
       heart: 85,
     },
     {
@@ -709,6 +917,7 @@ const musicData = {
       artist: 'George Benson',
       album: '20/20',
       coverUrl: '/music/s-2020georgebenson.jpg',
+      reflection: '老派情歌的顶配。旋律一出来，脑子里自动就是九十年代的婚礼现场。',
       heart: 86,
     },
     {
@@ -717,6 +926,7 @@ const musicData = {
       artist: 'Patti Austin',
       album: 'That Secret Place',
       coverUrl: '/music/s-thatsecretplacepattiaustin.jpg',
+      reflection: '轻快的律动配笃定的词：不需要更多了。这种「够了」的满足感，比求而不得更难写。',
       heart: 87,
     },
     {
@@ -725,6 +935,7 @@ const musicData = {
       artist: 'Tears for Fears',
       album: 'Songs from the Big Chair',
       coverUrl: '/music/s-songsfromthebigchairtearsforfears.jpg',
+      reflection: '八十年代最好的流行曲之一。旋律太顺了，顺到很多人没注意歌词其实挺冷。',
       heart: 88,
     },
     {
@@ -733,6 +944,7 @@ const musicData = {
       artist: 'One Direction',
       album: 'Up All Night (Deluxe Version)',
       coverUrl: '/music/s-upallnightdeluxeversiononedirection.jpg',
+      reflection: '青春期的标准答案。现在听会笑，但当年它确实让一整代人觉得「被看见」了。',
       heart: 89,
     },
     {
@@ -741,6 +953,7 @@ const musicData = {
       artist: 'Justin Bieber',
       album: 'My World 2.0 (Bonus Track Version)',
       coverUrl: '/music/s-myworld20bonustrackversionjustinbieber.jpg',
+      reflection: '少年的心碎，编曲甜、词很苦。那种不服气的委屈，是十几岁才有的浓度。',
       heart: 90,
     },
     {
@@ -749,6 +962,7 @@ const musicData = {
       artist: 'Justin Bieber',
       album: 'Purpose (Deluxe)',
       coverUrl: '/music/s-purposedeluxejustinbieber.jpg',
+      reflection: '把「分手」写成了轻描淡写的告别信，一句抱怨都没有，反而更狠。',
       heart: 91,
     },
     {
@@ -757,6 +971,7 @@ const musicData = {
       artist: 'Justin Bieber',
       album: 'Changes',
       coverUrl: '/music/s-changesjustinbieber.jpg',
+      reflection: 'R&B 的柔软版本，人声贴着节拍走。适合当作夜晚的底色。',
       heart: 92,
     },
     {
@@ -765,6 +980,7 @@ const musicData = {
       artist: 'Justin Bieber / Daniel Caesar / GIVĒON',
       album: 'Justice',
       coverUrl: '/music/s-justicejustinbieber.jpg',
+      reflection: '三个人的声音像三种温度，叠在一起刚刚好。副歌简单，但记性极好。',
       heart: 93,
     },
     {
@@ -773,6 +989,7 @@ const musicData = {
       artist: 'The Kid LAROI / Justin Bieber',
       album: 'STAY - Single',
       coverUrl: '/music/s-staysinglethekidlaroijustinbieber.jpg',
+      reflection: '关于「别走」的一首歌，节奏却快得像在追人。焦虑和旋律同时在线。',
       heart: 94,
     },
     {
@@ -781,6 +998,7 @@ const musicData = {
       artist: 'Justin Bieber / Nicki Minaj',
       album: 'Believe (Deluxe Edition)',
       coverUrl: '/music/s-believedeluxeeditionjustinbieber.jpg',
+      reflection: '舞曲的黄金配方：干净的电子底 + Nicki 的一段炫技。功能明确，就是让人动起来。',
       heart: 95,
     },
     {
@@ -789,6 +1007,7 @@ const musicData = {
       artist: 'Doja Cat',
       album: 'Hot Pink',
       coverUrl: '/music/s-hotpinkdojacat.jpg',
+      reflection: '复古迪斯科的壳，唱的是很当代的暧昧。那段贝斯线一响就忍不住跟着晃。',
       heart: 96,
     },
     {
@@ -797,6 +1016,7 @@ const musicData = {
       artist: 'Janet Jackson',
       album: 'Janet.',
       coverUrl: '/music/s-janetjanetjackson.jpg',
+      reflection: '慢到几乎停滞的 R&B，把「随时都可以」说得又轻又撩。是九十年代最会留白的那种唱法。',
       heart: 97,
     },
     {
@@ -805,6 +1025,7 @@ const musicData = {
       artist: 'Doja Cat',
       album: 'Scarlet 2 CLAUDE',
       coverUrl: '/music/s-scarlet2claudedojacat.jpg',
+      reflection: '在流行和说唱之间来回横跳，副歌甜得发腻，Verse 又突然变脸。她一直很会玩这种反差。',
       heart: 98,
     },
     {
@@ -813,6 +1034,7 @@ const musicData = {
       artist: 'Olivia Rodrigo',
       album: 'you seem pretty sad for a girl so in love',
       coverUrl: '/music/s-youseemprettysadforagirlsoinloveoliviaro.jpg',
+      reflection: '关于「以为某个人能治好自己」这件事，她写得又清醒又舍不得。年轻人的痛感，她从来不打折。',
       heart: 99,
     },
     {
@@ -821,6 +1043,7 @@ const musicData = {
       artist: 'Frank Ocean / Diplo / Mick Jones / Paul Simonon',
       album: 'Blonde',
       coverUrl: '/music/s-blondefrankocean.jpg',
+      reflection: '请了朋克老将来弹琴，出来的却是 Frank Ocean 那种慢热的孤独。副歌里那句「你可以做我的英雄」说得又轻又当真。',
       heart: 100,
     },
     {
@@ -829,6 +1052,7 @@ const musicData = {
       artist: 'Prince',
       album: '1999 (Super Deluxe Edition) [2019 Remaster]',
       coverUrl: '/music/s-1999superdeluxeedition2019remasterprince.jpg',
+      reflection: '录音室版已经很露骨，现场版反而更狠：他把速度拖慢到近乎停滞，让每个字都落在你来不及准备的位置。听的时候会不自觉屏住呼吸。',
       plays: 1,
     },
     {
@@ -837,6 +1061,7 @@ const musicData = {
       artist: '某幻君',
       album: '一周的说唱歌手 第19期 (Live) - Single',
       coverUrl: '/music/s-一周的说唱歌手第19期livesingleacertainphantomking.jpg',
+      reflection: '某幻君的东西总有一股少年气。旋律松松垮垮地铺着，词却一句比一句实在——像在深夜对自己说话，说着说着就认真了。',
       plays: 2,
     },
     {
@@ -845,6 +1070,7 @@ const musicData = {
       artist: 'Lil Nas X / Billy Ray Cyrus',
       album: 'Old Town Road (feat. RM of BTS) [Seoul Town Road Remix] - Single',
       coverUrl: '/music/s-oldtownroadfeatrmofbtsseoultownroadremix.jpg',
+      reflection: '乡村和 Trap 缝在一起的怪物级热单。Billy Ray Cyrus 那段一进来，土和潮就不再是反义词了。',
       plays: 3,
     },
     {
@@ -853,6 +1079,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       album: 'Not Like Us - Single',
       coverUrl: '/music/s-notlikeussinglekendricklamar.jpg',
+      reflection: '把一场恩怨写成了一首能全场大合唱的歌，这本身就够狠。beat 一起就想起立，节奏感是听完会想重放三遍的级别。',
       plays: 4,
     },
     {
@@ -860,6 +1087,7 @@ const musicData = {
       title: '自夸小队',
       artist: '某幻君 / 老番茄 / 王瀚哲 (中国BOY) / 花少北',
       coverUrl: '',
+      reflection: '几个人凑在一起闹着玩，结果做成了一首真的能循环的歌。朋友之间的松弛感是装不出来的。',
       plays: 5,
     },
     {
@@ -867,6 +1095,7 @@ const musicData = {
       title: '秃爵',
       artist: '某幻君 / 老番茄',
       coverUrl: '',
+      reflection: '两个人的配合像打乒乓球，你来我往都不肯掉球。听着会想起学生时代跟人抬杠的那种快乐。',
       plays: 6,
     },
     {
@@ -875,6 +1104,7 @@ const musicData = {
       artist: '华晨宇',
       album: '歌手·当打之年 (第十期 Live)',
       coverUrl: '/music/s-歌手当打之年第十期livehuachenyu.jpg',
+      reflection: '华晨宇的现场。疯是外壳，底下是很稳的控制力——他把「失控」演得精确到每一拍。',
       plays: 7,
     },
     {
@@ -883,6 +1113,7 @@ const musicData = {
       artist: '某幻君 / 王瀚哲 (中国BOY)',
       album: 'Dysonman - Single',
       coverUrl: '/music/s-dysonmansingleacertainphantomking.jpg',
+      reflection: '歌名玩的是《仿生人会梦见电子羊吗》的梗，听感也像一场赛博梦游。hook 抓耳得不讲道理。',
       plays: 8,
     },
     {
@@ -891,6 +1122,7 @@ const musicData = {
       artist: '某幻君 / 老番茄',
       album: '隱形大衣 - Single',
       coverUrl: '/music/s-隱形大衣single石璽彤中國boy某幻君.jpg',
+      reflection: '两个老搭档越写越顺。这首的节奏更松弛，像忙完一天之后随口唱的那几句。',
       plays: 9,
     },
     {
@@ -899,6 +1131,7 @@ const musicData = {
       artist: 'Frank Ocean',
       album: 'Blonde',
       coverUrl: '/music/s-blondefrankocean.jpg',
+      reflection: '整张 Blonde 里最像「凌晨四点」的一首。人声被推到最近，几乎听得见换气；后半段突然切进一段变调的吉他，像记忆被猛地拧了一下。',
       plays: 10,
     },
     {
@@ -907,6 +1140,7 @@ const musicData = {
       artist: 'Billie Eilish',
       album: 'HIT ME HARD AND SOFT',
       coverUrl: '/music/s-hitmehardandsoftbillieeilish.jpg',
+      reflection: '关于「想和你一起到老」的歌，她唱得轻得像耳语，内容却重得不行。越平静越让人心里发紧。',
       plays: 11,
     },
     {
@@ -915,6 +1149,7 @@ const musicData = {
       artist: 'Prince / The Revolution',
       album: 'Purple Rain (Deluxe Expanded Edition) [2015 Paisley Park Remaster]',
       coverUrl: '/music/s-purpleraindeluxeexpandededition2015paisl.jpg',
+      reflection: '八分钟的现场，从布道开始，最后变成一场雨。他把吉他当成嗓子在用，唱到后面已经不是表演了。',
       plays: 12,
     },
     {
@@ -923,6 +1158,7 @@ const musicData = {
       artist: '西原健一郎',
       album: 'Kaleidoscope Suite (Best Mix and Remixes)',
       coverUrl: '/music/s-kaleidoscopesuitebestmixandremixeskenich.jpg',
+      reflection: '爵士嘻哈的温柔版本，钢琴和女声都克制。适合深夜、适合一个人把灯关掉。',
       plays: 13,
     },
     {
@@ -931,6 +1167,7 @@ const musicData = {
       artist: 'Frank Ocean',
       album: 'Blonde',
       coverUrl: '/music/s-blondefrankocean.jpg',
+      reflection: '整张专辑最舍不得放下的那首。人声被处理得又薄又远，像隔着一层水在听——说的是「我懂」，可什么都留不住。',
       plays: 14,
     },
     {
@@ -939,6 +1176,7 @@ const musicData = {
       artist: '法老 / 杨秋儒',
       album: '中国说唱巅峰对决2023 第一期(Live)',
       coverUrl: '/music/s-中国说唱巅峰对决2023第一期livepharaoh.jpg',
+      reflection: '「我想」这个句式本身就带着不甘心。两个人把那种「想要但还够不着」的状态写得很实在。',
       plays: 15,
     },
     {
@@ -947,6 +1185,7 @@ const musicData = {
       artist: 'Kendrick Lamar / SZA',
       album: 'GNX',
       coverUrl: '/music/s-gnxkendricklamar.jpg',
+      reflection: 'Kendrick 和 SZA 的声音像两种温度的水，混在一起刚好。采样旧歌的做法他用得越来越自然。',
       plays: 16,
     },
     {
@@ -955,6 +1194,7 @@ const musicData = {
       artist: '华晨宇',
       album: '无聊人 - Single',
       coverUrl: '/music/s-无聊人singlehuachenyu.jpg',
+      reflection: '把「无聊」写成了一种攻击性的东西。编曲里有大量的空白，那些空白才是主角。',
       plays: 17,
     },
     {
@@ -963,6 +1203,7 @@ const musicData = {
       artist: 'J. Cole',
       album: 'MIDDLE CHILD - Single',
       coverUrl: '/music/s-middlechildsinglejcole.jpg',
+      reflection: '夹在两代人中间的自我定位，他说得不急不躁。这种「我不站队」的立场，反而最难站。',
       plays: 18,
     },
     {
@@ -971,6 +1212,7 @@ const musicData = {
       artist: 'Post Malone',
       album: 'Hollywood\'s Bleeding',
       coverUrl: '/music/s-hollywoodsbleedingpostmalone.jpg',
+      reflection: '关于「走不出去又回不来」的那种关系。旋律软得像随口哼的，副歌却会一直缠着你。',
       plays: 19,
     },
     {
@@ -979,6 +1221,7 @@ const musicData = {
       artist: '王瀚哲 (中国BOY) / 花少北 / LexBurner / 老番茄 / 某幻君',
       album: 'MYSELF',
       coverUrl: '/music/s-myself王瀚哲中國boy.jpg',
+      reflection: '一大群人的合作曲，热闹得像夏天的毕业旅行。听的时候会想起那种「人很多但很自由」的日子。',
       plays: 20,
     },
     {
@@ -986,6 +1229,7 @@ const musicData = {
       title: '感同身受',
       artist: '某幻君',
       coverUrl: '',
+      reflection: '这四个字本身就很难做到，他也没打算假装做到了。整首像是在说：我理解不了，但我在这儿。',
       plays: 21,
     },
     {
@@ -994,6 +1238,7 @@ const musicData = {
       artist: 'J. Cole',
       album: '2014 Forest Hills Drive',
       coverUrl: '/music/s-2014foresthillsdrivejcole.jpg',
+      reflection: '他坦白自己没有一个可以模仿的对象，只能自己摸索。那句关于「不要做别人的替补」的劝告，比很多鸡汤都管用。',
       plays: 22,
     },
     {
@@ -1002,6 +1247,7 @@ const musicData = {
       artist: 'The Chainsmokers / Coldplay',
       album: 'Kaleidoscope - EP',
       coverUrl: '/music/s-kaleidoscopeepcoldplaythechainsmokers.jpg',
+      reflection: '把「我不需要超级英雄，只要你就好」唱成了大合唱。旋律抓人，底色其实很朴素。',
       plays: 23,
     },
     {
@@ -1009,6 +1255,7 @@ const musicData = {
       title: '天使与魔鬼',
       artist: '幼稚园杀手 / 幸存者联盟',
       coverUrl: '',
+      reflection: '把自我里对立的两半摊开来说。中文说唱里能把这种内耗讲清楚的不多。',
       plays: 24,
     },
     {
@@ -1017,6 +1264,7 @@ const musicData = {
       artist: '华晨宇',
       album: '寒鸦少年 - Single',
       coverUrl: '/music/s-寒鸦少年singlehuachenyu.jpg',
+      reflection: '关于「不合群」的一首歌，他没有把它写成抱怨，而是写成了一种骄傲。',
       plays: 25,
     },
     {
@@ -1025,6 +1273,7 @@ const musicData = {
       artist: 'Prince / The Revolution',
       album: 'Parade (Music from the Motion Picture Under the Cherry Moon)',
       coverUrl: '/music/s-parademusicfromthemotionpictureunderthec.jpg',
+      reflection: '放克的教科书：吉他一响你就知道是谁。他唱「你不需要很漂亮也能拥有我的吻」的时候，是真诚的。',
       plays: 26,
     },
     {
@@ -1033,6 +1282,7 @@ const musicData = {
       artist: 'The Weeknd / Playboi Carti / Madonna',
       album: 'Popular (feat. Playboi Carti) [Music from the HBO Original Series The Idol] - Single',
       coverUrl: '/music/s-popularfeatplayboicartimusicfromthehboor.jpg',
+      reflection: '三个时代的声音挤在同一首歌里，Madonna 的出现像一次盖章。副歌很短，但很黏。',
       plays: 27,
     },
     {
@@ -1041,6 +1291,7 @@ const musicData = {
       artist: 'The Weeknd',
       album: 'Dawn FM',
       coverUrl: '/music/s-dawnfmtheweeknd.jpg',
+      reflection: '整张 Dawn FM 里最柔软的一首。合成器像八十年代的电台，他在里面说「已经来不及了」。',
       plays: 28,
     },
     {
@@ -1049,6 +1300,7 @@ const musicData = {
       artist: 'Travis Scott',
       album: 'ASTROWORLD',
       coverUrl: '/music/s-astroworldtravisscott.jpg',
+      reflection: '氛围大于歌词，人声只是音色之一。适合在噪音很大的环境里听，反而听得最清楚。',
       plays: 29,
     },
     {
@@ -1057,6 +1309,7 @@ const musicData = {
       artist: 'Prince',
       album: 'Prince',
       coverUrl: '/music/s-princeprince.jpg',
+      reflection: '他最早的代表作之一，年轻、直接、一点都不含蓄。那种「我就是想成为你的爱人」的坦白，现在听依然烫。',
       plays: 30,
     },
     {
@@ -1065,6 +1318,7 @@ const musicData = {
       artist: '21 Savage / J. Cole',
       album: 'i am > i was',
       coverUrl: '/music/s-iamiwas21savage.jpg',
+      reflection: '前半是冷冰冰的生存叙事，J. Cole 那段一进来，整首歌突然有了重量。',
       plays: 31,
     },
     {
@@ -1073,6 +1327,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       album: 'DAMN.',
       coverUrl: '/music/s-damnkendricklamar.jpg',
+      reflection: '鼓点硬得像拳头，词写的是「别飘」。它的功能很明确：把人从自满里打醒。',
       plays: 32,
     },
     {
@@ -1081,6 +1336,7 @@ const musicData = {
       artist: 'The Weeknd',
       album: 'Starboy',
       coverUrl: '/music/s-starboytheweeknd.jpg',
+      reflection: '关于「我是不是也值得你这样做」的一首。副歌很直白，反而最动人。',
       plays: 33,
     },
     {
@@ -1089,6 +1345,7 @@ const musicData = {
       artist: 'Taylor Swift',
       album: 'reputation',
       coverUrl: '/music/s-reputationtaylorswift.jpg',
+      reflection: '开场就是重鼓和低语，她把自己写成了一个危险角色。转折做得干净利落。',
       plays: 34,
     },
     {
@@ -1097,6 +1354,7 @@ const musicData = {
       artist: 'Ed Sheeran',
       album: '÷ (Deluxe)',
       coverUrl: '/music/s-deluxeedsheeran.jpg',
+      reflection: '婚礼歌单的常驻。简单、慢、不炫技，它赢在「不费力」这三个字上。',
       plays: 35,
     },
     {
@@ -1105,6 +1363,7 @@ const musicData = {
       artist: '某幻君',
       album: '自娱自乐 - Single',
       coverUrl: '/music/s-自娱自乐singlejinzhiwen.jpg',
+      reflection: '名字就说明了态度：本来也没打算给谁看。这种「自己玩得开心」的歌，往往最好听。',
       plays: 36,
     },
     {
@@ -1113,6 +1372,7 @@ const musicData = {
       artist: '华晨宇',
       album: '与火星的孩子对话 - Single',
       coverUrl: '/music/s-与火星的孩子对话singlehuachenyu.jpg',
+      reflection: '写给「和自己不一样的人」的一首歌。语气是温柔的，立场却很硬。',
       plays: 37,
     },
     {
@@ -1121,6 +1381,7 @@ const musicData = {
       artist: 'Lil Wayne / Kendrick Lamar',
       album: 'MONA LISA - Single',
       coverUrl: '/music/s-monalisasinglejhope.jpg',
+      reflection: '两代说唱高手过招，Kendrick 的段落像突然换了一部电影。听完只想倒回去再听一遍。',
       plays: 38,
     },
     {
@@ -1129,6 +1390,7 @@ const musicData = {
       artist: 'Travis Scott / Kendrick Lamar',
       album: 'Birds In The Trap Sing McKnight',
       coverUrl: '/music/s-birdsinthetrapsingmcknighttravisscott.jpg',
+      reflection: '歌名就是听感：起鸡皮疙瘩。Kendrick 那段的速度和音色切换，是整首歌的爆点。',
       plays: 39,
     },
     {
@@ -1137,6 +1399,7 @@ const musicData = {
       artist: '华晨宇',
       album: '異類',
       coverUrl: '/music/s-異類huachenyu.jpg',
+      reflection: '「我管你」三个字说得毫不客气，编曲也配合着往前顶。适合在需要一点脾气的时候放。',
       plays: 40,
     },
     {
@@ -1145,6 +1408,7 @@ const musicData = {
       artist: 'SZA',
       album: 'SOS',
       coverUrl: '/music/s-sossza.jpg',
+      reflection: '把「再睡一会儿」写成了舍不得结束。她的声音有一种懒洋洋的诚实。',
       plays: 41,
     },
     {
@@ -1153,6 +1417,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       album: 'DAMN. COLLECTORS EDITION.',
       coverUrl: '/music/s-damncollectorseditionkendricklamar.jpg',
+      reflection: '前奏那段人声采样一进来就让人坐直。整首像一次自我鉴定，结论是「别惹我」。',
       plays: 42,
     },
     {
@@ -1161,6 +1426,7 @@ const musicData = {
       artist: '华晨宇',
       album: '风之海 - Single',
       coverUrl: '/music/s-风之海singlehuachenyu.jpg',
+      reflection: '辽阔、干净，像站在高处的风里。他唱这种大开大合的东西时，控制力反而更明显。',
       plays: 43,
     },
     {
@@ -1169,6 +1435,7 @@ const musicData = {
       artist: 'Frank Ocean',
       album: 'Blonde',
       coverUrl: '/music/s-blondefrankocean.jpg',
+      reflection: '整张 Blonde 里最暖的一首。关于童年、关于失去，他写得不哀伤，只是很轻地承认了。',
       plays: 44,
     },
     {
@@ -1177,6 +1444,7 @@ const musicData = {
       artist: 'Kendrick Lamar / Zacari',
       album: 'DAMN.',
       coverUrl: '/music/s-damnkendricklamar.jpg',
+      reflection: '把「爱」这件事说得很具体——不是激情，是每天都在的那种。副歌软得像被子。',
       plays: 45,
     },
     {
@@ -1185,6 +1453,7 @@ const musicData = {
       artist: 'J. Cole',
       album: 'The Off-Season',
       coverUrl: '/music/s-theoffseasonjcole.jpg',
+      reflection: '开头的电话录音就把人拉进情境里。他写「成功之后反而更孤独」这件事，从来不用力。',
       plays: 46,
     },
     {
@@ -1193,6 +1462,7 @@ const musicData = {
       artist: 'Post Malone / Swae Lee',
       album: 'Spider-Man: Into the Spider-Verse (Soundtrack From & Inspired by the Motion Picture)',
       coverUrl: '/music/s-spidermanintothespiderversesoundtrackfro.jpg',
+      reflection: '两个人都很会写旋律，凑在一起就是一首天生适合循环的歌。轻快，但耐听。',
       plays: 47,
     },
     {
@@ -1201,6 +1471,7 @@ const musicData = {
       artist: 'J. Cole',
       album: 'Cole World: The Sideline Story',
       coverUrl: '/music/s-coleworldthesidelinestoryjcole.jpg',
+      reflection: '关于「我要变得更好再来找你」的那种少年心思。采样用得聪明，情绪是真的。',
       plays: 48,
     },
     {
@@ -1209,6 +1480,7 @@ const musicData = {
       artist: 'Travis Scott',
       album: 'ASTROWORLD',
       coverUrl: '/music/s-astroworldtravisscott.jpg',
+      reflection: '三段式结构，像三首歌拼在一起却毫不违和。每一次转折都在提高音量。',
       plays: 49,
     },
     {
@@ -1217,6 +1489,7 @@ const musicData = {
       artist: 'Prince',
       album: 'The Gold Experience',
       coverUrl: '/music/s-thegoldexperienceprince.jpg',
+      reflection: '歌名就在让人安静，编曲也真的收得很紧。他的克制和放肆是一体两面。',
       plays: 50,
     },
     {
@@ -1225,6 +1498,7 @@ const musicData = {
       artist: 'Prince',
       album: 'Controversy',
       coverUrl: '/music/s-controversyprince.jpg',
+      reflection: '录音室版，慢得几乎停滞。他把情欲唱成了很私密的、几乎不好意思听的东西。',
       plays: 51,
     },
     {
@@ -1233,6 +1507,7 @@ const musicData = {
       artist: 'Ed Sheeran',
       album: '÷ (Deluxe)',
       coverUrl: '/music/s-deluxeedsheeran.jpg',
+      reflection: '爱尔兰民谣的骨架套上流行旋律，轻快得像一场街头偶遇。',
       plays: 52,
     },
     {
@@ -1241,6 +1516,7 @@ const musicData = {
       artist: '华晨宇',
       album: '那些我尚未知道的美丽 - Single',
       coverUrl: '/music/s-那些我尚未知道的美丽singlehuachenyu.jpg',
+      reflection: '歌名就是一句诗。他唱的是「还没遇见但相信存在」的东西，语气里没有怀疑。',
       plays: 53,
     },
     {
@@ -1249,6 +1525,7 @@ const musicData = {
       artist: 'The Weeknd / Daft Punk',
       album: 'Starboy',
       coverUrl: '/music/s-starboytheweeknd.jpg',
+      reflection: 'Daft Punk 给了他一副八十年代的骨架。副歌简单到一听就会，是那种不需要解释的流行。',
       plays: 54,
     },
     {
@@ -1257,6 +1534,7 @@ const musicData = {
       artist: 'Drake',
       album: 'Scorpion',
       coverUrl: '/music/s-scorpiondrake.jpg',
+      reflection: '采样了一段女声，把它做成舞曲。内容是提醒人别把自己活小了。',
       plays: 55,
     },
     {
@@ -1265,6 +1543,7 @@ const musicData = {
       artist: 'J. Cole',
       album: '2014 Forest Hills Drive',
       coverUrl: '/music/s-2014foresthillsdrivejcole.jpg',
+      reflection: '两个城市、两种人生，他站在中间做对比。叙事稳，不煽情。',
       plays: 56,
     },
     {
@@ -1273,6 +1552,7 @@ const musicData = {
       artist: '王以太 / 艾热 AIR',
       album: '心中的日月',
       coverUrl: '/music/s-心中的日月王力宏.jpg',
+      reflection: '中文说唱里少见的、把「往上爬」写得这么有画面的作品。两个人的气口接得很顺。',
       plays: 57,
     },
     {
@@ -1281,6 +1561,7 @@ const musicData = {
       artist: 'Lauryn Hill',
       album: 'The Miseducation of Lauryn Hill',
       coverUrl: '/music/s-themiseducationoflaurynhilllaurynhill.jpg',
+      reflection: '老歌新唱，她把原来的甜改成了更厚重的表达。副歌一起来还是会起鸡皮疙瘩。',
       plays: 58,
     },
     {
@@ -1289,6 +1570,7 @@ const musicData = {
       artist: 'Frank Ocean',
       album: 'Blonde',
       coverUrl: '/music/s-blondefrankocean.jpg',
+      reflection: '整张 Blonde 里最孤单的一首。一个人、一台合成器，剩下的全是留白。',
       plays: 59,
     },
     {
@@ -1297,6 +1579,7 @@ const musicData = {
       artist: 'The Weeknd / Daft Punk',
       album: 'Starboy',
       coverUrl: '/music/s-starboytheweeknd.jpg',
+      reflection: '复古流行的完美示范：旋律顺、编曲干净、情绪克制。听完像刚看完一场日落。',
       plays: 60,
     },
     {
@@ -1305,6 +1588,7 @@ const musicData = {
       artist: 'YEHAIYAHAN',
       album: '围城 - Single',
       coverUrl: '/music/s-围城singlejahjahwayyehaiyahan.jpg',
+      reflection: '「围城」这个意象本身就带着矛盾——想进去又怕进去。编曲也配合着这种摇摆。',
       plays: 61,
     },
     {
@@ -1313,6 +1597,7 @@ const musicData = {
       artist: '华晨宇',
       album: '歌手·当打之年 (第十期 Live)',
       coverUrl: '/music/s-歌手当打之年第十期livehuachenyu.jpg',
+      reflection: '现场版比录音室更极端，气息和音量都在失控的边缘反复试探。这是他最擅长的战场。',
       plays: 62,
     },
     {
@@ -1321,6 +1606,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       album: 'GNX',
       coverUrl: '/music/s-gnxkendricklamar.jpg',
+      reflection: '短促、生猛，像一句话撂下就走。用来开场最合适。',
       plays: 63,
     },
     {
@@ -1329,6 +1615,7 @@ const musicData = {
       artist: 'Tyler, The Creator',
       album: 'No Angel',
       coverUrl: '/music/s-noangeldido.jpg',
+      reflection: '一首歌里塞了两个情绪相反的段落，前半是放手，后半是道谢。Tyler 的编曲一直在给人惊喜。',
       plays: 64,
     },
     {
@@ -1337,6 +1624,7 @@ const musicData = {
       artist: 'Drake',
       album: 'More Life',
       coverUrl: '/music/s-morelifedrake.jpg',
+      reflection: 'Drake 最温柔的那一面。节奏松、人声软，讲的是「异地恋里那些说不出口的等待」。',
       plays: 65,
     },
     {
@@ -1344,6 +1632,7 @@ const musicData = {
       title: '嘴硬',
       artist: '幼稚园杀手',
       coverUrl: '',
+      reflection: '「嘴硬」两个字概括了很多人。中文说唱里能把这种逞强唱得让人心软的不多。',
       plays: 66,
     },
     {
@@ -1352,6 +1641,7 @@ const musicData = {
       artist: '华晨宇',
       album: '新世界',
       coverUrl: '/music/s-新世界huachenyu.jpg',
+      reflection: '写给抑郁的人，也写给自己。旋律很轻，但每一句都压着很重的东西。',
       plays: 67,
     },
     {
@@ -1360,6 +1650,7 @@ const musicData = {
       artist: '法老 / 泠风',
       album: '科幻小说',
       coverUrl: '/music/s-科幻小说pharaoh.jpg',
+      reflection: '「我想」后面接的往往是「但」，这首也一样。两个人在同一句里说出了愿望和现实。',
       plays: 68,
     },
     {
@@ -1368,6 +1659,7 @@ const musicData = {
       artist: 'Post Malone',
       album: 'beerbongs & bentleys',
       coverUrl: '/music/s-beerbongsbentleyspostmalone.jpg',
+      reflection: '分手之后的「我很好」，说给谁听其实都听得出来。旋律轻快，词是酸的。',
       plays: 69,
     },
     {
@@ -1376,6 +1668,7 @@ const musicData = {
       artist: '某幻君',
       album: 'Later That Night - Single',
       coverUrl: '/music/s-laterthatnightsingle國蛋.jpg',
+      reflection: '歌名就是他的长处：能把一件小事讲出起伏。说唱最难的不是押韵，是让人想听下去。',
       plays: 70,
     },
     {
@@ -1384,6 +1677,7 @@ const musicData = {
       artist: 'Kanye West / Charlie Wilson',
       album: 'Sample This! The Foundation of Modern Classics',
       coverUrl: '/music/s-samplethisthefoundationofmodernclassicsp.jpg',
+      reflection: '粗糙的采样配上极简的鼓，反而把那种「不管了，我就要这个人」的冲动放大了。',
       plays: 71,
     },
     {
@@ -1392,6 +1686,7 @@ const musicData = {
       artist: 'J. Cole',
       album: '4 Your Eyez Only',
       coverUrl: '/music/s-4youreyezonlyjcole.jpg',
+      reflection: '关于「想改变但一直没开始」。他写自我怀疑时从来不留情面，这首尤其诚实。',
       plays: 72,
     },
     {
@@ -1400,6 +1695,7 @@ const musicData = {
       artist: 'Earth, Wind & Fire',
       album: 'The Best Of Earth, Wind & Fire Vol. 1',
       coverUrl: '/music/s-thebestofearthwindfirevol1earthwindfire.jpg',
+      reflection: '被采样到几乎无处不在的一首。管乐一进来，所有人的身体都会先反应过来。',
       plays: 73,
     },
     {
@@ -1408,6 +1704,7 @@ const musicData = {
       artist: 'Ed Sheeran',
       album: '=',
       coverUrl: '/music/s-edsheeran.jpg',
+      reflection: '快节奏的甜歌，副歌像被人挠了一下。不深刻，但很有效。',
       plays: 74,
     },
     {
@@ -1416,6 +1713,7 @@ const musicData = {
       artist: 'Charli xcx',
       album: '360 - Single',
       coverUrl: '/music/s-360singlecharlixcx.jpg',
+      reflection: '极简的电子骨架，人声被切得很碎。她一直在做「听起来很未来但很流行」的东西。',
       plays: 75,
     },
     {
@@ -1424,6 +1722,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       album: 'GNX',
       coverUrl: '/music/s-gnxkendricklamar.jpg',
+      reflection: '把情绪推到失控边缘的一首。中间那段换拍像突然踩了油门。',
       plays: 76,
     },
     {
@@ -1432,6 +1731,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       album: 'Mr. Morale & The Big Steppers',
       coverUrl: '/music/s-mrmoralethebigstepperskendricklamar.jpg',
+      reflection: '关于「面具」的歌。鼓点密得让人喘不过气，正好对上歌词里那种被压着的窒息感。',
       plays: 77,
     },
     {
@@ -1440,6 +1740,7 @@ const musicData = {
       artist: 'Tyler, The Creator',
       album: 'Flower Boy',
       coverUrl: '/music/s-flowerboytylerthecreator.jpg',
+      reflection: '开头那句几乎是喊出来的。Tyler 把「别离开我」这种话放进了一个很怪但很美的编曲里。',
       plays: 78,
     },
     {
@@ -1448,6 +1749,7 @@ const musicData = {
       artist: '薛凯琪',
       album: '天赐的声音第五季 第1期 (Live) - EP',
       coverUrl: '/music/s-天赐的声音第五季第1期liveepfionasitpakhochau.jpg',
+      reflection: '城市、河流、旧情，中文版的词比粤语更直白。她的声音有一种湿润的质感。',
       plays: 79,
     },
     {
@@ -1456,6 +1758,7 @@ const musicData = {
       artist: 'Kendrick Lamar / Rihanna',
       album: 'Unwrapped Vol. 9: The Songs of Kendrick Lamar Reimagined',
       coverUrl: '/music/s-unwrappedvol9thesongsofkendricklamarreim.jpg',
+      reflection: '把「忠诚」拆开来讲——它不是美德，是一种要求。Rihanna 那段的语气特别对。',
       plays: 80,
     },
     {
@@ -1464,6 +1767,7 @@ const musicData = {
       artist: 'Drake',
       album: 'Views',
       coverUrl: '/music/s-viewsdrake.jpg',
+      reflection: '旋律简单到像念白，却成了那个夏天的背景音。它证明了好歌可以非常省力。',
       plays: 81,
     },
     {
@@ -1472,6 +1776,7 @@ const musicData = {
       artist: '王以太',
       album: '演.说.家',
       coverUrl: '/music/s-演说家yitaiwang.jpg',
+      reflection: '用止痛药比喻某种依赖，中文说唱里少见的写法。冷静，但底下有情绪。',
       plays: 82,
     },
     {
@@ -1480,6 +1785,7 @@ const musicData = {
       artist: '华晨宇',
       album: 'H',
       coverUrl: '/music/s-hhuachenyu.jpg',
+      reflection: '把「孤单」量成了距离，这个比喻很准。唱得很轻，落点却重。',
       plays: 83,
     },
     {
@@ -1488,6 +1794,7 @@ const musicData = {
       artist: '华晨宇',
       album: '智商二五零 - Single',
       coverUrl: '/music/s-智商二五零singlehuachenyu.jpg',
+      reflection: '一首玩心很重的歌，编曲和词都在自嘲。他难得这么放松。',
       plays: 84,
     },
     {
@@ -1496,6 +1803,7 @@ const musicData = {
       artist: '华晨宇',
       album: '普通到不普通的人生 - Single',
       coverUrl: '/music/s-普通到不普通的人生singlehuachenyu.jpg',
+      reflection: '写给「大多数」。他没有俯视，也没有安慰，只是把那种平凡认真地唱了一遍。',
       plays: 85,
     },
     {
@@ -1504,6 +1812,7 @@ const musicData = {
       artist: '某幻君',
       album: '退潮',
       coverUrl: '/music/s-退潮pharaoh.jpg',
+      reflection: '用一个年份当标题，写的是那一年的事。时间感很强，像给一段日子盖了个章。',
       plays: 86,
     },
     {
@@ -1512,6 +1821,7 @@ const musicData = {
       artist: 'Kanye West',
       album: 'Donda',
       coverUrl: '/music/s-dondakanyewest.jpg',
+      reflection: '很短、很安静，像专辑里的一次呼吸。越简单的东西越难做得不空。',
       plays: 87,
     },
     {
@@ -1520,6 +1830,7 @@ const musicData = {
       artist: 'J. Cole',
       album: '4 Your Eyez Only',
       coverUrl: '/music/s-4youreyezonlyjcole.jpg',
+      reflection: '写给女儿的歌。他把自己从「说唱歌手」切换成「父亲」，切换得很自然。',
       plays: 88,
     },
     {
@@ -1528,6 +1839,7 @@ const musicData = {
       artist: 'J. Cole',
       album: '2014 Forest Hills Drive',
       coverUrl: '/music/s-2014foresthillsdrivejcole.jpg',
+      reflection: '节奏突然转向的那一下是全曲的灵魂。他在最放松的时候埋了最锋利的句子。',
       plays: 89,
     },
     {
@@ -1536,6 +1848,7 @@ const musicData = {
       artist: 'Prince',
       album: 'HITNRUN Phase Two',
       coverUrl: '/music/s-hitnrunphasetwoprince.jpg',
+      reflection: '他晚期的作品，少了年轻时的张扬，多了一种安静的自省。反而更耐听。',
       plays: 90,
     },
     {
@@ -1544,13 +1857,15 @@ const musicData = {
       artist: 'ROSÉ / Bruno Mars',
       album: 'APT. - Single',
       coverUrl: '/music/s-aptsinglerosbrunomars.jpg',
+      reflection: '把酒桌游戏写成了流行歌，简单、上瘾、功能明确。副歌一响就会有人跟着拍手。',
       plays: 91,
     },
     {
       id: 'sg-192',
       title: 'Father Stretch My Hands Pt. 1',
       artist: 'Kanye West / Kid Cudi',
-      coverUrl: '',
+      coverUrl: '/music/s-fatherstretchmyhandspt1kanyewestkidcudi.jpg',
+      reflection: '采样福音，唱的是「我搞砸了但还是想被拉一把」。粗糙、真诚、不加修饰。',
       plays: 92,
     },
     {
@@ -1559,6 +1874,7 @@ const musicData = {
       artist: 'The Weeknd',
       album: 'Dawn FM',
       coverUrl: '/music/s-dawnfmtheweeknd.jpg',
+      reflection: '关于猜疑的一首歌。合成器冷得像怀疑本身，副歌却软下来求一个答案。',
       plays: 93,
     },
   ],
@@ -1671,6 +1987,7 @@ const musicData = {
       artist: 'Frank Ocean',
       coverUrl: '/music/b-blonde.jpg',
       year: 2016,
+      reflection: '一张把「留白」用到极致的专辑。人声被推到最前面，编曲却故意做得很薄，听久了像在翻一本只有几行字的日记。它是那种「当时没听懂、过两年突然听懂」的唱片。',
       featured: true,
       featuredText: '听得最多的一张。它不靠副歌抓人，靠的是那种「一个人在深夜反复想同一件事」的质地。编曲极其克制，人声常常被推到最前面，剩下的空间全留给呼吸。\n\n每重听一次都会听到之前漏掉的细节——一层和声、一段环境音、某个突然变调的瞬间。',
     },
@@ -1680,6 +1997,7 @@ const musicData = {
       artist: '华晨宇',
       coverUrl: '/music/b-new-world.jpg',
       year: 2020,
+      reflection: '野心很大的一张。他把摇滚、电子、戏剧化的编排全塞进来，主题是「重建一个自己的世界」。有人觉得用力过猛，但那股非要把话说完的劲我很买账。',
       featured: true,
       featuredText: '华晨宇把「新世界」做成了一个完整的叙事：从压抑到爆发的完整弧线。他的高音不是炫技，是情绪到了那个位置不得不上去。',
     },
@@ -1689,6 +2007,7 @@ const musicData = {
       artist: 'The Weeknd',
       coverUrl: '/music/b-starboy.jpg',
       year: 2016,
+      reflection: 'Daft Punk 参与之后，他的声音第一次有了「复古」的骨架。整张像一台八十年代的跑车，速度很快，里面坐着的人却挺孤独。',
       featured: true,
       featuredText: 'Daft Punk 参与制作，把 The Weeknd 从地下 R&B 推到流行顶端。整张的合成器音色是标志性的，冷、亮、带点金属感。',
     },
@@ -1698,6 +2017,7 @@ const musicData = {
       artist: 'J. Cole',
       coverUrl: '/music/b-2014-fhd.jpg',
       year: 2014,
+      reflection: '没有客串、没有花活，就他一个人从头讲到尾。讲的是老家的那栋房子、成名之后的不适应。说唱专辑里少见的「安静但很重」。',
       featured: true,
       featuredText: 'J. Cole 最真诚的一张，没有客串、没有花哨的制作，就是一个人讲他从哪来。',
     },
@@ -1707,6 +2027,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       coverUrl: '/music/b-damn.jpg',
       year: 2017,
+      reflection: '整张像一个问句接一个问句。制作干净、篇幅克制，每一首都在问「我是谁、我信什么」。它拿奖不冤。',
       featured: true,
       featuredText: '拿了普利策奖的那张。结构上正着听倒着听都能成立，每一首都在问同一个问题：我到底是个好人还是坏人。',
     },
@@ -1716,6 +2037,7 @@ const musicData = {
       artist: '华晨宇',
       coverUrl: '/music/b-liangbian.jpg',
       year: 2025,
+      reflection: '名字就是一个物理概念：量变到临界点。整张的情绪也一直压在临界线上，克制和爆发交替出现。',
       featured: true,
       featuredText: '华晨宇最新的一张，把电子、摇滚和实验元素推得更远。',
     },
@@ -1725,6 +2047,7 @@ const musicData = {
       artist: 'Kendrick Lamar',
       coverUrl: '/music/b-gnx.jpg',
       year: 2024,
+      reflection: '发得很突然，听感也很生猛。他把西海岸的底子重新翻出来，节奏硬、留白多，像一次不打招呼的突袭。',
       featured: true,
       featuredText: '突然空降的一张，西海岸味道极重，节奏比 DAMN. 更硬。',
     },
@@ -1734,6 +2057,7 @@ const musicData = {
       artist: 'Travis Scott',
       coverUrl: '/music/b-astroworld.jpg',
       year: 2018,
+      reflection: '一张把「氛围」当成主角的专辑。人声常常只是音色之一，真正的叙事在合成器和鼓的缝隙里。适合戴耳机整张听。',
       featured: true,
       featuredText: 'Travis 把「氛围」做成了主角——人声常常只是众多音色里的一个。',
     },
@@ -1743,6 +2067,7 @@ const musicData = {
       artist: 'Ed Sheeran',
       coverUrl: '/music/b-divide.jpg',
       year: 2017,
+      reflection: '流行写歌的模范作业。旋律一首比一首顺，情绪从甜到苦都铺到了。它不深刻，但几乎每首都能单独拿出来循环。',
       featured: true,
       featuredText: '流行到极致的一张，几乎每首都能当单曲发。',
     },
@@ -1752,6 +2077,7 @@ const musicData = {
       artist: 'The Weeknd',
       coverUrl: '/music/b-dawn-fm.jpg',
       year: 2022,
+      reflection: '做成了「一档深夜电台节目」，有旁白、有广告、有过渡。听整张像坐车穿过一整夜，天亮了歌也结束了。',
       featured: true,
       featuredText: '整张假装是一档午夜电台节目，有主持人串场。概念完整到像一部广播剧。',
     },
@@ -1765,6 +2091,7 @@ const musicData = {
       avatarUrl: '',
       tags: ['说唱', '华语'],
       note: '最近才关注的说唱新人，flow 很稳。',
+      profile: '最近才关注的说唱新人。他的东西不精致，但很真——那种还没被包装过的生涩感，反而让人愿意一直听下去。flow 很稳，缺的只是时间和作品量。',
     },
     {
       id: 'ar-logic',
@@ -1772,6 +2099,7 @@ const musicData = {
       avatarUrl: '/music/ar-logic.jpg',
       tags: ['说唱', '英语'],
       note: '技术流的代表，押韵密度极高。',
+      profile: '技术流的代表。押韵密度高到需要看歌词本才能跟上，但他真正厉害的地方是「把复杂的东西讲得清楚」。缺点也在这儿：有时候技巧跑在了情绪前面。',
     },
     {
       id: 'ar-songyueting',
@@ -1779,6 +2107,7 @@ const musicData = {
       avatarUrl: '/music/ar-songyueting.jpg',
       tags: ['说唱', '华语'],
       note: '华语说唱的先行者，留下的作品不多但句句是命。',
+      profile: '华语说唱的先行者。留下的作品不多，录音条件也差，但每一句都像用命换来的。听他的歌会明白，有些表达跟技术无关。',
     },
     {
       id: 'ar-future',
@@ -1786,6 +2115,7 @@ const musicData = {
       avatarUrl: '/music/ar-future.jpg',
       tags: ['说唱', 'Trap'],
       note: '把 Auto-Tune 用成了一种乐器的人。',
+      profile: '把 Auto-Tune 用成了一种乐器，而不是修音工具。他的东西产量极大、质量参差，但巅峰那几张定义了一整个时代的 Trap 情绪。',
     },
     {
       id: 'ar-olivia-rodrigo',
@@ -1793,6 +2123,7 @@ const musicData = {
       avatarUrl: '/music/ar-olivia-rodrigo.jpg',
       tags: ['流行', '摇滚'],
       note: '新生代里最会把青春期写成歌的。',
+      profile: '新生代里最会把青春期写成歌的。她不美化疼痛，也不假装成熟，就是把十几岁那种又笨又烈的感受原样交出来。',
     },
     {
       id: 'ar-don-toliver',
@@ -1800,6 +2131,7 @@ const musicData = {
       avatarUrl: '/music/ar-don-toliver.jpg',
       tags: ['说唱', 'R&B'],
       note: '声音辨识度极高，飘忽的唱腔是他的签名。',
+      profile: '声音辨识度极高，飘忽的唱腔是他的签名。他的歌往往旋律不复杂，但你一听就知道是他。',
     },
     {
       id: 'ar-led-zeppelin',
@@ -1807,6 +2139,7 @@ const musicData = {
       avatarUrl: '/music/ar-led-zeppelin.jpg',
       tags: ['摇滚', '经典'],
       note: '老摇滚的顶点之一，riff 教科书。',
+      profile: '老摇滚的顶点之一。riff 教科书级别的乐队，把布鲁斯、民谣和硬摇滚焊在一起。哪怕只听编曲，也够学很多年。',
     },
     {
       id: 'ar-sade',
@@ -1814,6 +2147,7 @@ const musicData = {
       avatarUrl: '/music/ar-sade.jpg',
       tags: ['灵魂', '爵士'],
       note: '把「温柔」做成了一种风格，几十年没变过。',
+      profile: '把「温柔」做成了一种风格，几十年没变过。她的音乐像恒温的房间，什么时候进去都舒服。',
     },
     {
       id: 'ar-rosalia',
@@ -1821,6 +2155,7 @@ const musicData = {
       avatarUrl: '/music/ar-rosalia.jpg',
       tags: ['流行', '弗拉门戈'],
       note: '把弗拉门戈和电子揉在一起，听起来完全不像别人。',
+      profile: '把弗拉门戈和电子揉在一起，听起来完全不像别人。她的唱腔里有很老的根，做法却非常当下。',
     },
     {
       id: 'ar-chris-brown',
@@ -1828,6 +2163,7 @@ const musicData = {
       avatarUrl: '/music/ar-chris-brown.jpg',
       tags: ['R&B', '流行'],
       note: '争议不少，但唱跳实力是公认的。',
+      profile: '争议不少，但唱跳实力是公认的。他的 R&B 底子扎实，舞曲和慢歌都拿得下——只是作品之外的事总在拖累作品。',
     },
     {
       id: 'ar-mouhuanjun',
@@ -1836,6 +2172,7 @@ const musicData = {
       tags: ['说唱', '华语'],
       plays: 740,
       note: '播放量第一。',
+      profile: '我的播放量第一。他的说唱不炫技，胜在叙事和松弛——像朋友在饭桌上跟你讲一件刚发生的事，讲着讲着你就笑了，然后又有点酸。',
     },
     {
       id: 'ar-huachenyu',
@@ -1844,6 +2181,7 @@ const musicData = {
       tags: ['流行', '摇滚'],
       plays: 549,
       note: '从选秀出来，一路把唱功和编曲都推到了很前面。',
+      profile: '从选秀出来，一路把唱功和编曲都推到了很前面。他的争议和才华一样大，但有一点没法否认：他唱现场的时候是真的不留余地。',
     },
     {
       id: 'ar-kendrick',
@@ -1852,6 +2190,7 @@ const musicData = {
       tags: ['说唱', '英语'],
       plays: 537,
       note: '这个时代最好的叙事型说唱歌手之一。',
+      profile: '这个时代最好的叙事型说唱歌手之一。他写的是具体的人、具体的街区，却能讲到很远的地方去。',
     },
     {
       id: 'ar-prince',
@@ -1860,6 +2199,7 @@ const musicData = {
       tags: ['放克', '摇滚'],
       plays: 452,
       note: '一个人能演奏所有乐器，也能把所有风格都变成自己的。',
+      profile: '一个人能演奏所有乐器，也能把所有风格都变成自己的。他留下的东西太多，多到需要慢慢听很多年才听得完。',
     },
     {
       id: 'ar-jcole',
@@ -1868,6 +2208,7 @@ const musicData = {
       tags: ['说唱', '英语'],
       plays: 388,
       note: '很少炒作，靠作品说话。',
+      profile: '很少炒作，靠作品说话。他的歌里总有一种「我在替一群不常被写的人说话」的自觉，而且从不居高临下。',
     },
     {
       id: 'ar-laofanqie',
@@ -1876,6 +2217,7 @@ const musicData = {
       tags: ['说唱', '华语'],
       plays: 332,
       note: 'B 站创作者出身，合作曲传唱度很高。',
+      profile: 'B 站创作者出身，合作曲传唱度很高。他的部分往往负责把气氛拉起来，是那种「一开口就知道要热闹了」的角色。',
     },
     {
       id: 'ar-theweeknd',
@@ -1884,6 +2226,7 @@ const musicData = {
       tags: ['R&B', '流行'],
       plays: 258,
       note: '从地下 mixtape 一路做到超级碗中场秀。',
+      profile: '从地下 mixtape 一路做到超级碗中场秀。他的音乐一直在同一种夜色里——霓虹、失控、事后清醒。',
     },
     {
       id: 'ar-wanghanzhe',
@@ -1892,6 +2235,7 @@ const musicData = {
       tags: ['说唱', '华语'],
       plays: 248,
       note: '中国 BOY，和某幻君、老番茄一批的合作曲常客。',
+      profile: '中国 BOY，和某幻君、老番茄一批的合作曲常客。他的声音辨识度很高，在合唱里总是最容易认出来的那个。',
     },
     {
       id: 'ar-frankocean',
@@ -1900,6 +2244,7 @@ const musicData = {
       tags: ['R&B', '独立'],
       plays: 218,
       note: '产量极低，但两张专辑定义了一个时代的审美。',
+      profile: '产量极低，但两张专辑定义了一个时代的审美。他唱歌像在自言自语，偏偏所有人都听见了。',
     },
     {
       id: 'ar-travisscott',
@@ -1908,6 +2253,7 @@ const musicData = {
       tags: ['说唱', 'Trap'],
       plays: 139,
       note: '把现场做成了一种宗教体验。',
+      profile: '把现场做成了一种宗教体验。音乐上他更像个氛围设计师——人声、合成器、鼓在他手里都是同一种材料。',
     },
     {
       id: 'ar-postmalone',
@@ -1916,6 +2262,7 @@ const musicData = {
       tags: ['流行', '说唱'],
       plays: 139,
       note: '从 SoundCloud 出来，最后成了最会写旋律的那类人。',
+      profile: '从 SoundCloud 出来，最后成了最会写旋律的那类人。他的歌听着随意，副歌却几乎每首都记得住。',
     },
   ],
 

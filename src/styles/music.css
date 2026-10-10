@@ -44,7 +44,9 @@
 }
 
 .music-inner {
-  max-width: 1080px;
+  position: relative;
+  z-index: 1; /* 压住 .music-decor 的背景气泡 */
+  max-width: 1140px;
   margin: 0 auto;
   padding: 48px 28px 88px;
 }
@@ -610,8 +612,9 @@
 
 .music-artists-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 18px;
+  /* 用户反馈卡片太小 → 固定每行 3 个（原来 auto-fill 在宽屏会挤到 4~5 个） */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
 .music-artist-item {
@@ -811,7 +814,9 @@
 }
 
 .artist-modal {
-  max-width: 560px;
+  /* 2026-10-09：弹窗里现在要放「头像 + note + 收藏的歌 + 相关专辑」，加宽加内边距 */
+  max-width: 760px;
+  padding: 30px 30px 34px;
 }
 
 .full-list-panel {
@@ -1689,4 +1694,680 @@
   .music-hero-deck { align-self: center; }
   .music-thought-item { flex-direction: column; gap: 12px; }
   .music-thought-cover { width: 84px; height: 84px; }
+}
+
+/* ============================================
+   背景装饰气泡（2026-10-09）
+   用户反馈「背景还是太单调」。加几个硬边亮色圆，
+   大部分压到视口外，只在左右留一弯月牙，不挡正文。
+   ⚠️ .music-inner 要 z-index:1，否则 z-index:0 的装饰会盖在内容上。
+   ============================================ */
+.music-decor {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.music-bubble {
+  position: absolute;
+  border-radius: 50%;
+  border: 4px solid var(--nb-black);
+}
+
+.music-bubble--1 {
+  width: 210px;
+  height: 210px;
+  top: 250px;
+  left: -96px;
+  background: var(--nb-green);
+}
+
+.music-bubble--2 {
+  width: 128px;
+  height: 128px;
+  top: 1180px;
+  right: -46px;
+  background: var(--nb-yellow);
+}
+
+/* 空心环 —— 和实心圆错开，层次更活 */
+.music-bubble--3 {
+  width: 280px;
+  height: 280px;
+  top: 2380px;
+  right: -128px;
+  background: transparent;
+  border-width: 26px;
+  border-color: var(--nb-blue);
+}
+
+.music-bubble--4 {
+  width: 150px;
+  height: 150px;
+  top: 3960px;
+  left: -58px;
+  background: var(--nb-pink);
+}
+
+/* ============================================
+   搜索（推歌下方）
+   ============================================ */
+.music-block--search {
+  margin-bottom: 52px;
+}
+
+.music-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+  padding: 0 18px;
+  background: var(--nb-white);
+  border: 4px solid var(--nb-black);
+  box-shadow: 7px 7px 0 0 var(--nb-black);
+}
+
+.music-search-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.music-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--nb-black);
+}
+
+.music-search-input::placeholder {
+  color: #a29c94;
+  font-weight: 700;
+}
+
+.music-search-clear {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-yellow);
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--nb-black);
+  cursor: pointer;
+  transition: background-color 0ms, transform var(--nb-t);
+}
+
+.music-search-clear:hover {
+  background: var(--nb-pink);
+  transform: rotate(90deg);
+}
+
+.music-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 26px;
+}
+
+.music-search-empty {
+  margin: 0;
+  padding: 26px 22px;
+  border: 3px dashed var(--nb-black);
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.music-search-group-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 3px solid var(--nb-black);
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.music-search-group-title span {
+  padding: 1px 9px;
+  background: var(--nb-black);
+  color: var(--nb-white);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0;
+}
+
+.music-search-artists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.music-search-artist {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 4px 4px 0 0 var(--nb-black);
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--nb-t), box-shadow var(--nb-t), background-color 0ms;
+}
+
+.music-search-artist:hover {
+  background: var(--nb-blue);
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0 0 var(--nb-black);
+}
+
+.music-search-artist-avatar {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-pink);
+  overflow: hidden;
+}
+
+.music-search-artist-avatar img,
+.music-search-artist-avatar svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-search-artist-name {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--nb-black);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.music-search-albums {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.music-search-album {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 11px;
+  background: var(--nb-white);
+  border: 3px solid var(--nb-black);
+  box-shadow: 5px 5px 0 0 var(--nb-black);
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--nb-t), box-shadow var(--nb-t), background-color 0ms;
+}
+
+.music-search-album:hover {
+  background: var(--nb-green);
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 0 var(--nb-black);
+}
+
+.music-search-album-cover {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--nb-black);
+  background: var(--nb-blue);
+  overflow: hidden;
+}
+
+.music-search-album-cover img,
+.music-search-album-cover svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-search-album-title {
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--nb-black);
+}
+
+.music-search-album-artist {
+  font-size: 0.84rem;
+  color: #55504a;
+}
+
+.music-search-more {
+  margin: 12px 0 0;
+  font-size: 0.86rem;
+  color: #55504a;
+}
+
+/* ============================================
+   歌曲 / 专辑 左右两列（用户：「太松散」）
+   ============================================ */
+.music-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 34px;
+  align-items: start;
+}
+
+.music-split-col {
+  min-width: 0;
+}
+
+/* 半宽栏里标题和切换器竖排，避免挤在一行 */
+.music-split-col .music-block-head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 16px;
+}
+
+/* ============================================
+   推歌：历史入口按钮
+   ============================================ */
+.latest-pick-toprow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.latest-pick-history-btn {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-yellow);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--nb-t), box-shadow var(--nb-t), background-color 0ms;
+}
+
+.latest-pick-history-btn:hover {
+  background: var(--nb-pink);
+  color: var(--nb-white);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 0 var(--nb-black);
+}
+
+.latest-pick-history-count {
+  opacity: 0.75;
+}
+
+/* ============================================
+   往期推歌弹窗
+   ============================================ */
+.pick-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pick-history-item {
+  display: flex;
+  gap: 20px;
+  padding: 18px;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-white);
+  box-shadow: 5px 5px 0 0 var(--nb-black);
+}
+
+.pick-history-cover {
+  flex-shrink: 0;
+  width: 118px;
+  aspect-ratio: 1 / 1;
+  border: 3px solid var(--nb-black);
+  background: var(--nb-blue);
+  overflow: hidden;
+}
+
+.pick-history-cover img,
+.pick-history-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pick-history-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pick-history-rank {
+  display: inline-block;
+  margin-bottom: 7px;
+  padding: 2px 9px;
+  border: 2px solid var(--nb-black);
+  background: var(--nb-green);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.pick-history-title {
+  margin: 0 0 3px;
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.pick-history-artist {
+  margin: 0 0 9px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #55504a;
+}
+
+.pick-history-reason {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #3a3630;
+}
+
+/* ============================================
+   音乐人弹窗：头部 + 作品
+   ============================================ */
+.artist-modal-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 18px;
+  border-bottom: 4px solid var(--nb-black);
+}
+
+.artist-modal-headtext {
+  min-width: 0;
+}
+
+.artist-modal-note {
+  margin: 16px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.8;
+  color: #3a3630;
+}
+
+.artist-modal-works {
+  margin-top: 26px;
+}
+
+.artist-modal-works-title {
+  margin: 0 0 13px;
+  padding-bottom: 8px;
+  border-bottom: 3px solid var(--nb-black);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.music-artist-albums {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 14px;
+}
+
+.music-artist-album {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.music-artist-album-cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--nb-black);
+  background: var(--nb-orange);
+  overflow: hidden;
+}
+
+.music-artist-album-cover img,
+.music-artist-album-cover svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-artist-album-title {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.music-artist-album-year {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: #55504a;
+}
+
+/* ============================================
+   字号整体放大（用户：「整个页面字都太小了」）
+   在原有规则之后覆盖，同权重后者生效。
+   ============================================ */
+.music-section-label { font-size: 1.8rem; }
+.music-block-note { font-size: 0.84rem; }
+.latest-pick-title { font-size: 2rem; }
+.latest-pick-artist { font-size: 0.95rem; }
+.latest-pick-reason { font-size: 1rem; }
+.latest-pick-label { font-size: 0.7rem; }
+.music-tab { font-size: 0.98rem; }
+.music-tab-count { font-size: 0.78rem; }
+.music-more-btn { font-size: 0.9rem; }
+.music-empty { font-size: 1rem; }
+.music-track-title { font-size: 1.05rem; }
+.music-track-artist { font-size: 0.88rem; }
+.music-track-index { font-size: 0.8rem; }
+.music-track-badge { font-size: 0.74rem; }
+.music-albums-row-title { font-size: 1.35rem; }
+.music-albums-row-artist { font-size: 0.88rem; }
+.music-albums-row-year { font-size: 0.82rem; }
+.music-artist-name { font-size: 1.15rem; }
+.music-artist-note { font-size: 0.86rem; }
+.music-thought-intro { font-size: 1rem; }
+.music-thought-album { font-size: 1.15rem; }
+.music-thought-artist { font-size: 0.9rem; }
+.music-thought-pick-text p,
+.music-thought-text p { font-size: 0.96rem; }
+.music-tag-pill { font-size: 0.84rem; }
+.artist-modal-name { font-size: 1.7rem; }
+
+/* ============================================
+   响应式
+   ============================================ */
+@media (max-width: 900px) {
+  .music-split { grid-template-columns: 1fr; gap: 44px; }
+  .music-artists-list { grid-template-columns: repeat(2, 1fr); }
+  .music-bubble--3 { display: none; }
+}
+
+@media (max-width: 768px) {
+  .music-search-bar { height: 56px; padding: 0 14px; }
+  .music-search-input { font-size: 1rem; }
+  .music-artists-list { grid-template-columns: 1fr; }
+  .music-artist-albums { grid-template-columns: repeat(3, 1fr); }
+  .pick-history-item { flex-direction: column; gap: 14px; }
+  .pick-history-cover { width: 96px; }
+  .music-decor { display: none; }
+}
+
+/* 半宽栏里的专辑行压缩：否则一列 10 张比左边 15 首歌高太多，看着不齐 */
+.music-split-col .music-albums-row-card {
+  padding: 14px;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.music-split-col .music-albums-row-cover-wrap {
+  width: 88px;
+  height: 88px;
+}
+
+.music-split-col .music-albums-row-title { font-size: 1.18rem; }
+.music-split-col .music-albums-row-artist { font-size: 0.82rem; }
+
+/* ============================================
+   2026-10-09 第二轮反馈
+   ============================================ */
+
+/* ----- 背景气泡再加几个（用户说太少了）----- */
+.music-bubble--5 {
+  width: 96px;
+  height: 96px;
+  top: 720px;
+  right: 14%;
+  background: var(--nb-pink);
+}
+
+.music-bubble--6 {
+  width: 190px;
+  height: 190px;
+  top: 1720px;
+  left: -74px;
+  background: transparent;
+  border-width: 22px;
+  border-color: var(--nb-green);
+}
+
+.music-bubble--7 {
+  width: 118px;
+  height: 118px;
+  top: 3180px;
+  right: -38px;
+  background: var(--nb-yellow);
+}
+
+/* ----- 歌曲列表：字号再大一点、左栏再宽一点 ----- */
+.music-track-title { font-size: 1.15rem; }
+.music-track-artist { font-size: 0.95rem; }
+.music-track-index { font-size: 0.86rem; }
+.music-track-badge { font-size: 0.78rem; }
+
+/* 左栏（歌曲）比右栏（专辑）宽一点 —— 歌名长，需要更多横向空间 */
+.music-split { grid-template-columns: 1.14fr 1fr; }
+
+/* ----- 音乐人中文名竖排（用户要求：中文名竖着写） ----- */
+.music-artist-name--cjk {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0;
+  padding: 1px 0;
+}
+
+/* ----- 感想区字号再放大一点 ----- */
+.music-thought-intro { font-size: 1.06rem; line-height: 2; }
+.music-thought-pick-text p,
+.music-thought-text p { font-size: 1.04rem; line-height: 1.95; }
+.music-thought-album { font-size: 1.25rem; }
+.music-thought-artist { font-size: 0.98rem; }
+
+/* ----- 人生必听歌单（原「推歌」）----- */
+.music-block--must { margin-bottom: 60px; }
+
+.music-must-intro {
+  margin: 0 0 20px;
+  padding: 16px 20px;
+  border: 3px solid var(--nb-black);
+  border-left-width: 12px;
+  background: var(--nb-white);
+  font-size: 1rem;
+  line-height: 1.9;
+  color: #3a3630;
+}
+
+/* ----- 详情弹窗要盖在「查看更多」清单之上 -----
+   用户反馈：在清单里点一首歌看完详情，关掉后应该回到清单而不是主页。
+   做法是清单不关（见 Music.jsx），这里把详情弹窗的层级抬上去。 */
+.music-modal-overlay,
+.artist-modal-overlay {
+  z-index: 9200;
+}
+
+@media (max-width: 900px) {
+  .music-split { grid-template-columns: 1fr; }
+}
+
+/* ----- 曲目行左边的序号位：榜单角标挪到这儿（原来是右边，和序号重复） ----- */
+.music-track-badge--lead {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 46px;
+}
+
+/* ============================================
+   弹窗里的「我的感悟」（单曲 / 专辑 / 音乐人通用）
+   2026-10-09：用户要求每个条目点开都要有一段感悟
+   ============================================ */
+.music-modal-reflection {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 3px solid var(--nb-black);
+  font-size: 0.96rem;
+  line-height: 1.95;
+  color: #3a3630;
+}
+
+.music-modal-reflection-title {
+  margin: 0 0 10px;
+  padding: 2px 10px;
+  display: inline-block;
+  background: var(--nb-black);
+  color: var(--nb-white);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.music-modal-reflection-body p {
+  margin: 0 0 0.9em;
+}
+
+.music-modal-reflection-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* 音乐人弹窗里紧跟在 note 后面，间距小一点 */
+.artist-modal-reflection {
+  margin-top: 16px;
 }

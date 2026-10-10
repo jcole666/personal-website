@@ -112,17 +112,18 @@ export const navThemes = {
   },
   '/music': {
     // 音乐页是 Neo-Brutalist：白底 + 纯黑粗边 + 直角。
-    // 原来导航是白底黑字，和纯白页面糊在一起、没有边界感 —— 改成实心黑条：
-    // 白底页面上一条黑横杠，是这个风格最典型的强对比，也把导航和内容分开了。
-    // 边框仍是纯黑加粗（风格明令「禁止灰色边框」），底色用实色不用半透明。
+    // 2026-10-09 用户第二轮反馈：先前的暖米白「太丑、不搭」→ 改成**页面主色粉**
+    // （页面上所有 ♥/▶ 角标都是这个粉），导航条和内容终于同一套配色。
+    //   黑字压粉底 = 5.5:1，过 WCAG AA；
+    //   交互色用荧光绿（页面里 hover 用的那支），压在粉底上是 3.3:1 —— 只用在
+    //   单个 active 项的文字和 2px 下划线上（非文字图形 3:1 达标），主体文字仍是黑。
     tag: 'LISTENING ROOM',
-    bg: '#000000',
+    bg: '#ff006e',
     border: '#000000',
     borderWidth: '4px',
-    ink: '#ffffff',
-    // 亮粉：黑底上对比度 5.9:1，过 WCAG AA；比原来的 #ff006e 更亮更清楚
-    accent: '#ff2d78',
-    tagInk: '#ffffff',
+    ink: '#000000',
+    accent: '#ccff00',
+    tagInk: '#000000',
     logoFont: "'Space Grotesk', 'Noto Sans SC', sans-serif",
     logoSize: '1.35rem',
     logoSpacing: '0.02em',
