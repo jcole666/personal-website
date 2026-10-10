@@ -16,6 +16,14 @@ import { useLocation } from 'react-router-dom'
 function ScrollToTop() {
   const { pathname } = useLocation()
 
+  /* 关掉浏览器的自动滚动恢复 —— 刷新 / 后退时浏览器会把上次的滚动位置还原，
+     表现就是「一进来不在最上面，而是停在页面中段」。这是这类问题的常见元凶。 */
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
+
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
   }, [pathname])

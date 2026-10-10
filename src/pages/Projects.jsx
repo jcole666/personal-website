@@ -420,11 +420,7 @@ function Projects() {
         <AllProjectsPanel
           projects={allProjects}
           onClose={() => setShowAll(false)}
-          onSelect={(p) => {
-            // 先关面板再开详情 —— 不做嵌套弹窗
-            setShowAll(false)
-            setModalId(p.id)
-          }}
+          onSelect={(p) => setModalId(p.id)}
         />
       )}
 
