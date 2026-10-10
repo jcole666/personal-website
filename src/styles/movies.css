@@ -63,52 +63,14 @@
 
 .filmstrip-wrapper {
   position: relative;
-  margin: 0 -48px 36px;
-  padding-top: 8px;
+  /* 2026-10-09：胶片挪到页面最顶上（hero 之前），不再在 .movies-inner 里，
+     所以去掉原来的 -48px 负边距，改成全宽 + 上下留白 */
+  margin: 0 0 0;
+  /* 2026-10-10：底部留白 8 → 48 → **18px**。胶片板下面要放一段「板底色淡出」的过渡
+     （见 .filmstrip-film::after），留白不够会被 overflow:hidden 切出新硬边；
+     但留太多又会在「胶片带 → 屏幕」之间拉出一条空档，所以取 18px。 */
+  padding: 22px 0 18px;
   overflow: hidden;
-}
-
-/* 串灯绳 */
-.string-lights {
-  display: flex;
-  justify-content: space-evenly;
-  padding: 0 60px;
-  margin-bottom: 12px;
-  position: relative;
-  z-index: 2;
-}
-
-.string-lights::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 40px;
-  right: 40px;
-  height: 1px;
-  background: rgba(228, 192, 99, 0.2);
-  z-index: -1;
-}
-
-.string-light {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff, #f0d489);
-  box-shadow: 0 0 10px rgba(255, 220, 120, 0.5), 0 0 24px rgba(228, 192, 99, 0.2);
-  position: relative;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-  animation: string-light-breathe 3s ease-in-out infinite alternate;
-}
-
-.string-light--glow {
-  background: radial-gradient(circle at 35% 35%, #ffffff, #fff3b0);
-  box-shadow: 0 0 20px rgba(255, 230, 140, 0.8), 0 0 44px rgba(228, 192, 99, 0.35), 0 0 72px rgba(228, 192, 99, 0.15);
-  transform: scale(1.3);
-}
-
-@keyframes string-light-breathe {
-  0%   { opacity: 0.65; }
-  100% { opacity: 1; }
 }
 
 /* 胶片带 */
@@ -120,41 +82,93 @@
 }
 
 .filmstrip-film {
-  background: #4a3828;
+  /* 2026-10-09：原来是棕色 #4a3828，用户说丑、跟深蓝夜空不搭 → 换成深蓝灰 */
+  position: relative;
+  /* 2026-10-10：暖光从「径向椭圆」改成「竖向线性」，两端 alpha 可控 ——
+     原来的径向纵向半径 260%，在胶片板**底边还剩 ~0.15 的 alpha**，
+     被板的硬边一刀切断 → 板下方出现一条明显的暖色横线（用户反馈了两次）。
+     现在底边固定 0.14，正好接上 ::after 的 0.14，过渡连续。 */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(228, 192, 99, 0.09) 0%,
+      rgba(228, 192, 99, 0.17) 30%,
+      rgba(228, 192, 99, 0.14) 100%
+    ),
+    linear-gradient(180deg, #1b2130 0%, #12171f 52%, #0d1119 100%);
   border-radius: 4px;
   padding: 12px 0;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-/* 齿孔 */
+/* 胶片板下方：把「板底色 + 暖光」继续往下淡出到页面底色，
+   让板的底边不再是硬边（数值从 100% 处无缝接续）。
+   高度 = .filmstrip-hang 的 padding-bottom(8) + .filmstrip-wrapper 的 padding-bottom(18)，
+   这样淡出刚好在胶片带的**最下沿**归零，紧接着就是 hero —— 中间不留空档。 */
+.filmstrip-film::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 26px;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(228, 192, 99, 0.14) 0%, rgba(228, 192, 99, 0) 100%),
+    linear-gradient(180deg, #0d1119 0%, rgba(13, 17, 25, 0) 100%);
+}
+
+/* 齿孔
+   ⚠️ 用 background-size 把渐变裁成正好一个周期（36px）宽，repeat-x 无缝平铺；
+   这样只要把 background-position 平移 36px 就能完美循环，不会出现接缝。
+   动画时长由组件按海报速度算好（--sprocket-dur），两边同速才像同一条带子在过片。 */
 .filmstrip-sprockets {
   height: 10px;
   margin: 0 18px;
-  background: repeating-linear-gradient(
+  background-image: repeating-linear-gradient(
     90deg,
     transparent 0px,
     transparent 14px,
-    rgba(20, 24, 33, 0.88) 14px,
-    rgba(20, 24, 33, 0.88) 22px,
+    rgba(6, 8, 12, 0.92) 14px,
+    rgba(6, 8, 12, 0.92) 22px,
     transparent 22px,
     transparent 36px
   );
+  background-size: 36px 100%;
+  background-repeat: repeat-x;
+  animation: filmstrip-sprocket-scroll var(--sprocket-dur, 1.154s) linear infinite;
+}
+
+@keyframes filmstrip-sprocket-scroll {
+  from { background-position: 0 0; }
+  to   { background-position: -36px 0; }
 }
 
 .filmstrip-sprockets--top { margin-bottom: 8px; }
 .filmstrip-sprockets--bottom { margin-top: 8px; }
 
-/* 海报区——CSS 无限循环滚动，前面出去后面进来 */
+/* 海报区——CSS 无限循环滚动，前面出去后面进来
+   ⚠️ 无缝循环的关键：**不要用 gap，也不要给容器加 padding**。
+   用 gap 时容器总宽 = 2N*w + (2N-1)*g，一半 = N*w + (N-0.5)*g，
+   比「一组的推进量 N*(w+g)」少半个 gap → 每圈结束会跳一下（用户反馈的「卡一下」）。
+   改成每张卡自带 margin-right（间距也参与推进），总宽 = 2N*(w+g)，
+   一半正好等于一组 → 首尾完全对齐。 */
 .filmstrip-posters {
   display: flex;
-  gap: 16px;
-  padding: 0 32px;
+  padding: 0;
   width: max-content;
   overflow-x: hidden;
   animation: filmstrip-scroll var(--scroll-dur, 30s) linear infinite;
 }
 
-.filmstrip-posters:hover {
+/* 鼠标停在这条胶片的**任意位置**（海报、两张卡之间的缝、上下齿孔）→
+   海报和齿孔**一起**定格，看起来才像同一条胶片在过片。
+   ⚠️ 2026-10-10：原来海报挂的是 `.filmstrip-posters:hover`（整条海报行都算），
+   齿孔挂的是 React 的「鼠标压在某张卡上」—— 两个判定范围不一样，
+   于是鼠标停在两张卡中间的缝里时**海报停了、齿孔还在滚**（用户反馈的 bug）。
+   现在两边统一挂在 `.filmstrip-film:hover` 上，一个条件、一起停。 */
+.filmstrip-film:hover .filmstrip-posters,
+.filmstrip-film:hover .filmstrip-sprockets {
   animation-play-state: paused;
 }
 
@@ -167,17 +181,19 @@
 .film-poster-card {
   flex-shrink: 0;
   width: 140px;
+  margin-right: 16px;
   cursor: pointer;
   border-radius: 5px;
   overflow: hidden;
-  background: #3a2a1a;
+  background: #141821;
   transition: transform 0.4s ease-out,
               box-shadow 0.3s ease;
 }
 
+/* 2026-10-09：用户要求胶片上的海报**不要放大**（一放大就超出胶片带的可视范围），
+   只保留发光。 */
 .film-poster-card:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 2px rgba(228, 192, 99, 0.55), 0 0 24px rgba(228, 192, 99, 0.25);
+  box-shadow: 0 0 0 2px rgba(228, 192, 99, 0.6), 0 0 26px rgba(228, 192, 99, 0.35);
   z-index: 5;
   position: relative;
 }
@@ -1183,7 +1199,8 @@
 .full-list-panel {
   background: #141821;
   border-radius: 16px;
-  max-width: 820px;
+  /* 2026-10-09：用户要求更宽、每行 5 部电影，卡片保持原来大小 */
+  max-width: min(1320px, 96vw);
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
@@ -1227,7 +1244,7 @@
 
 .full-list-body--grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
 }
 
@@ -1278,7 +1295,9 @@
 
 @media (max-width: 768px) {
   .movies-inner { padding: 24px 16px 40px; }
-  .filmstrip-wrapper { margin: 0 -16px 28px; }
+  /* ⚠️ 2026-10-10：这里原来有一句 `.filmstrip-wrapper { margin: 0 -16px 28px }`，
+     是胶片带还在 .movies-inner 里时的负边距补偿。胶片带挪到页面最顶（全宽）之后
+     它变成多余的 28px 下边距 —— 手机上胶片带和 hero 之间会凭空多出一条 28px 缝。已删。 */
 
   .signboard-content { flex-direction: column; gap: 18px; }
   .signboard-poster { width: 100px; }
@@ -1683,342 +1702,464 @@
   .mv-stat { flex: 1 1 45%; }
 }
 
-/* ============================================
-   真实数据改版（2026-10-09）
-   原来那套（今夜放映 / 放映排期 / 关注人物）用的是编的数据，
-   换成用户豆瓣「看过」清单后，结构简化成：
-   统计条 → 胶片 banner → 最近看过 → 观影画廊（竖排海报卡）→ 观影日历
-   下面这些 .mv-* 是新加的，页面里旧的 .signboard / .watchlist / .people 保留不动
-   （万一以后要用），只是不再渲染。
-   ============================================ */
-
-/* ----- 观影统计条 ----- */
-.mv-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-bottom: 34px;
-}
-
-.mv-stat {
-  flex: 1 1 120px;
-  padding: 14px 18px;
-  border-radius: 10px;
-  border: 1px solid rgba(228, 192, 99, 0.18);
-  background: rgba(20, 24, 33, 0.72);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.mv-stat--wide { flex: 1 1 220px; }
-
-.mv-stat-num {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.75rem;
-  font-weight: 700;
-  line-height: 1.1;
-  color: #E4C063;
-}
-
-.mv-stat-num--sm { font-size: 1.05rem; letter-spacing: 0.01em; }
-
-.mv-stat-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  color: #8D98AA;
-}
-
-/* ----- 星级（我的评分）----- */
-.mv-stars { display: inline-flex; align-items: center; gap: 2px; }
-
-.mv-star {
-  font-size: 0.82rem;
-  line-height: 1;
-  color: rgba(228, 192, 99, 0.25);
-}
-
-.mv-star--on { color: #E4C063; }
-
-.mv-stars--lg .mv-star { font-size: 1.05rem; }
-
-.mv-stars-label {
-  margin-left: 7px;
-  font-style: normal;
-  font-size: 0.76rem;
-  letter-spacing: 0.06em;
-  color: #C9B47A;
-}
-
-/* ----- 通用小节 ----- */
-.mv-section { margin-bottom: 52px; }
-
-/* ----- 最近看过 ----- */
-.mv-featured {
-  display: flex;
-  gap: 26px;
-  padding: 22px;
-  border-radius: 14px;
-  border: 1px solid rgba(228, 192, 99, 0.22);
-  background: linear-gradient(140deg, rgba(28, 33, 45, 0.95), rgba(16, 20, 28, 0.95));
-  cursor: pointer;
-  transition: border-color 0.35s, transform 0.35s;
-}
-
-.mv-featured:hover {
-  border-color: rgba(228, 192, 99, 0.5);
-  transform: translateY(-3px);
-}
-
-/* ⚠️ PhotoArt 渲染的是 <img>，容器和里面的 img 都要给尺寸，
-   只给容器会被 overflow:hidden 裁掉一块（见 MEMORY.md 第 9 条） */
-.mv-featured-poster {
-  position: relative;
-  flex-shrink: 0;
-  width: 168px;
-  aspect-ratio: 2 / 3;
-  overflow: hidden;
-  border-radius: 10px;
-  background: #0d1017;
-}
-
-.mv-featured-poster img,
-.mv-featured-poster svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.mv-featured-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.mv-featured-kicker {
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
-  color: #8D98AA;
-  margin-bottom: 10px;
-}
-
-.mv-featured-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #F3EFE8;
-  margin: 0 0 4px;
-  letter-spacing: 0.02em;
-}
-
-.mv-featured-original {
-  font-size: 0.8rem;
-  color: #8D98AA;
-  margin: 0 0 8px;
-  letter-spacing: 0.02em;
-}
-
-.mv-featured-meta {
-  font-size: 0.78rem;
-  color: #9AA6B8;
-  margin: 0 0 14px;
-}
-
-.mv-featured-ratings {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
-
-.mv-featured-douban {
-  font-size: 0.78rem;
-  color: #E4C063;
-  letter-spacing: 0.04em;
-}
-
-.mv-featured-genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-bottom: 12px;
-}
-
-.mv-genre-pill {
-  padding: 3px 11px;
-  border-radius: 999px;
-  border: 1px solid rgba(228, 192, 99, 0.28);
-  font-size: 0.7rem;
-  color: #C9B47A;
-  letter-spacing: 0.04em;
-}
-
-.mv-featured-credits {
-  font-size: 0.76rem;
-  color: #8D98AA;
-  margin: 0;
-}
-
-/* ----- 观影画廊：改成竖排海报卡（封面在上、信息在下）-----
-   ⚠️ 横排卡片塞不下 2:3 的竖版海报（正文会被挤到只剩几十 px），
-   这是 MEMORY.md 里记过的坑，竖版封面一律用竖排卡。 */
-.movie-gallery {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.movie-gallery-card {
-  flex-direction: column;
-  border: 1px solid rgba(228, 192, 99, 0.14);
-}
-
-.movie-gallery-card:hover {
-  border-color: rgba(228, 192, 99, 0.45);
-}
-
-.movie-gallery-poster {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  background: #0d1017;
-}
-
-.movie-gallery-poster img,
-.movie-gallery-poster svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* 海报右下角的豆瓣评分角标 */
-.mv-card-douban {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: rgba(8, 10, 15, 0.82);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #E4C063;
-  letter-spacing: 0.04em;
-}
-
-.movie-gallery-info { padding: 12px 14px 14px; }
-
-.movie-gallery-title {
-  font-size: 0.95rem;
-  margin-bottom: 3px;
+/* 小卡片文字不要换行（移动端「2026 · 克里斯托弗·诺兰」会折成两行，
+   「2026-09」也会断行，很难看） */
+.movie-gallery-director {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.movie-gallery-director { margin-bottom: 8px; }
+.mv-card-date { white-space: nowrap; }
 
-.mv-card-foot {
+/* ============================================
+   2026-10-09 用户反馈批改
+   ============================================ */
+
+/* 「开始放映」跳转目标：让「最近看过」标题正好落在吸顶导航下面 */
+#movie-featured {
+  scroll-margin-top: calc(var(--nav-height) + 10px);
+}
+
+/* ----- 观影画廊：标题 + 右侧搜索栏（交互和游戏页一致：点一下/回车才搜）----- */
+.movie-gallery-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-.mv-card-date {
-  font-size: 0.68rem;
-  color: #6E7A8C;
-  letter-spacing: 0.04em;
+.movie-gallery-head .movies-section-label {
+  margin-bottom: 0;
 }
 
-/* ----- 弹窗新增部分 ----- */
-.mv-modal-original {
-  font-size: 0.78rem;
-  color: #8D98AA;
-  margin: 4px 0 0;
-}
-
-.mv-modal-ratings {
+.movies-search {
   display: flex;
   align-items: center;
-  gap: 22px;
-  flex-wrap: wrap;
-  margin: 16px 0 18px;
-  padding: 12px 0;
-  border-top: 1px solid rgba(228, 192, 99, 0.14);
-  border-bottom: 1px solid rgba(228, 192, 99, 0.14);
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.mv-modal-rating { display: flex; align-items: center; gap: 10px; }
-
-.mv-modal-rating-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  color: #8D98AA;
+.movies-search-input {
+  width: 240px;
+  padding: 8px 16px;
+  border: 1px solid rgba(228, 192, 99, 0.28);
+  border-radius: 999px;
+  background: rgba(20, 24, 33, 0.8);
+  font-family: inherit;
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+  color: #F3EFE8;
+  outline: none;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
 }
 
-.mv-douban-score {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
-  font-size: 1.15rem;
-  font-weight: 700;
+.movies-search-input::placeholder { color: #7d8798; }
+
+.movies-search-input:focus {
+  border-color: #E4C063;
+  box-shadow: 0 0 16px rgba(228, 192, 99, 0.25);
+}
+
+.movies-search-btn {
+  padding: 8px 20px;
+  border: 1px solid #E4C063;
+  border-radius: 999px;
+  background: rgba(228, 192, 99, 0.12);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #E4C063;
+  cursor: pointer;
+  transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.movies-search-btn:hover {
+  background: #E4C063;
+  color: #0d1017;
+  box-shadow: 0 0 18px rgba(228, 192, 99, 0.4);
+}
+
+.movies-search-clear {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(228, 192, 99, 0.28);
+  border-radius: 50%;
+  background: transparent;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: #9AA6B8;
+  cursor: pointer;
+  transition: border-color 0.35s ease, color 0.35s ease;
+}
+
+.movies-search-clear:hover {
+  border-color: #E4C063;
   color: #E4C063;
 }
 
-.mv-modal-facts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 8px 14px;
-  margin: 0;
+.movies-result-count {
+  margin: 0 0 20px;
   font-size: 0.8rem;
-}
-
-.mv-modal-facts dt {
-  color: #6E7A8C;
   letter-spacing: 0.06em;
-  white-space: nowrap;
+  color: #8D98AA;
 }
 
-.mv-modal-facts dd {
-  margin: 0;
-  color: #C6CEDC;
-  line-height: 1.6;
+.movies-result-num {
+  margin-left: 12px;
+  color: #E4C063;
+  font-weight: 600;
 }
 
-/* 弹窗海报：原来压了一层 sepia 做旧滤镜，真实海报看不清，
-   这里去掉（外面已经够暗了，不需要再压） */
-.movie-modal-cover { filter: none; }
+/* ----- 观影日历：电影名字放大（用户说太小看不清）----- */
+.calendar-day { min-height: 76px; }
+
+.calendar-day-number { font-size: 1.05rem; }
+
+.calendar-day-movie {
+  font-size: 0.9rem;
+  line-height: 1.25;
+  /* 原来是 nowrap + 省略号，字放大后名字几乎全被截掉 → 改成最多两行 */
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+/* ============================================
+   字号整体放大（用户：「整个页面字也太小了」）
+   ============================================ */
+.movies-section-label { font-size: 1.6rem; }
+.movies-filter-btn { font-size: 0.9rem; }
+.mv-stat-num { font-size: 2rem; }
+.mv-stat-num--sm { font-size: 1.2rem; }
+.mv-stat-label { font-size: 0.8rem; }
+.mv-stars-label { font-size: 0.84rem; }
+.movie-gallery-title { font-size: 1.1rem; }
+.movie-gallery-director { font-size: 0.82rem; }
+.mv-card-date { font-size: 0.78rem; }
+.mv-card-douban { font-size: 0.8rem; }
+.mv-featured-kicker { font-size: 0.78rem; }
+.mv-featured-title { font-size: 1.9rem; }
+.mv-featured-original { font-size: 0.88rem; }
+.mv-featured-meta { font-size: 0.86rem; }
+.mv-featured-douban { font-size: 0.86rem; }
+.mv-genre-pill { font-size: 0.78rem; }
+.mv-featured-credits { font-size: 0.84rem; }
+.film-poster-title { font-size: 0.8rem; }
+.film-poster-year { font-size: 0.7rem; }
+.movies-more-btn { font-size: 0.86rem; }
 
 @media (max-width: 768px) {
-  .mv-featured { flex-direction: column; gap: 18px; padding: 16px; }
-  .mv-featured-poster { width: 130px; }
-  .mv-featured-title { font-size: 1.35rem; }
-  .movie-gallery { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
-  .mv-stat { flex: 1 1 45%; }
+  .movie-gallery-head { align-items: flex-start; }
+  .movies-search { width: 100%; }
+  .movies-search-input { flex: 1; width: auto; }
+  .calendar-day-movie { font-size: 0.78rem; }
+  .mv-stat:hover { transform: none; }
 }
 
-/* 小卡片文字不要换行（移动端「2026 · 克里斯托弗·诺兰」会折成两行，
-   「2026-09」也会断行，很难看） */
-.movie-gallery-director {
-  white-space: nowrap;
+/* ============================================
+   2026-10-09 第二批反馈
+   ============================================ */
+
+/* ----- 统计格 hover：放大更明显 + 光晕更强 + 数字跟着弹 ----- */
+.mv-stat {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.mv-stat:hover {
+  transform: scale(1.09) translateY(-4px);
+  border-color: rgba(228, 192, 99, 0.75);
+  background: rgba(34, 41, 56, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(228, 192, 99, 0.35),
+    0 0 26px rgba(228, 192, 99, 0.5),
+    0 0 60px rgba(228, 192, 99, 0.28),
+    0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+.mv-stat .mv-stat-num {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), text-shadow 0.3s ease;
+}
+
+.mv-stat:hover .mv-stat-num {
+  transform: scale(1.08);
+  text-shadow: 0 0 16px rgba(228, 192, 99, 0.75);
+}
+
+/* ----- 影片推荐：标题行 + 历史推荐入口 ----- */
+.mv-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.mv-section-head .movies-section-label { margin-bottom: 0; }
+
+.movies-rec-history-btn {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border: 1px solid #E4C063;
+  border-radius: 999px;
+  background: rgba(228, 192, 99, 0.12);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #E4C063;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.movies-rec-history-btn:hover {
+  background: #E4C063;
+  color: #0d1017;
+  box-shadow: 0 0 20px rgba(228, 192, 99, 0.45);
+}
+
+.movies-rec-history-count { opacity: 0.8; }
+
+/* ----- 推荐缘由 ----- */
+.mv-featured-reason {
+  margin: 14px 0 0;
+  padding: 12px 16px;
+  border-left: 3px solid #E4C063;
+  background: rgba(228, 192, 99, 0.07);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: #D8DFEA;
+}
+
+.mv-featured-reason-label {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: #E4C063;
+  color: #0d1017;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  vertical-align: 1px;
+}
+
+/* ----- 弹窗里的「我的感想」 ----- */
+.mv-modal-reflection {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(228, 192, 99, 0.16);
+}
+
+.mv-modal-reflection-title {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #E4C063;
+}
+
+.mv-modal-reflection-text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 2;
+  color: #C6CEDC;
+}
+
+/* ----- 历史推荐弹窗 ----- */
+.movies-rec-panel { max-width: 900px; }
+
+.movies-rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.movies-rec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid rgba(228, 192, 99, 0.18);
+  border-radius: 10px;
+  background: rgba(20, 24, 33, 0.7);
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+}
+
+.movies-rec-item:hover {
+  border-color: rgba(228, 192, 99, 0.55);
+  background: rgba(30, 36, 49, 0.9);
+  transform: translateX(4px);
+}
+
+.movies-rec-index {
+  flex-shrink: 0;
+  padding-top: 2px;
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #E4C063;
+  opacity: 0.75;
+}
+
+.movies-rec-cover {
+  position: relative;
+  flex-shrink: 0;
+  width: 76px;
+  aspect-ratio: 2 / 3;
+  border-radius: 6px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  background: #0d1017;
 }
 
-.mv-card-date { white-space: nowrap; }
-
-/* 小卡片文字不要换行（移动端「2026 · 克里斯托弗·诺兰」会折成两行，
-   「2026-09」也会断行，很难看） */
-.movie-gallery-director {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.movies-rec-cover img,
+.movies-rec-cover svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.mv-card-date { white-space: nowrap; }
+.movies-rec-body { flex: 1; min-width: 0; }
+
+.movies-rec-title {
+  margin: 0 0 4px;
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #F3EFE8;
+}
+
+.movies-rec-meta {
+  margin: 0 0 9px;
+  font-size: 0.8rem;
+  color: #8D98AA;
+}
+
+.movies-rec-reason {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.9;
+  color: #C6CEDC;
+}
+
+@media (max-width: 768px) {
+  .mv-stat:hover { transform: none; }
+  .mv-stat:hover .mv-stat-num { transform: none; }
+  .mv-section-head { align-items: flex-start; }
+  .movies-rec-item { flex-direction: column; gap: 12px; }
+  .movies-rec-cover { width: 64px; }
+}
+
+/* ============================================
+   2026-10-09 第三批反馈
+   ============================================ */
+
+/* ----- 把「流前影院」后面那圈暖黄光晕延伸到上面的胶片带 -----
+   胶片板本身是不透明的，所以光晕要在它自己的背景里画一份。
+   ⚠️ 2026-10-10：原来的「页面级径向暖光 + 板内径向椭圆」组合已废弃 ——
+   板内径向椭圆在板底边还剩 0.15 alpha，被硬边切断 → 出现横线。
+   现在暖光只放在 .filmstrip-wrapper（线性渐变）和 .filmstrip-film（线性渐变）里，
+   板的底边由 .filmstrip-film::after 继续淡出。 */
+
+/* ----- 详情弹窗要盖在「历史推荐 / 查看更多」清单之上 -----
+   用户反馈：清单里点一部片看完详情，关掉后应该回到清单而不是主页。
+   做法是清单不关（见 Movies.jsx），这里把详情弹窗层级抬上去。 */
+.movie-modal-overlay {
+  z-index: 9100;
+}
+
+@media (max-width: 1100px) {
+  .full-list-body--grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ============================================
+   顶部暖光：让胶片带和「流前影院」之间的光晕连成一片
+   历史：原来 .movies-world 有一层大的**径向**暖光，它在 y≈433（hero 上沿）
+   还没衰减完，撞上 hero 顶部的纯黑宽银幕边 → 一条明显的横线。
+   现在页面底色只用文件开头那一条线性渐变（见 `.movies-world` 第一处），
+   暖光全部收进 .filmstrip-wrapper / .filmstrip-film（都是线性，下边缘可控）。
+   ============================================ */
+
+/* ⚠️ 2026-10-10：这里原来有一层独立的暖光渐变。
+   现在整块首屏（胶片带 + 影院）的光晕**统一挪到 `.movies-stage`**，做成唯一光源 ——
+   两个光源各自在自己的盒子里衰减到 0，中间必然出现一条「谷」，
+   那正是用户看到的「上下间隙」。所以这里改成透明。 */
+
+
+/* ============================================
+   2026-10-10 首屏布局：胶片带 + hero 合起来正好一屏
+   用户反馈：hero 里的「流前影院」文字块偏下，布局不协调；
+   希望它落在「放映胶片下沿 → 视口底」的正中间。
+   原来 .cine-hero 写死 78vh，胶片带又把它整个顶下去 → 内容自然偏下。
+   现在改成 flex：舞台占满导航以下的一屏，hero 吃掉胶片带之外的剩余高度，
+   内容在 hero 里居中 = 正好落在胶片带下沿与视口底的中间。
+   ============================================ */
+.movies-stage {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--nav-height));
+  /* ============================================
+     整块首屏（胶片带 + 影院）**唯一**的暖黄光晕
+     2026-10-10：用户说「上下间隙更明显了，要这个黄色背景若隐若现，不要明显的分割」。
+     根因是首屏原来有**两个**光源：胶片带一层 CSS 光晕 + 影院那层装饰视频
+     （它的 poster 就是一张暖黄光晕图）。两层各自在自己的盒子里衰减到 0，
+     中间必然出现一条「谷」—— 就是那道分割。
+     现在视频删了，只剩这一处光晕，用两层**互相重叠**的渐变叠出一个平滑的竖向剖面：
+       ① 标题一带的热点（径向）
+       ② 上部延伸（线性）—— 让胶片带那一段也带上暖色
+     两层都平滑且重叠，加起来不会出现「归零再接上」的谷。
+     ============================================ */
+  background:
+    radial-gradient(
+      92% 30% at 50% 72%,
+      rgba(228, 192, 99, 0.20) 0%,
+      rgba(228, 192, 99, 0.11) 46%,
+      rgba(228, 192, 99, 0) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(228, 192, 99, 0.17) 0%,
+      rgba(228, 192, 99, 0.16) 40%,
+      rgba(228, 192, 99, 0.03) 78%,
+      rgba(228, 192, 99, 0) 100%
+    );
+}
+
+.movies-stage > .filmstrip-wrapper {
+  flex: 0 0 auto;
+}
+
+.movies-stage > .cine-hero {
+  flex: 1 1 auto;
+  /* 覆盖 CineHero.css 的 78vh / max-height:820px —— 高度改由 flex 决定 */
+  height: auto;
+  min-height: 300px;
+  max-height: none;
+}
+
+/* 矮屏（横屏笔记本等）：不强行凑一屏，否则文字块会被压扁 */
+@media (max-height: 760px) {
+  .movies-stage { min-height: 0; }
+  .movies-stage > .cine-hero { min-height: 380px; }
+}
+
+/* 窄屏：仍然让 hero 吃掉胶片带之外的剩余高度（保持和桌面一样的居中），
+   只是把 min-height 调小一点，免得手机横屏时被撑爆 */
+@media (max-width: 768px) {
+  .movies-stage > .cine-hero { min-height: 320px; }
+}

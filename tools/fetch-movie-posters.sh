@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# 下载电影海报（豆瓣图床，直连可用）→ .tmp/movies-posters/
+# 下载电影海报（豆瓣图床，走代理 127.0.0.1:7890 —— 直连会 http=000）→ .tmp/movies-posters/
 set -u
 cd "$(dirname "$0")/.."
 OUT=".tmp/movies-posters"
 mkdir -p "$OUT"
 UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36'
+PROXY='127.0.0.1:7890'
 PY='C:/Users/Leneve/.workbuddy-ai/binaries/python/envs/default/Scripts/python.exe'
 
 $PY - <<'PYEOF' > /tmp/mv-urls.txt
@@ -23,9 +24,11 @@ PYEOF
 
 while IFS='|' read -r idx url; do
   [ -z "$idx" ] && continue
+  # 去掉 URL 末尾的 \r（Python 写文件用 CRLF 会带过来）
+  url="${url%$'\r'}"
   f="$OUT/mv-$idx.jpg"
   if [ -s "$f" ]; then echo "· $idx 已有"; continue; fi
-  code=$(curl -s --max-time 40 -o "$f" -w "%{http_code}" -H "User-Agent: $UA" -H "Referer: https://movie.douban.com/" "$url")
+  code=$(curl -s --max-time 40 -x "$PROXY" -o "$f" -w "%{http_code}" -H "User-Agent: $UA" -H "Referer: https://movie.douban.com/" "$url")
   size=$(stat -c%s "$f" 2>/dev/null || echo 0)
   echo "$idx http=$code size=$size"
   sleep 1

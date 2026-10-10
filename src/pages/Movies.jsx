@@ -83,14 +83,56 @@ function MovieModal({ movie, onClose }) {
               </>
             )}
           </dl>
+
+          {movie.reflection && (
+            <div className="mv-modal-reflection">
+              <h3 className="mv-modal-reflection-title">我的感想</h3>
+              <p className="mv-modal-reflection-text">{movie.reflection}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-/* ====== 最近看过（大卡片）====== */
-function FeaturedMovie({ movie, onSelect }) {
+/* ====== 历史推荐弹窗 ====== */
+function RecommendModal({ picks, onClose, onSelect }) {
+  return (
+    <div className="full-list-overlay" onClick={onClose}>
+      <div className="full-list-panel movies-rec-panel" onClick={(e) => e.stopPropagation()}>
+        <button className="full-list-close" onClick={onClose}>✕</button>
+        <h2 className="full-list-title">影片推荐 · 全部 {picks.length} 部</h2>
+        <div className="movies-rec-list">
+          {picks.map((p, i) => (
+            <article
+              key={p.movie.id}
+              className="movies-rec-item"
+              onClick={() => onSelect(p.movie)}
+            >
+              <span className="movies-rec-index">{String(i + 1).padStart(2, '0')}</span>
+              <div className="movies-rec-cover">
+                <PhotoArt src={p.movie.posterUrl} alt={p.movie.title} id={p.movie.id} theme="poster" />
+              </div>
+              <div className="movies-rec-body">
+                <h3 className="movies-rec-title">{p.movie.title}</h3>
+                <p className="movies-rec-meta">
+                  {p.movie.year}
+                  {p.movie.directors?.length > 0 && ` · ${p.movie.directors[0]}`}
+                  {p.movie.doubanRating != null && ` · 豆瓣 ${p.movie.doubanRating}`}
+                </p>
+                <p className="movies-rec-reason">{p.reason}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ====== 影片推荐（大卡片，显示最新一条）====== */
+function FeaturedMovie({ movie, reason, onSelect }) {
   if (!movie) return null
   return (
     <div className="mv-featured" onClick={() => onSelect(movie)}>
@@ -98,7 +140,7 @@ function FeaturedMovie({ movie, onSelect }) {
         <PhotoArt src={movie.posterUrl} alt={movie.title} id={movie.id} theme="poster" />
       </div>
       <div className="mv-featured-body">
-        <span className="mv-featured-kicker">最近看过 · {movie.watchedDate}</span>
+        <span className="mv-featured-kicker">最新推荐</span>
         <h2 className="mv-featured-title">{movie.title}</h2>
         {movie.originalTitle && <p className="mv-featured-original">{movie.originalTitle}</p>}
         <p className="mv-featured-meta">{metaLine(movie)}</p>
@@ -112,6 +154,12 @@ function FeaturedMovie({ movie, onSelect }) {
           <div className="mv-featured-genres">
             {movie.genres.map((g) => <span key={g} className="mv-genre-pill">{g}</span>)}
           </div>
+        )}
+        {reason && (
+          <p className="mv-featured-reason">
+            <span className="mv-featured-reason-label">推荐缘由</span>
+            {reason}
+          </p>
         )}
         {movie.directors?.length > 0 && (
           <p className="mv-featured-credits">
@@ -247,7 +295,10 @@ function TicketCalendar({ movies, onSelect }) {
   )
 }
 
-/* ====== 更多弹窗 ====== */
+/* ====== 更多弹窗 ======
+   ⚠️ 点条目**只开详情弹窗、不关清单** —— 关掉详情要回到「全部观影记录」，
+   不是直接回电影页（否则相当于一次点了两级返回）。
+   详情弹窗 z-index 比清单高（见 movies.css）。 */
 function FullListModal({ title, items, onClose, onSelect }) {
   return (
     <div className="full-list-overlay" onClick={onClose}>
@@ -256,7 +307,7 @@ function FullListModal({ title, items, onClose, onSelect }) {
         <h2 className="full-list-title">{title}</h2>
         <div className="full-list-body--grid">
           {items.map((item) => (
-            <GalleryCard key={item.id} movie={item} onSelect={(m) => { onClose(); onSelect(m) }} />
+            <GalleryCard key={item.id} movie={item} onSelect={onSelect} />
           ))}
         </div>
       </div>
@@ -273,31 +324,81 @@ function Movies() {
   const [activeGenre, setActiveGenre] = useState(null)
   const [modalItem, setModalItem] = useState(null)
   const [showAll, setShowAll] = useState(false)
+  /* 搜索：输入框内容和「真正生效的关键词」分开存 —— 用户要的是「点一下才搜」，
+     和游戏页的搜索保持一致（不是边打字边过滤） */
+  const [searchInput, setSearchInput] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   const genres = movieData.genres ?? []
-  const filtered = useMemo(() => filterMoviesByGenre(watched, activeGenre), [watched, activeGenre])
+  const filtered = useMemo(() => {
+    let list = filterMoviesByGenre(watched, activeGenre)
+    const kw = searchTerm.trim().toLowerCase()
+    if (kw) {
+      list = list.filter((m) =>
+        [
+          m.title,
+          m.originalTitle,
+          m.year,
+          ...(m.directors ?? []),
+          ...(m.actors ?? []),
+          ...(m.genres ?? []),
+          ...(m.countries ?? []),
+        ]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(kw)),
+      )
+    }
+    return list
+  }, [watched, activeGenre, searchTerm])
 
   const GALLERY_PAGE = 12
   const visible = filtered.slice(0, GALLERY_PAGE)
   const hasMore = filtered.length > GALLERY_PAGE
 
   const stats = movieData.stats ?? {}
-  const featured = watched[0] ?? null
+
+  /* 影片推荐：把 recommendations 里的 id 解析成完整电影对象（漏一个就少一个） */
+  const recommendations = useMemo(
+    () =>
+      (movieData.recommendations ?? [])
+        .map((r) => ({ movie: watched.find((m) => m.id === r.id), reason: r.reason }))
+        .filter((p) => p.movie),
+    [movieData.recommendations, watched],
+  )
+  const topPick = recommendations[0] ?? null
+  const [recOpen, setRecOpen] = useState(false)
 
   return (
     <main className="movies-world">
       <Stars />
 
-      {/* 0. 电影感视频首屏 */}
-      <CineHero>
-        <p className="cine-hero-kicker">NOW SHOWING</p>
-        <h1 className="cine-hero-title">流前影院</h1>
-        <p className="cine-hero-sub">一场一场，都记着。</p>
-        <a className="cine-hero-cta" href="#movie-gallery">开始放映</a>
-      </CineHero>
+      {/* 首屏舞台：胶片带 + 影院 hero 合起来占满「导航以下的一屏」。
+          hero 用 flex 吃掉胶片带之外的剩余高度 → 文字块自然居中在
+          「胶片带下沿 → 视口底」的正中间（原来 hero 写死 78vh，会被胶片带顶下去，内容偏下）。 */}
+      <div className="movies-stage">
+        {/* 0. 滚动胶片 Banner —— 放在整个页面最上面，一进页面就能看到 */}
+        <Filmstrip movies={movieData.bannerMovies} onSelect={setModalItem} />
+
+        {/* 1. 电影感视频首屏 */}
+        <CineHero>
+          <p className="cine-hero-kicker">NOW SHOWING</p>
+          <h1 className="cine-hero-title">流前影院</h1>
+          <p className="cine-hero-sub">一场一场，都记着。</p>
+          {/* 用 JS 滚动而不是 <a href="#...">：不留 hash 在 URL 里，
+              否则刷新 / 回退时浏览器会直接跳到锚点，看不到最上面的胶片 */}
+          <button
+            type="button"
+            className="cine-hero-cta"
+            onClick={() => document.getElementById('movie-featured')
+              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          >
+            开始放映
+          </button>
+        </CineHero>
+      </div>
 
       <div className="movies-inner">
-        {/* 1. 观影统计 */}
+        {/* 2. 观影统计 */}
         <div className="mv-stats">
           <div className="mv-stat">
             <span className="mv-stat-num">{stats.count}</span>
@@ -319,19 +420,49 @@ function Movies() {
           </div>
         </div>
 
-        {/* 2. 滚动胶片 Banner */}
-        <Filmstrip movies={movieData.bannerMovies} onSelect={setModalItem} />
-
-        {/* 3. 最近看过 */}
-        <section className="mv-section">
-          <h2 className="movies-section-label">最近看过</h2>
-          <FeaturedMovie movie={featured} onSelect={setModalItem} />
+        {/* 3. 影片推荐 —— 卡片显示最新推荐，点「历史推荐」看全部 */}
+        <section className="mv-section" id="movie-featured">
+          <div className="mv-section-head">
+            <h2 className="movies-section-label">影片推荐</h2>
+            {recommendations.length > 1 && (
+              <button className="movies-rec-history-btn" onClick={() => setRecOpen(true)}>
+                历史推荐 <span className="movies-rec-history-count">{recommendations.length}</span> →
+              </button>
+            )}
+          </div>
+          <FeaturedMovie movie={topPick?.movie} reason={topPick?.reason} onSelect={setModalItem} />
         </section>
 
-        {/* 4. 类型筛选 + 观影画廊 */}
+        {/* 4. 类型筛选 + 搜索 + 观影画廊 */}
         <section className="movie-gallery-section" id="movie-gallery">
-          <h2 className="movies-section-label">观影画廊</h2>
+          <div className="movie-gallery-head">
+            <h2 className="movies-section-label">观影画廊</h2>
+            <div className="movies-search">
+              <input
+                className="movies-search-input"
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') setSearchTerm(searchInput) }}
+                placeholder="搜索片名 / 导演 / 演员 / 类型"
+                aria-label="搜索电影"
+              />
+              <button className="movies-search-btn" onClick={() => setSearchTerm(searchInput)}>搜索</button>
+              {searchTerm && (
+                <button
+                  className="movies-search-clear"
+                  onClick={() => { setSearchInput(''); setSearchTerm('') }}
+                  aria-label="清除搜索"
+                >×</button>
+              )}
+            </div>
+          </div>
           <GenreFilter genres={genres} active={activeGenre} onSelect={setActiveGenre} />
+          <p className="movies-result-count">
+            {searchTerm ? `「${searchTerm}」` : ''}
+            {activeGenre ? ` · ${activeGenre}` : ''}
+            <span className="movies-result-num">共 {filtered.length} 部</span>
+          </p>
           <div className="movie-gallery">
             {visible.map((m) => (
               <GalleryCard key={m.id} movie={m} onSelect={setModalItem} />
@@ -342,7 +473,7 @@ function Movies() {
               查看更多（共 {filtered.length} 部）
             </button>
           )}
-          {filtered.length === 0 && <div className="movies-empty">还没有这个类型的电影</div>}
+          {filtered.length === 0 && <div className="movies-empty">没有找到符合条件的电影</div>}
         </section>
 
         {/* 5. 星空观影日历 */}
@@ -355,6 +486,14 @@ function Movies() {
       <SiteFooter path="/movies" />
 
       <MovieModal movie={modalItem} onClose={() => setModalItem(null)} />
+
+      {recOpen && (
+        <RecommendModal
+          picks={recommendations}
+          onSelect={setModalItem}
+          onClose={() => setRecOpen(false)}
+        />
+      )}
 
       {showAll && (
         <FullListModal

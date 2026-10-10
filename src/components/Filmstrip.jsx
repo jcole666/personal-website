@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import PhotoArt from './PhotoArt.jsx'
 
 /**
@@ -41,31 +41,12 @@ function Stars() {
 }
 
 /**
- * 串灯绳
- */
-function StringLights({ count = 14, hoveredIndex, className = '' }) {
-  return (
-    <div className={`string-lights ${className}`}>
-      {Array.from({ length: count }, (_, i) => (
-        <span
-          key={i}
-          className={`string-light ${i === hoveredIndex ? 'string-light--glow' : ''}`}
-          style={{ animationDelay: `${i * 0.35}s` }}
-        />
-      ))}
-    </div>
-  )
-}
-
-/**
  * 单张海报
  */
-function PosterCard({ movie, index, onHover, onSelect }) {
+function PosterCard({ movie, onSelect }) {
   return (
     <div
       className="film-poster-card"
-      onMouseEnter={() => onHover(index)}
-      onMouseLeave={() => onHover(-1)}
       onClick={() => onSelect(movie)}
       title={movie.title}
     >
@@ -88,10 +69,23 @@ function PosterCard({ movie, index, onHover, onSelect }) {
 
 /**
  * 胶片 Banner — CSS 无限循环滚动，前面出去后面进来
+ *
+ * 2026-10-09：
+ *   · 用户说串灯绳「好累赘」→ 删掉（原 StringLights 组件已移除）。
+ *   · 齿孔动画跟海报一起暂停 ——
+ *     海报速度 = 每张宽 140 + 间距 16 = 156px / 5s = 31.2 px/s（与张数无关），
+ *     齿孔周期 36px → 周期时长 = 36 / 31.2 ≈ 1.154s，由组件算好传给 CSS。
+ *
+ * 2026-10-10：暂停改成**纯 CSS**（`.filmstrip-film:hover` 同时管海报和齿孔）。
+ *   原来海报靠 CSS `:hover`（整条海报行都算）、齿孔靠 React 的「鼠标压在某张卡上」，
+ *   两个判定范围不一致 → 鼠标停在两张卡中间的缝里时海报停了、齿孔还在滚。
+ *   现在只有一个条件，组件里的 hoveredIndex / onHover 一并删掉。
  */
-function Filmstrip({ movies, onSelect }) {
-  const [hoveredIndex, setHoveredIndex] = useState(-1)
+const POSTER_W = 140
+const POSTER_GAP = 16
+const SPROCKET_PERIOD = 36
 
+function Filmstrip({ movies, onSelect }) {
   const doubled = useMemo(
     () => (movies.length > 0 ? [...movies, ...movies] : []),
     [movies]
@@ -100,24 +94,18 @@ function Filmstrip({ movies, onSelect }) {
   if (!movies || movies.length === 0) return null
 
   const scrollDur = movies.length * 5
+  const speed = (POSTER_W + POSTER_GAP) / 5
+  const sprocketDur = SPROCKET_PERIOD / speed
 
   return (
     <div className="filmstrip-wrapper">
-      <StringLights count={14} hoveredIndex={hoveredIndex % movies.length} />
-
       <div className="filmstrip-hang">
-        <div className="filmstrip-film">
+        <div className="filmstrip-film" style={{ '--sprocket-dur': `${sprocketDur}s` }}>
           <div className="filmstrip-sprockets filmstrip-sprockets--top" />
 
           <div className="filmstrip-posters" style={{ '--scroll-dur': `${scrollDur}s` }}>
             {doubled.map((movie, i) => (
-              <PosterCard
-                key={`${movie.id}-${i}`}
-                movie={movie}
-                index={i % movies.length}
-                onHover={setHoveredIndex}
-                onSelect={onSelect}
-              />
+              <PosterCard key={`${movie.id}-${i}`} movie={movie} onSelect={onSelect} />
             ))}
           </div>
 

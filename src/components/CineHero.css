@@ -1,63 +1,18 @@
 /* ============================================
-   电影感视频首屏
+   影院首屏
+   2026-10-10：装饰视频已删 —— 背景光晕统一由 `.movies-stage` 提供
+   （见 movies.css）。这里只负责「撑满剩余高度 + 内容居中」。
    ============================================ */
 
 .cine-hero {
   position: relative;
-  /* 显式高度，不用内容撑 —— 防 CLS。视频没加载出来时占位也不能塌 */
-  height: 78vh;
-  min-height: 460px;
-  max-height: 820px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #05060A;
-}
-
-.cine-hero-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* poster 先出（瞬间可见），视频就绪后淡入 —— 避免视频第一帧"跳"出来 */
-  opacity: 0;
-  transition: opacity 700ms ease-out;
-}
-
-.cine-hero-video--ready {
-  opacity: 1;
-}
-
-/* 可读性遮罩：文字压视频前必须先铺这一层，否则对比度无法保证 */
-.cine-hero-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(5, 6, 10, 0.78) 0%,
-    rgba(5, 6, 10, 0.2) 45%,
-    rgba(5, 6, 10, 0.45) 100%
-  );
-}
-
-/* 宽银幕上下黑边 */
-.cine-hero-bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 22px;
-  background: #05060A;
-  z-index: 3;
-}
-
-.cine-hero-bar--top {
-  top: 0;
-}
-
-.cine-hero-bar--bottom {
-  bottom: 0;
+  /* 背景保持透明：让 .movies-stage 的那一层暖光透上来，
+     和上面的胶片带连成一片（之前这里是不透明的 #05060A，会切出一条边） */
+  background: transparent;
 }
 
 .cine-hero-content {
@@ -97,13 +52,16 @@
 .cine-hero-cta {
   display: inline-block;
   padding: 14px 34px;
+  border: none;
   border-radius: 999px;
   background: #E4C063;
   color: #05060A;
+  font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-decoration: none;
+  cursor: pointer;
   transition: transform 300ms ease-out, box-shadow 300ms ease-out,
     background-color 300ms ease-out;
 }
@@ -122,74 +80,9 @@
   box-shadow: 0 0 0 3px rgba(228, 192, 99, 0.5);
 }
 
-/* 播放/暂停入口 —— 绝不剥夺用户的控制权 */
-.cine-hero-toggle {
-  position: absolute;
-  right: 26px;
-  bottom: 42px;
-  z-index: 4;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  color: #F3EFE8;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  cursor: pointer;
-  transition: background-color 300ms ease-out, border-color 300ms ease-out;
-}
-
-.cine-hero-toggle:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.cine-hero-toggle:active {
-  transform: scale(0.98);
-}
-
-.cine-hero-toggle:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(228, 192, 99, 0.5);
-}
-
-.cine-hero-toggle-icon {
-  font-size: 0.62rem;
-  color: #E4C063;
-}
-
-/* ============================================
-   响应式
-   ============================================ */
-@media (max-width: 768px) {
-  .cine-hero {
-    height: 62vh;
-    min-height: 380px;
-  }
-
-  .cine-hero-bar {
-    height: 14px;
-  }
-
-  .cine-hero-toggle {
-    right: 16px;
-    bottom: 30px;
-  }
-}
-
-/* 用户开了「减少动效」—— 视频本来就不播了，淡入也去掉 */
+/* 用户开了「减少动效」 */
 @media (prefers-reduced-motion: reduce) {
-  .cine-hero-video {
-    transition: none;
-  }
-
-  .cine-hero-cta,
-  .cine-hero-toggle {
+  .cine-hero-cta {
     transition: none;
   }
 }
