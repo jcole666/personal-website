@@ -371,7 +371,9 @@
 .food-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9000;
+  /* 比「全部显示」清单（9000）高一层 —— 清单里点条目只开详情、不关清单，
+     关掉详情要回到清单 */
+  z-index: 9100;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -626,3 +628,558 @@
     transform: none;
   }
 }
+
+/* ============================================
+   2026-10-10：搜索栏 + 侧边快速跳转
+   用户反馈：
+     ① 页面往下滑，顶部那条快速导航被卷走就跳不动了
+        → 补一条侧边快速跳转，只在顶部那条滚出视口后出现（两者不同时出现）
+     ② 快速导航下面、第一个摊位上面要有搜索（交互同游戏页：点一下 / 回车才搜）
+   ============================================ */
+
+/* 搜索栏插在快速导航和摊位之间，所以导航的下边距收窄一点 */
+.food-quick-nav { margin-bottom: 18px; }
+
+.food-search-wrap { margin: 0 0 48px; }
+
+/* 和 .food-quick-nav 共用一套「亚麻盒子」语言，视觉上是同族。
+   宽度也和上面那条导航对齐（同一个 .food-inner 宽度），上下叠起来是齐的 */
+.food-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--cc-linen);
+  border: 1px solid var(--cc-line-soft);
+  border-radius: 24px;
+  box-shadow: var(--cc-shadow-md);
+}
+
+.food-search-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 16px;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: var(--cc-ink);
+  outline: none;
+  transition: border-color var(--cc-ease), box-shadow var(--cc-ease);
+}
+
+.food-search-input::placeholder {
+  /* 低透明度在这里会掉到 2:1 以下，用实色 + 字号撑住可读性 */
+  color: var(--cc-ink-soft);
+}
+
+.food-search-input:focus {
+  border-color: var(--cc-green-bright);
+  box-shadow: 0 0 0 3px rgba(90, 143, 90, 0.18);
+}
+
+/* 按钮底用压深版绿 #3f6b3f —— 配白字 6.18:1 ✓（亮绿 #5a8f5a 只有 3.80，不达标） */
+.food-search-btn {
+  flex-shrink: 0;
+  padding: 9px 22px;
+  background: var(--cc-green);
+  border: 1px solid var(--cc-green);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--cc-ease), box-shadow var(--cc-ease);
+}
+
+.food-search-btn:hover {
+  background: #335733;
+  box-shadow: var(--cc-shadow-md);
+}
+
+.food-search-clear {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--cc-line);
+  border-radius: 50%;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--cc-ink-soft);
+  cursor: pointer;
+  transition: border-color var(--cc-ease), color var(--cc-ease),
+    background-color var(--cc-ease);
+}
+
+.food-search-clear:hover {
+  border-color: var(--cc-green);
+  background: var(--cc-cream);
+  color: var(--cc-green);
+}
+
+.food-result-count {
+  margin: 14px 0 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: var(--cc-ink-soft);
+}
+
+.food-result-num {
+  margin-left: 10px;
+  color: var(--cc-green);
+  font-weight: 600;
+}
+
+.food-empty {
+  padding: 48px 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  color: var(--cc-ink-soft);
+}
+
+/* ---------- 侧边快速跳转 ---------- */
+.food-side-nav {
+  position: fixed;
+  right: 22px;
+  top: 50%;
+  /* 低于吸顶导航(100) 和弹窗(9000+)，所以弹窗打开时它自然被盖住 */
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 10px;
+  background: var(--cc-linen);
+  border: 1px solid var(--cc-line-soft);
+  border-radius: 22px;
+  box-shadow: var(--cc-shadow-lg);
+  /* 默认藏起来：往右挪 22px + 透明 + 不可点，出现时滑进来 */
+  opacity: 0;
+  transform: translate(22px, -50%);
+  pointer-events: none;
+  transition: opacity var(--cc-ease), transform var(--cc-ease);
+}
+
+.food-side-nav--show {
+  opacity: 1;
+  transform: translate(0, -50%);
+  pointer-events: auto;
+}
+
+.food-side-nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px 7px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--cc-ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--cc-ease), border-color var(--cc-ease),
+    box-shadow var(--cc-ease);
+}
+
+.food-side-nav-item:hover {
+  background: var(--cc-cream);
+  border-color: var(--cc-line);
+}
+
+.food-side-nav-item--active {
+  background: var(--cc-cream);
+  border-color: var(--cc-line);
+  box-shadow: var(--cc-shadow-sm);
+  font-weight: 600;
+}
+
+.food-side-nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform var(--cc-ease), box-shadow var(--cc-ease);
+}
+
+/* 当前摊位：圆点放大 + 套一圈自己的摊位色 */
+.food-side-nav-item--active .food-side-nav-dot {
+  transform: scale(1.45);
+  box-shadow: 0 0 0 3px var(--cc-linen), 0 0 0 5px var(--nav-color);
+}
+
+.food-side-nav-icon { font-size: 0.95rem; line-height: 1; }
+.food-side-nav-label { line-height: 1; }
+
+/* 内容区 max-width 1040，窄屏时侧边栏会压到正文 → 逐步降级：
+   1400 以下只留「圆点 + 图标」，1150 以下整条收起 */
+@media (max-width: 1400px) {
+  .food-side-nav { right: 10px; padding: 10px 8px; }
+  .food-side-nav-label { display: none; }
+  .food-side-nav-item { padding: 8px; }
+}
+
+@media (max-width: 1150px) {
+  .food-side-nav { display: none; }
+}
+
+@media (max-width: 768px) {
+  .food-search { padding: 10px 12px; border-radius: 20px; }
+  .food-search-btn { padding: 9px 16px; }
+}
+
+/* 「减少动效」：侧边栏不做滑入，直接淡入 */
+@media (prefers-reduced-motion: reduce) {
+  .food-side-nav { transform: translate(0, -50%); transition: none; }
+  .food-search-btn,
+  .food-search-clear,
+  .food-search-input,
+  .food-side-nav-item,
+  .food-side-nav-dot { transition: none; }
+}
+
+/* ============================================
+   2026-10-10：「流前精选」
+   每个摊位标题旁边一个入口，点开是 5 列卡片墙，每张卡带推荐理由。
+   名单 = 评分 ≥4.5 的条目（理由取自自己的点评原文）。
+   ============================================ */
+
+/* ---------- 摊位标题旁边的入口 ---------- */
+.food-pick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 6px 15px;
+  /* 雏菊黄 #f5d75f + 压深棕字 = 4.80:1 ✓（stall color 那种中间调配白字只有 ~3.2，不达标） */
+  background: var(--cc-yellow);
+  border: 1px solid rgba(139, 115, 85, 0.3);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cc-ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform var(--cc-ease), box-shadow var(--cc-ease),
+    background-color var(--cc-ease);
+}
+
+.food-pick-btn:hover {
+  background: #f0cf4a;
+  box-shadow: var(--cc-shadow-sm);
+  transform: translateY(-1px);
+}
+
+.food-pick-btn-mark { font-size: 0.72rem; }
+
+/* ---------- 精选弹窗 ---------- */
+.food-picks-overlay {
+  position: fixed;
+  inset: 0;
+  /* 与「全部显示」同一个层级；详情弹窗 9100 在它上面（见 .food-modal-overlay） */
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background: rgba(107, 85, 64, 0.42);
+}
+
+.food-picks-panel {
+  position: relative;
+  width: 100%;
+  /* 一排最多 5 个（和电影「查看更多」一致），但**面板宽度跟着内容收** ——
+     某个摊位只有 3 件时，5 列网格会空出 2 列，看着不平衡。
+     列数由 food-picks-panel--nN 类给出，宽度从同一个 --cols 算出来，
+     卡片宽度恒定为 236（254 = 236 卡 + 18 间距，50 = 左右内边距）。 */
+  --cols: 5;
+  max-width: min(calc(var(--cols) * 254px + 50px), 96vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 34px 34px 32px;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 28px;
+  box-shadow: var(--cc-shadow-lg);
+}
+
+.food-picks-panel--n1 { --cols: 1; }
+.food-picks-panel--n2 { --cols: 2; }
+.food-picks-panel--n3 { --cols: 3; }
+.food-picks-panel--n4 { --cols: 4; }
+
+.food-picks-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 50%;
+  color: var(--cc-ink);
+  font-size: 0.86rem;
+  cursor: pointer;
+  box-shadow: var(--cc-shadow-sm);
+  transition: transform var(--cc-ease), background-color var(--cc-ease),
+    color var(--cc-ease);
+}
+
+.food-picks-close:hover {
+  background: var(--cc-linen);
+  transform: rotate(90deg);
+}
+
+.food-picks-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+  padding: 0 44px 16px 0;
+  border-bottom: 1px dashed var(--cc-line);
+}
+
+.food-picks-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.food-picks-icon { font-size: 1.15rem; line-height: 1; }
+
+.food-picks-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--cc-ink);
+}
+
+.food-picks-count {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.86rem;
+  color: var(--cc-ink-soft);
+}
+
+/* ---------- 卡片墙：一排最多 5 个 ---------- */
+.food-picks-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 5), 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.food-pick-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--cc-cream);
+  border: 1px solid var(--cc-line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--cc-shadow-md);
+  cursor: pointer;
+  transition: transform var(--cc-ease), box-shadow var(--cc-ease),
+    border-color var(--cc-ease);
+}
+
+.food-pick-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--cc-brown);
+  box-shadow: var(--cc-shadow-lg);
+}
+
+.food-pick-photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--cc-linen);
+}
+
+/* ⚠️ PhotoArt 必须同时约束「容器」和「容器里的 img / svg」，
+   否则图片按原图尺寸渲染再被 overflow 裁掉（看起来像显示不全） */
+.food-pick-photo img,
+.food-pick-photo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.food-pick-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 10px;
+  background: var(--cc-yellow);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--cc-ink);
+  box-shadow: var(--cc-shadow-sm);
+}
+
+.food-pick-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 13px 14px 15px;
+}
+
+.food-pick-name {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--cc-ink);
+}
+
+.food-pick-shop {
+  margin-top: 3px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.74rem;
+  color: var(--cc-ink-soft);
+}
+
+.food-pick-reason {
+  margin: 10px 0 0;
+  padding-top: 9px;
+  border-top: 1px dashed var(--cc-line-soft);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  line-height: 1.75;
+  color: var(--cc-ink-soft);
+}
+
+/* 收窄时逐级压列数（改的是 --cols，面板宽度会自动跟着收） */
+@media (max-width: 1200px) {
+  .food-picks-panel--n5 { --cols: 4; }
+}
+
+@media (max-width: 940px) {
+  .food-picks-panel { padding: 28px 22px 26px; }
+  .food-picks-panel--n4,
+  .food-picks-panel--n5 { --cols: 3; }
+  .food-picks-title { font-size: 1.3rem; }
+}
+
+@media (max-width: 640px) {
+  .food-picks-overlay { padding: 16px; }
+  .food-picks-panel--n2,
+  .food-picks-panel--n3,
+  .food-picks-panel--n4,
+  .food-picks-panel--n5 { --cols: 2; }
+  .food-picks-head { flex-wrap: wrap; padding-right: 44px; }
+  .food-picks-count { margin-left: 0; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .food-pick-btn,
+  .food-pick-card,
+  .food-picks-close { transition: none; }
+  .food-pick-btn:hover,
+  .food-pick-card:hover,
+  .food-picks-close:hover { transform: none; }
+}
+
+/* ============================================
+   2026-10-10：占位内容标记
+   用户：「标记一下现在这个市集里面出现的东西都是你编的，先保存着占个位置，
+   等慢慢录入真实的后就把这几个删了。」
+   → 数据里每条带 `placeholder: true`；页面上**只在编辑模式（?edit=1）**显示
+     「示例」角标 + 顶部一条待替换提示，访客完全看不到。
+   ============================================ */
+
+/* 顶部提示条 */
+.food-ph-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 36px;
+  padding: 16px 20px;
+  background: rgba(169, 82, 58, 0.08);
+  border: 1px solid rgba(169, 82, 58, 0.32);
+  border-radius: 20px;
+}
+
+.food-ph-notice-tag {
+  flex-shrink: 0;
+  margin-top: 1px;
+  padding: 3px 12px;
+  background: #a9523a;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.food-ph-notice-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  line-height: 1.85;
+  color: #7d4028;
+}
+
+/* 风格指南禁 font-mono，这里靠底色区分即可 */
+.food-ph-notice-text code {
+  padding: 1px 6px;
+  background: rgba(169, 82, 58, 0.14);
+  border-radius: 5px;
+  font-size: 0.92em;
+  color: #6b3a24;
+}
+
+/* 卡片 / 弹窗上的「示例」角标（白字压陶土红 5.29:1 ✓） */
+.food-ph-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  padding: 3px 10px;
+  background: #a9523a;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  box-shadow: var(--cc-shadow-sm);
+}
+
+.food-ph-badge--pick { top: 10px; right: 10px; }
+
+.food-ph-note {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  background: rgba(169, 82, 58, 0.1);
+  border-left: 3px solid #a9523a;
+  border-radius: 0 10px 10px 0;
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: #8a4630;
+}
+
+/* 角标要绝对定位，容器得有 position —— .food-modal-photo 原来没有 */
+.food-modal-photo { position: relative; }
+
+/* 详情弹窗的角标改到左上 —— 右上角是关闭按钮，会压住 */
+.food-ph-badge--modal { top: 14px; left: 14px; right: auto; }

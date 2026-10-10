@@ -1,5 +1,22 @@
 /**
  * 市集 — 美食日记数据
+ *
+ * ⚠️⚠️ 占位内容警告（2026-10-10 用户确认）
+ * ============================================================
+ * 本文件里**全部 32 条**都是 AI 生成的占位示例，不是真实吃过的记录：
+ *   · 店名 / 地点 / 日期 / 价格 / 评分 / 点评  → 编的
+ *   · `pick`（流前精选的推荐理由）            → 编的
+ *   · `public/food/*.jpg` 的照片               → 部分是「同类代表图」，不是那家店的实物
+ * 每条都带 `placeholder: true` 标记，页面上**编辑模式**（`?edit=1`）会显示
+ * 「示例」角标 + 顶部一条待替换提示，访客看不到。
+ *
+ * 用户会慢慢录入真实内容。替换某条时：删掉那一行的 `placeholder: true` 即可，
+ * 角标和计数会自动消失。整批替换完就把本段注释删掉。
+ *
+ * 还剩多少没替换：**打开 `/food?edit=1`，页面顶部那条提示会显示「本页 N / 总数 条…」**。
+ * 命令行核对（`^` 锚定行首，本段注释不会被算进去）：
+ *   grep -c "^          placeholder: true," src/data/food.js
+ * ============================================================
  */
 
 const foodData = {
@@ -14,11 +31,13 @@ const foodData = {
       items: [
         {
           id: 'd-1',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '招牌波波奶茶',
           shop: '喜茶 · 海岸城店',
           location: '深圳',
           date: '2026-07-28',
           rating: 4.5,
+          pick: '回购四次。波波是黑糖珍珠但不过甜，嚼劲刚好；少糖最正，全糖会腻。',
           price: '¥28',
           photoUrl: '/food/d-1.jpg',
           tags: ['奶茶', '推荐'],
@@ -27,6 +46,7 @@ const foodData = {
         },
         {
           id: 'd-2',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '生椰拿铁',
           shop: '瑞幸 · 校内店',
           location: '学校',
@@ -40,11 +60,13 @@ const foodData = {
         },
         {
           id: 'd-3',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '鸭屎香柠檬茶',
           shop: '邻里 · 万象天地店',
           location: '深圳',
           date: '2026-07-20',
           rating: 4.5,
+          pick: '柠檬是手打的、不是勾兑汁，茶底比普通柠檬茶多一层花香。夏天喝比奶茶舒服。',
           photoUrl: '/food/d-3.jpg',
           price: '¥22',
           tags: ['果茶', '推荐'],
@@ -53,6 +75,7 @@ const foodData = {
         },
         {
           id: 'd-4',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '芒果椰奶冰沙',
           shop: '阿嬷手作 · 东门店',
           location: '深圳',
@@ -66,6 +89,7 @@ const foodData = {
         },
         {
           id: 'd-5',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '桂花酒酿拿铁',
           shop: 'M Stand · 来福士店',
           location: '深圳',
@@ -79,11 +103,13 @@ const foodData = {
         },
         {
           id: 'd-6',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '泰式手标柠檬红茶',
           shop: '街角路边摊',
           location: '学校后街',
           date: '2026-06-30',
           rating: 4.5,
+          pick: '茶底用的是潮汕单丛，跟路边奶茶店的茶精是两个世界。15 块钱能喝一下午。',
           photoUrl: '/food/d-6.jpg',
           price: '¥15',
           tags: ['果茶', '推荐'],
@@ -102,11 +128,13 @@ const foodData = {
       items: [
         {
           id: 'm-1',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '红烧牛肉面',
           shop: '兰州拉面 · 学校后街',
           location: '学校后街',
           date: '2026-07-26',
           rating: 4.5,
+          pick: '牛肉给得比食堂大方三倍，汤是牛骨熬的，喝完不口渴。月底穷学生的救赎。',
           price: '¥18',
           photoUrl: '/food/m-1.jpg',
           tags: ['面食', '推荐'],
@@ -115,6 +143,7 @@ const foodData = {
         },
         {
           id: 'm-2',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '鳗鱼饭',
           shop: '吉野家 · 万象城店',
           location: '深圳',
@@ -128,6 +157,7 @@ const foodData = {
         },
         {
           id: 'm-3',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '肉酱意面',
           shop: '萨莉亚 · 校外',
           location: '学校附近',
@@ -141,11 +171,13 @@ const foodData = {
         },
         {
           id: 'm-4',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '水煮鱼',
           shop: '渝是乎 · 海岸城店',
           location: '深圳',
           date: '2026-07-10',
           rating: 5,
+          pick: '鱼片嫩到夹起来会抖，辣度像是专门给广东人调的。底下豆芽拌饭比鱼还好吃。',
           price: '¥68',
           photoUrl: '/food/m-4.jpg',
           tags: ['川菜', '推荐'],
@@ -154,6 +186,7 @@ const foodData = {
         },
         {
           id: 'm-5',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '螺蛳粉',
           shop: '柳州螺蛳粉 · 学校后街',
           location: '学校后街',
@@ -167,11 +200,13 @@ const foodData = {
         },
         {
           id: 'm-6',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '叉烧滑蛋饭',
           shop: '茶餐厅 · 东门',
           location: '深圳',
           date: '2026-06-28',
           rating: 4.5,
+          pick: '开了快二十年的老店：叉烧自己烤、滑蛋刚凝固。简单的东西做到让人「还想再来」。',
           price: '¥35',
           photoUrl: '/food/m-6.jpg',
           tags: ['米饭', '推荐'],
@@ -190,11 +225,13 @@ const foodData = {
       items: [
         {
           id: 's-1',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '潮汕牛肉丸',
           shop: '路边摊 · 学校后街',
           location: '学校后街',
           date: '2026-07-27',
           rating: 5,
+          pick: '手打的，咬开有蜂窝孔，筷子戳下去会顶回来。12 块 8 个，分量实在。',
           price: '¥12',
           photoUrl: '/food/s-1.jpg',
           tags: ['小吃', '推荐'],
@@ -203,6 +240,7 @@ const foodData = {
         },
         {
           id: 's-2',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '铁板鱿鱼',
           shop: '铁板烧摊 · 学校后街',
           location: '学校后街',
@@ -216,11 +254,13 @@ const foodData = {
         },
         {
           id: 's-3',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '冰粉',
           shop: '手搓冰粉 · 学校后街',
           location: '学校后街',
           date: '2026-07-12',
           rating: 4.5,
+          pick: '手搓的口感「弹中带软」，粉冲的是「弹中带硬」。夏天晚上来一碗比冰棍满足。',
           price: '¥10',
           photoUrl: '/food/s-3.jpg',
           tags: ['甜品', '推荐'],
@@ -229,6 +269,7 @@ const foodData = {
         },
         {
           id: 's-4',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '煎饼果子',
           shop: '天津煎饼 · 学校食堂',
           location: '学校',
@@ -242,11 +283,13 @@ const foodData = {
         },
         {
           id: 's-5',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '烤冷面',
           shop: '东北烤冷面 · 学校后街',
           location: '学校后街',
           date: '2026-06-25',
           rating: 4.5,
+          pick: '两面煎到微焦，甜辣酱加芝麻酱。后街最受欢迎、九点还在排队的那一家。',
           price: '¥12',
           photoUrl: '/food/s-5.jpg',
           tags: ['小吃', '推荐'],
@@ -255,6 +298,7 @@ const foodData = {
         },
         {
           id: 's-6',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '糯米糍',
           shop: '手工糯米糍 · 东门',
           location: '深圳',
@@ -278,11 +322,13 @@ const foodData = {
       items: [
         {
           id: 't-1',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '提拉米苏',
           shop: 'La Vita · 来福士店',
           location: '深圳',
           date: '2026-07-29',
           rating: 5,
+          pick: '手指饼干浸得湿润但没塌，马斯卡彭打得极细，可可粉是现筛的。',
           price: '¥42',
           photoUrl: '/food/t-1.jpg',
           tags: ['蛋糕', '推荐'],
@@ -291,11 +337,13 @@ const foodData = {
         },
         {
           id: 't-2',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '双皮奶',
           shop: '仁信老铺 · 东门',
           location: '深圳',
           date: '2026-07-24',
           rating: 4.5,
+          pick: '奶皮厚到舀起来会颤，甜度比别家低、吃得到牛奶本味。东门开了快四十年的那家。',
           price: '¥18',
           photoUrl: '/food/t-2.jpg',
           tags: ['糖水', '推荐'],
@@ -304,6 +352,7 @@ const foodData = {
         },
         {
           id: 't-3',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '抹茶千层',
           shop: 'Lady M · 万象天地店',
           location: '深圳',
@@ -317,6 +366,7 @@ const foodData = {
         },
         {
           id: 't-4',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '姜撞奶',
           shop: '自制 · 寝室',
           location: '寝室',
@@ -330,6 +380,7 @@ const foodData = {
         },
         {
           id: 't-5',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '舒芙蕾',
           shop: 'Flipper\'s · 万象城店',
           location: '深圳',
@@ -343,11 +394,13 @@ const foodData = {
         },
         {
           id: 't-6',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '杨枝甘露',
           shop: '满记甜品 · 海岸城店',
           location: '深圳',
           date: '2026-06-28',
           rating: 4.5,
+          pick: '西柚粒是现剥的不是罐头，咬破那点酸刚好解椰奶的腻。',
           price: '¥30',
           photoUrl: '/food/t-6.jpg',
           tags: ['糖水', '推荐'],
@@ -366,11 +419,13 @@ const foodData = {
       items: [
         {
           id: 'sh-1',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '机械键盘 Keychron K8',
           shop: 'Keychron 官方旗舰店',
           location: '淘宝',
           date: '2026-07-26',
           rating: 4.5,
+          pick: '青轴噼里啪啦，治写代码的困。铝合金边框压手，放桌上纹丝不动。',
           price: '¥428',
           photoUrl: '/food/sh-1.jpg',
           tags: ['数码', '推荐'],
@@ -379,6 +434,7 @@ const foodData = {
         },
         {
           id: 'sh-2',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '帆布袋 · 单向空间联名',
           shop: '单向空间书店',
           location: '深圳',
@@ -392,11 +448,13 @@ const foodData = {
         },
         {
           id: 'sh-3',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '冷萃咖啡壶套装',
           shop: 'HARIO 旗舰店',
           location: '淘宝',
           date: '2026-07-15',
           rating: 4.5,
+          pick: '前一晚丢冰箱，第二天倒出来就是丝滑冷萃，不苦不涩，比热冲加冰块好喝一万倍。',
           price: '¥168',
           photoUrl: '/food/sh-3.jpg',
           tags: ['生活', '推荐'],
@@ -405,11 +463,13 @@ const foodData = {
         },
         {
           id: 'sh-4',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '《只是孩子》Patti Smith',
           shop: '西西弗书店 · 海岸城店',
           location: '深圳',
           date: '2026-07-08',
           rating: 5,
+          pick: '两个穷得叮当响的年轻人，做艺术、相爱、分开、继续做艺术。看完会去听 Horses。',
           price: '¥58',
           photoUrl: '/food/sh-4.jpg',
           tags: ['书籍', '推荐'],
@@ -418,6 +478,7 @@ const foodData = {
         },
         {
           id: 'sh-5',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '桌面小夜灯 · 暖光蘑菇造型',
           shop: '名创优品 · 学校附近',
           location: '学校附近',
@@ -431,6 +492,7 @@ const foodData = {
         },
         {
           id: 'sh-6',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '日系格纹衬衫',
           shop: 'UNIQLO · 万象天地店',
           location: '深圳',
@@ -444,6 +506,7 @@ const foodData = {
         },
         {
           id: 'sh-7',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '香薰蜡烛 · 白茶味',
           shop: '观夏 · 来福士店',
           location: '深圳',
@@ -457,11 +520,13 @@ const foodData = {
         },
         {
           id: 'sh-8',
+          placeholder: true, // ⚠️ AI 生成的占位内容，等录入真实内容后删掉这一行
           name: '手冲咖啡滤杯 V60',
           shop: 'HARIO 旗舰店',
           location: '淘宝',
           date: '2026-06-08',
           rating: 4.5,
+          pick: '螺旋纹让水流均匀铺开，萃出来比法压干净。值那每天早上磨豆注水的五分钟。',
           price: '¥68',
           photoUrl: '/food/sh-8.jpg',
           tags: ['生活', '推荐'],
