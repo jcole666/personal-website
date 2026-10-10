@@ -142,6 +142,61 @@ function GameModal({ game, onClose }) {
   )
 }
 
+/* ====== 人生游戏名单 ======
+   放在筛选栏上方：左 2:3 封面，右大字 + 点开看。
+   点击打开 LifeListModal 列出全部 4 款（含简介 + 平台/时长/状态）。 */
+function LifeListCard({ cover, count, onClick }) {
+  return (
+    <button className="life-card" onClick={onClick}>
+      <div className="life-card-cover">
+        <PhotoArt src={cover} alt="塞尔达传说 旷野之息" id="life-card" theme="poster" />
+      </div>
+      <div className="life-card-body">
+        <span className="life-card-kicker">MY LIFE LIST</span>
+        <h2 className="life-card-title">我的人生游戏清单</h2>
+        <p className="life-card-sub">流前精选</p>
+        <p className="life-card-hint">点开看完整名单<span className="life-card-arrow"> →</span></p>
+      </div>
+    </button>
+  )
+}
+
+function LifeListModal({ items, onClose }) {
+  return (
+    <div className="life-modal-overlay" onClick={onClose}>
+      <div className="life-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="life-modal-close" onClick={onClose} aria-label="关闭" />
+        <div className="life-modal-head">
+          <span className="life-modal-kicker">MY LIFE LIST</span>
+          <h2 className="life-modal-title">人生游戏名单</h2>
+          <p className="life-modal-sub">流前精选</p>
+        </div>
+        <div className="life-modal-list">
+          {items.map((g, i) => (
+            <article key={g.id} className="life-modal-item">
+              <span className="life-modal-index">{String(i + 1).padStart(2, '0')}</span>
+              <div className="life-modal-cover">
+                <PhotoArt src={g.coverUrl} alt={g.title} id={g.id} theme="poster" />
+              </div>
+              <div className="life-modal-info">
+                <h3 className="life-modal-item-title">{g.title}</h3>
+                {g.subtitle && <p className="life-modal-item-sub">{g.subtitle}</p>}
+                <p className="life-modal-item-meta">
+                  <span className="life-modal-item-status">{statusLabels[g.status]}</span>
+                  {g.platform && <span> · {g.platform}</span>}
+                  {g.hours && <span> · {g.hours}</span>}
+                  {g.genre && <span> · {g.genre}</span>}
+                </p>
+                {g.tagline && <p className="life-modal-item-tagline">{g.tagline}</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ====== 主组件 ====== */
 function Games() {
   const { data } = useData()
@@ -210,6 +265,17 @@ function Games() {
     { key: 'want-to-play', label: '想去玩' },
   ]
 
+  /* 人生游戏名单：把 lifeList 里的 id 解析成完整游戏对象，
+     漏一个就少一个（不上占位图，保证列表真实）。 */
+  const lifeGames = useMemo(
+    () => (gameData.lifeList ?? [])
+      .map((entry) => gameData.games.find((g) => g.id === entry.id))
+      .filter(Boolean)
+      .map((g, i) => ({ ...g, tagline: gameData.lifeList[i]?.tagline })),
+    [gameData],
+  )
+  const [lifeOpen, setLifeOpen] = useState(false)
+
   return (
     <main className="games-world">
       {/* Vaporwave 背景：落日圆盘 + 透视网格地面 + 扫描线。
@@ -222,13 +288,37 @@ function Games() {
       </div>
 
       <div className="games-inner">
-        {/* 标题 */}
+        {/* 标题（片假名 + 主标），下面跟一行：左人生游戏清单 / 右 2×2 统计 */}
         <div className="games-hero">
           <p className="vw-kana">ゲーム コレクション</p>
           <h1 className="games-hero-title">流前游戏</h1>
-          <p className="games-hero-sub">
-            {gameData.stats.total} 款游戏 · {gameData.stats.completed} 已通关 · {gameData.stats.playing} 正在玩 · {gameData.stats.wantToPlay} 想去玩
-          </p>
+        </div>
+
+        <div className="games-hero-row">
+          <LifeListCard
+            cover={lifeGames[0]?.coverUrl}
+            count={gameData.stats.total}
+            onClick={() => setLifeOpen(true)}
+          />
+
+          <div className="games-stats-grid" aria-label="游戏统计">
+            <div className="games-stat">
+              <span className="games-stat-num">{gameData.stats.total}</span>
+              <span className="games-stat-label">款游戏</span>
+            </div>
+            <div className="games-stat">
+              <span className="games-stat-num">{gameData.stats.completed}</span>
+              <span className="games-stat-label">已通关</span>
+            </div>
+            <div className="games-stat">
+              <span className="games-stat-num">{gameData.stats.playing}</span>
+              <span className="games-stat-label">正在玩</span>
+            </div>
+            <div className="games-stat">
+              <span className="games-stat-num">{gameData.stats.wantToPlay}</span>
+              <span className="games-stat-label">想去玩</span>
+            </div>
+          </div>
         </div>
 
         {/* 筛选：第一排是状态标签 + 右侧搜索栏；第二排是类型标签 */}
@@ -309,6 +399,7 @@ function Games() {
       <SiteFooter path="/games" />
 
       <GameModal game={modalItem} onClose={() => setModalItem(null)} />
+      {lifeOpen && <LifeListModal items={lifeGames} onClose={() => setLifeOpen(false)} />}
       <EditButton sectionKey="games" label="游戏" />
     </main>
   )

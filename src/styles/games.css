@@ -941,3 +941,393 @@
   .games-search { width: 100%; }
   .games-search-input { flex: 1; width: auto; }
 }
+
+/* ============================================
+   人生游戏名单（Life List）
+   放在筛选栏上方：左 2:3 封面，右大字 + 点开看。
+   Vaporwave 风：深紫底 + 2077 黄 + 霓虹粉/青。
+   ============================================ */
+.life-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  width: 100%;
+  margin: 0 0 26px;
+  padding: 18px 24px 18px 18px;
+  border: 2px solid rgba(1, 205, 254, 0.32);
+  border-left: 6px solid var(--cp-yellow, #fcee0a);
+  /* 用户要圆角，不要方角 */
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(28, 8, 56, 0.78), rgba(12, 4, 30, 0.78));
+  color: #F3EFE8;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--vw-base, 240ms) ease-out, border-color var(--vw-base), box-shadow var(--vw-base);
+}
+
+.life-card:hover {
+  transform: translateX(4px);
+  border-color: var(--cp-yellow, #fcee0a);
+  box-shadow: 0 0 24px rgba(252, 238, 10, 0.25);
+}
+
+/* ⚠️ PhotoArt 渲染的是 <img>，容器和里面的 img 都要给尺寸 */
+.life-card-cover {
+  position: relative;
+  flex-shrink: 0;
+  width: 96px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 2px solid var(--cp-yellow, #fcee0a);
+  /* 跟卡片一起圆角 */
+  border-radius: 8px;
+  background: #0a0216;
+}
+
+.life-card-cover img,
+.life-card-cover svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.life-card-body { flex: 1; min-width: 0; }
+
+.life-card-kicker {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 4px 12px;
+  background: rgba(255, 0, 110, 0.18);
+  color: #ff006e;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;  /* 原来 0.66 太小了 */
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  border-radius: 4px;
+}
+
+.life-card-title {
+  margin: 2px 0 4px;
+  font-family: var(--font-body, inherit);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #F3EFE8;
+  /* 霓虹光晕 */
+  text-shadow: 0 0 12px rgba(252, 238, 10, 0.28);
+}
+
+.life-card-sub {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  color: #C8B5E8;
+  letter-spacing: 0.04em;
+}
+
+.life-card-hint {
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--cp-yellow, #fcee0a);
+}
+
+.life-card-arrow {
+  display: inline-block;
+  margin-left: 4px;
+  transition: transform var(--vw-base);
+}
+
+.life-card:hover .life-card-arrow { transform: translateX(4px); }
+
+/* ----- 弹窗 ----- */
+.life-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(5, 0, 22, 0.78);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* 2026-10-09：原来 padding-top 只有 32px，弹窗高的时候顶部会顶到吸顶导航（72px）。
+     改成从导航下沿开始留白，overlay 自己可滚动 —— 弹窗再高也不会被切掉顶部。 */
+  padding: calc(var(--nav-height) + 18px) 16px 28px;
+  overflow-y: auto;
+}
+
+.life-modal {
+  position: relative;
+  width: min(820px, 100%);
+  /* 高度上限跟 overlay 的留白对齐，保证顶部始终在导航下面 */
+  max-height: calc(100vh - var(--nav-height) - 46px);
+  overflow-y: auto;
+  padding: 32px 36px 36px;
+  background: linear-gradient(160deg, #160730 0%, #0a0216 100%);
+  border: 2px solid var(--cp-yellow, #fcee0a);
+  box-shadow: 0 0 40px rgba(252, 238, 10, 0.18), 0 24px 60px rgba(0, 0, 0, 0.6);
+  color: #F3EFE8;
+}
+
+.life-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid rgba(243, 239, 232, 0.3);
+  border-radius: 0;
+  background: transparent;
+  color: #F3EFE8;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0ms, border-color var(--vw-base);
+}
+
+.life-modal-close::before {
+  content: '✕';
+}
+
+.life-modal-close:hover {
+  background: var(--cp-yellow, #fcee0a);
+  border-color: var(--cp-yellow, #fcee0a);
+  color: #0a0216;
+}
+
+.life-modal-head {
+  margin: 0 0 22px;
+  padding: 0 0 18px;
+  border-bottom: 1.5px solid rgba(1, 205, 254, 0.32);
+}
+
+.life-modal-kicker {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  background: rgba(255, 0, 110, 0.18);
+  color: #ff006e;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.life-modal-title {
+  margin: 0 0 6px;
+  font-family: var(--font-body, inherit);
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #F3EFE8;
+}
+
+.life-modal-sub {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #C8B5E8;
+}
+
+.life-modal-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.life-modal-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px dashed rgba(243, 239, 232, 0.14);
+  align-items: flex-start;
+}
+
+.life-modal-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.life-modal-index {
+  flex-shrink: 0;
+  width: 32px;
+  padding-top: 16px;
+  font-family: var(--font-mono, monospace);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cp-yellow, #fcee0a);
+  letter-spacing: 0.04em;
+}
+
+.life-modal-cover {
+  position: relative;
+  flex-shrink: 0;
+  width: 80px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 1.5px solid rgba(252, 238, 10, 0.4);
+  background: #0a0216;
+}
+
+.life-modal-cover img,
+.life-modal-cover svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.life-modal-info { flex: 1; min-width: 0; }
+
+.life-modal-item-title {
+  margin: 0 0 2px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #F3EFE8;
+  letter-spacing: 0.02em;
+}
+
+.life-modal-item-sub {
+  margin: 0 0 8px;
+  font-size: 0.76rem;
+  color: #9D8AC2;
+  letter-spacing: 0.02em;
+}
+
+.life-modal-item-meta {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  color: #B5A6D4;
+}
+
+.life-modal-item-status {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--cp-yellow, #fcee0a);
+  color: var(--cp-yellow, #fcee0a);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.life-modal-item-tagline {
+  margin: 6px 0 0;
+  padding: 10px 12px;
+  border-left: 2px solid var(--cp-yellow, #fcee0a);
+  background: rgba(252, 238, 10, 0.05);
+  font-size: 0.84rem;
+  line-height: 1.75;
+  color: #E2D5F8;
+}
+
+@media (max-width: 768px) {
+  .life-card { gap: 14px; padding: 14px 16px 14px 14px; }
+  .life-card-cover { width: 72px; }
+  .life-card-title { font-size: 1.2rem; }
+  .life-card-sub { font-size: 0.76rem; }
+  .life-modal { padding: 24px 18px 24px; }
+  .life-modal-item { gap: 12px; }
+  .life-modal-cover { width: 64px; }
+}
+
+
+/* ============================================
+   Hero 行：左边「我的人生游戏清单」卡片 + 右边 2×2 统计
+   原来 stats 是一行小字（40 款游戏 · 34 已通关 · ...），太轻，
+   整页「左重右轻」—— 把 stats 改成 2×2 的大字网格，跟卡片并排。
+   ============================================ */
+.games-hero-row {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+  margin: 0 0 26px;
+}
+
+.games-hero-row .life-card {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-bottom: 0;
+  padding: 14px 18px;
+  gap: 14px;
+}
+
+.games-hero-row .life-card-cover {
+  width: 72px;
+  border-radius: 6px;
+}
+
+.games-hero-row .life-card-title {
+  font-size: 1.2rem;
+  margin: 2px 0 3px;
+  text-shadow: 0 0 8px rgba(252, 238, 10, 0.22);
+}
+
+.games-hero-row .life-card-kicker {
+  font-size: 0.76rem;
+  padding: 3px 10px;
+  margin-bottom: 4px;
+}
+
+.games-hero-row .life-card-sub {
+  font-size: 0.76rem;
+  margin: 0 0 4px;
+}
+
+.games-hero-row .life-card-hint {
+  font-size: 0.66rem;
+}
+
+/* ----- 2×2 统计网格 ----- */
+.games-stats-grid {
+  flex: 1 1 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.games-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 12px 8px;
+  border: 1.5px solid rgba(1, 205, 254, 0.28);
+  border-radius: 10px;
+  background: linear-gradient(160deg, rgba(1, 205, 254, 0.08), rgba(255, 0, 110, 0.04));
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  cursor: default;
+}
+
+.games-stat:hover {
+  border-color: rgba(1, 205, 254, 0.85);
+  background: linear-gradient(160deg, rgba(1, 205, 254, 0.18), rgba(255, 0, 110, 0.10));
+  box-shadow: 0 0 18px rgba(252, 238, 10, 0.22), 0 0 0 1px rgba(252, 238, 10, 0.12) inset;
+  transform: translateY(-2px);
+}
+
+.games-stat-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--cp-yellow, #fcee0a);
+  text-shadow: 0 0 12px rgba(252, 238, 10, 0.35);
+}
+
+.games-stat-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: #C8B5E8;
+}
+
+@media (max-width: 768px) {
+  .games-hero-row { flex-direction: column; gap: 14px; }
+  .games-stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .games-stat { padding: 10px 4px; }
+  .games-stat-num { font-size: 1.4rem; }
+  .games-stat-label { font-size: 0.62rem; }
+}
+
